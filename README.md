@@ -1,8 +1,8 @@
-# WCV (Possible name change later)
+# Veteran e-Post Hub
 
 ## Project summary
 
-### One-sentence description of the project
+### This website is designed as a user-friendly hub for events near Whitman County for veterans and their familes
 
 TODO: A 20-second elevator pitch of your project - its core idea summarized in one sentence.
 
