@@ -8,7 +8,9 @@ Time:
 
 Location: 111 Upton Street, Colfax, WA 99111 
 
-Attendees: Client: Becky Buri
+Attendees: 
+
+Client: Becky Buri
 
 Team Lead: Melvin Manning
 
@@ -17,12 +19,14 @@ Team Member: Anthony Graves
 __________________________________________________________________________________________________________________
 1. Agenda
 
+
 The meeting was set with the intention of introducing the team to the client and clarification of what the client wants,
 what the end product might look like, and to pitch ideas of how we might be able to achieve it.
 
 __________________________________________________________________________________________________________________
 
 2. Meeting Summary
+
 
 Introduction:
 
@@ -31,8 +35,6 @@ The project is to assist the client, Becky Buri, with a way to better engage wit
 and opportunities.  The team intends to assist the client by streamlining the process currently used by our VSO, as well as provide her with new
 and better options to accomplish her tasks.
 
-
-_________________________________________________________________________________________________________________
 
 Client’s Requirements:
 
@@ -81,17 +83,21 @@ Decisions Made:
 
 _______________________________________________________________________________________________________
 
+
 3. Project Milestones Discussed
 
 1.) Have a prototype website built for testing within an unspecified timeline.
 
 ________________________________________________________________________________________________________
 
+
 4. Next Steps
 
 The next steps the team agreed upon are to familiarize ourselves with the technology stack required to successfully implement the website, and build a project description and requirements document.
 
 _______________________________________________________________________________________________________
+
+
 5. Next Meeting
    
 Date: unspecified
