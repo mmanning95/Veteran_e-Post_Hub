@@ -53,14 +53,22 @@ The client would prefer it if filters were set in place to minimize moderation o
 
 Discussion on specific features and functionalities expected by the client:
 
+
 The client would like interested parties to be able to submit events.
+
 The client would like users to be able to leave feedback on event postings.
+
 The client expects to be able to share events on social media.
+
 The client wants to be able to use the same database that stores information for the website event postings to automatically 
+
 populate her monthly email newsletter with the same events.
+
 The client would like to compile a comprehensive  list of individuals and organizations involved in veteran's
 services.
+
 The Client wants easier communication between any parties of interest that deal with veteran's services.
+
 The Client wants users to be able to filter events to only show events that they are likely to be interested in.
 
 
