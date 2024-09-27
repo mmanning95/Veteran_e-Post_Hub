@@ -18,7 +18,7 @@ Team Member: Anthony Graves
 
 __________________________________________________________________________________________________________________
 
-1. Agenda
+1. AGENDA:
 
 
 The meeting was set with the intention of introducing the team to the client and clarification of what the client wants,
@@ -26,18 +26,17 @@ what the end product might look like, and to pitch ideas of how we might be able
 
 __________________________________________________________________________________________________________________
 
-2. Meeting Summary
+2. MEETING SUMMARY:
 
 
-Introduction:
+INTRODUCTION:
 
 Acme26WCV is composed of two computer science students, Melvin Manning and Anthony Graves, working on the capstone project for CPTS 421.  
 The project is to assist the client, Becky Buri, with a way to better engage with veterans and keep them informed about upcoming events 
 and opportunities.  The team intends to assist the client by streamlining the process currently used by our VSO, as well as provide her with new
 and better options to accomplish her tasks.
 
-
-Client’s Requirements:
+CLIENT'S REQUIREMENTS:
 
 The client expressed concern about the accessibility of information given the tendency for the veterans
 who she is responsible for tend to be from an older demographic.  The client also expressed a desire to compile 
@@ -52,7 +51,7 @@ The client would prefer it if filters were set in place to minimize moderation o
 
 
 
-Discussion on specific features and functionalities expected by the client:
+SPECIFIC FEATURES AND FUNCTIONALITY:
 
 
 The client would like interested parties to be able to submit events.
@@ -74,7 +73,7 @@ The Client wants users to be able to filter events to only show events that they
 
 
 
-Key Discussion Points:
+KEY DISCUSSION POINTS:
 
 1.) What are the goals of our client?
 
@@ -84,7 +83,7 @@ Key Discussion Points:
 
 
 
-Decisions Made:
+DECISIONS MADE:
 
 1.) A Website would be the best platform to achieve the client's goals and requirements.
 
@@ -93,21 +92,21 @@ Decisions Made:
 _______________________________________________________________________________________________________
 
 
-3. Project Milestones Discussed
+3. PROJECT MILESTONES DISCUSSED:
 
 1.) Have a prototype website built for testing within an unspecified timeline.
 
 ________________________________________________________________________________________________________
 
 
-4. Next Steps
+4. NEXT STEPS:
 
 The next steps the team agreed upon are to familiarize ourselves with the technology stack required to successfully implement the website, and build a project description and requirements document.
 
 _______________________________________________________________________________________________________
 
 
-5. Next Meeting
+5. NEXT MEETING:
    
 Date: unspecified
 
