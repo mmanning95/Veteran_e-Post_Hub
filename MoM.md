@@ -34,8 +34,6 @@ and better options to accomplish her tasks.
 
 _________________________________________________________________________________________________________________
 
-Overview of the project goals, scope, and key stakeholders.
-
 Client’s Requirements:
 
 The client expressed concern about the accessibility of information given the tendency for the veterans
@@ -49,9 +47,9 @@ The client would like to keep things as simple as possible to use on her part. T
 existing tools she is already familiar with, or tools that do not require too steep of a learning curve.
 The client would prefer it if filters were set in place to minimize moderation of events and user comments on her part.
 
-_________________________________________________________________________________________________
 
-Discussion on specific features and functionalities expected by the client.
+
+Discussion on specific features and functionalities expected by the client:
 
 The client would like interested parties to be able to submit events.
 The client would like users to be able to leave feedback on event postings.
@@ -64,6 +62,7 @@ The Client wants easier communication between any parties of interest that deal 
 The Client wants users to be able to filter events to only show events that they are likely to be interested in.
 
 
+
 Key Discussion Points:
 
 1.) What are the goals of our client?
@@ -71,6 +70,8 @@ Key Discussion Points:
 2.) What type of platform would be best to achieve these goals?
 
 3.) What features should this platform have to achieve these goals?
+
+
 
 Decisions Made:
 
