@@ -1,13 +1,20 @@
 Project Name: ACME26WCV
+
 Client Name: Becky Buri
+
 Date: 9/13/2024
+
 Time:
+
 Location: 111 Upton Street, Colfax, WA 99111 
-Attendees:
-Client: Becky Buri
+
+Attendees: Client: Becky Buri
+
 Team Lead: Melvin Manning
+
 Team Member: Anthony Graves
 
+__________________________________________________________________________________________________________________
 1. Agenda
 
 The meeting was set with the intention of introducing the team to the client and clarification of what the client wants,
