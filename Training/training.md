@@ -11,8 +11,9 @@ While creating the Veteran e-Post hub, we will also be learning and reviewing va
 - Introduction to SQL database
 
 ### Timeline:
-- Start: Sep ??
+- Start: Sep 2
 - End: Oct 5
 
 ### Resources
 - [UML use case diagram](https://youtu.be/4emxjxonNRI?si=kCPDMs0kWstI8tcS)
+- [Relationships in databases](https://condor.depaul.edu/gandrus/240IT/accesspages/relationships.htm#:~:text=There%20are%20three%20types%20of,and%20many%2Dto%2Dmany.)
