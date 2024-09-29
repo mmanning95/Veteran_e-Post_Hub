@@ -16,6 +16,7 @@ While creating the Veteran e-Post hub, we will also be learning and reviewing va
 - End: Oct 5
 
 ### Resources
-- [HTML and CSS Tutorial](https://www.youtube.com/watch?v=G3e-cpL7ofc)
+- [HTML and CSS Course](https://www.youtube.com/watch?v=G3e-cpL7ofc)
+- [JavaScript Course](https://www.youtube.com/watch?v=EerdGm-ehJQ&t)
 - [UML use case diagram](https://youtu.be/4emxjxonNRI?si=kCPDMs0kWstI8tcS)
 - [Relationships in databases](https://condor.depaul.edu/gandrus/240IT/accesspages/relationships.htm#:~:text=There%20are%20three%20types%20of,and%20many%2Dto%2Dmany.)
