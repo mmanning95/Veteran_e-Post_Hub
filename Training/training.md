@@ -21,5 +21,6 @@ While creating the Veteran e-Post hub, we will also be learning and reviewing va
 - [JavaScript Course](https://www.youtube.com/watch?v=EerdGm-ehJQ&t)
 - [UML use case diagram](https://youtu.be/4emxjxonNRI?si=kCPDMs0kWstI8tcS)
 - [Relationships in databases](https://condor.depaul.edu/gandrus/240IT/accesspages/relationships.htm#:~:text=There%20are%20three%20types%20of,and%20many%2Dto%2Dmany.)
-- [Build a Full-stack Application](https://youtu.be/kPKXmEp_wfU?si=8Ty5Hk3l0zEkqXsH)
+- [Build a Full-stack Application](https://youtu.be/J9sfR6HN6BY?si=Wah8fg_Zk_zT1Ilh)
+- [Intro to Nextjs](https://youtu.be/ZVnjOPwW4ZA?si=WvGU-YBLk-LoUekD)
 - [GitKraken Desktop Tutorials](https://youtu.be/k2PtTXNpUSE?si=euttcpsetAiM3zno)
