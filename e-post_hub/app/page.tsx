@@ -1,7 +1,7 @@
-import Image from "next/image";
-
-export default function Home() {
+const Homepage = () => {
   return (
-    <div>Buttons are not incorporated</div>
+    <div className="">Homepage</div>
   )
 }
+
+export default Homepage
