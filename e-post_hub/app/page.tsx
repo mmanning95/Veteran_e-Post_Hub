@@ -1,5 +1,8 @@
-import Image from "next/image";
+import { redirect } from "next/navigation"
+import GuestPage from "./dashboard/Guest/page"
 
-export default function Home() {
-  return <main></main>;
+
+
+export default function Homepage() {
+  redirect('dashboard/Guest')
 }
