@@ -4,9 +4,10 @@
 * Homepage (No Login)
 * Member Homepage 
 * Admin Homepage
+* Modify Events Page
 
 ## Work Summary (Developer Facing)
-During this sprint, we laid the groundwork for our e-Post Hub. Our efforts focused on integrating SQL databases, designing the Next.js application structure, and configuring GitHub Actions. While we encountered challenges with the initial Next.js setup, we were able to resolve them by leveraging resources from YouTube, which have been documented in the Training folder for future reference.
+During this sprint, we laid the groundwork for our e-Post Hub. Our efforts focused on learning to integrate databases, designing the Next.js application structure, and configuring GitHub Actions. While we encountered challenges with the initial Next.js setup, we were able to resolve them by leveraging resources from YouTube, which have been documented in the Training folder for future reference.
 
 ## Unfinished Work
 to-do
@@ -21,14 +22,16 @@ https://github.com/mmanning95/ACME26WCV-Cpts421/issues/7
 to-do
 
 ## Code Files for Review
-to-do
+N/A
 
 ## Retrospective Summary
 Here's what went well:
-to-do
+* Once we were able to complete the setup, tailwind css was straightforward to use
  
 Here's what we'd like to improve:
-to-do
+* We would like to improve our knowledge of databases and user authentication.
   
 Here are the changes we plan to implement in the next sprint:
-to-do
+* User Authentication
+* Creating Events
+* User types: Member and Admin
