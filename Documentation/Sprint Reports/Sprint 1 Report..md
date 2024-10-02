@@ -12,11 +12,11 @@ During this sprint, we laid the groundwork for our e-Post Hub. Our efforts focus
 ## Unfinished Work
 to-do
 
-##Completed Issues/ User Stories
-https://github.com/mmanning95/ACME26WCV-Cpts421/issues/23
-https://github.com/mmanning95/ACME26WCV-Cpts421/issues/10
-https://github.com/mmanning95/ACME26WCV-Cpts421/issues/9
-https://github.com/mmanning95/ACME26WCV-Cpts421/issues/7
+## Completed Issues/ User Stories
+* https://github.com/mmanning95/ACME26WCV-Cpts421/issues/23
+* https://github.com/mmanning95/ACME26WCV-Cpts421/issues/10
+* https://github.com/mmanning95/ACME26WCV-Cpts421/issues/9
+* https://github.com/mmanning95/ACME26WCV-Cpts421/issues/7
 
  ## Incomplete Issues/User Stories
 to-do
