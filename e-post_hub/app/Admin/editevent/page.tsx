@@ -2,7 +2,7 @@ import React from "react";
 import Link from "next/link";
 import { Button } from "@nextui-org/react";
 
-export default function ModifyEventPage() {
+export default function EditEventPage() {
   return (
     <div>
       <h3 className="text-3xl">This will be the modify event page</h3>
@@ -20,7 +20,7 @@ export default function ModifyEventPage() {
       </div>
 
       <div className="formCreate">
-        <h1>Change Event Form</h1>
+        <h1>Edit Event Form</h1>
 
         <div>
           <form>
@@ -37,22 +37,35 @@ export default function ModifyEventPage() {
             </div>
 
             <div>
-              <label>Change Event Date:</label>
-              <input type="text" />
+              <label>Edit Event Date:</label>
+              <input type="text" placeholder="Enter new event date here" />
             </div>
 
             <div>
-              <label>Change Event Title:</label>
-              <input type="text" />
+              <label>Edit Event Title:</label>
+              <input type="text" placeholder="Enter new event title here" />
             </div>
 
             <div>
-              <label>Change Event Description:</label>
-              <input type="text" />
+              <label> Edit Event Description:</label>
+              <input
+                type="text"
+                placeholder="Enter the new event description"
+              />
             </div>
 
-            {/* Edit Event Button moved outside of select */}
-            <Button>Submit Changes </Button>
+            <div>
+              <label>Edit Contact information:</label>
+              <input
+                type="text"
+                placeholder="Enter new contact information here"
+              />
+            </div>
+
+            <Button>Upload New Flyer</Button>
+            <Button>Clear</Button>
+            <Button>Delete Event</Button>
+            <Button>Save Changes</Button>
           </form>
         </div>
       </div>

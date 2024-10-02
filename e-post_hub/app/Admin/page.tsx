@@ -10,11 +10,11 @@ export default function Adminpage() {
       <div style={{ margin: "20px 0" }}>
         <Button
           as={Link}
-          href="/Admin/modifyevent"
+          href="/Admin/editevent"
           color="primary"
           variant="bordered"
         >
-          Modify Event
+          Edit Event
         </Button>
       </div>
 
