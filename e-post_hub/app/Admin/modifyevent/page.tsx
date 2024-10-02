@@ -19,40 +19,42 @@ export default function ModifyEventPage() {
         </Button>
       </div>
 
-      <h1>Change Event Form</h1>
+      <div className="formCreate">
+        <h1>Change Event Form</h1>
 
-      <div>
-        <form>
-          <div>
-            <label>Select Event ID</label>
-            <select>
-              <option value="Event 1" id="">
-                Event 1
-              </option>
-              <option value="Event 2" id="">
-                Event 2
-              </option>
-            </select>
-          </div>
+        <div>
+          <form>
+            <div>
+              <label>Select Event ID:</label>
+              <select>
+                <option value="Event 1" id="">
+                  Event 1
+                </option>
+                <option value="Event 2" id="">
+                  Event 2
+                </option>
+              </select>
+            </div>
 
-          <div>
-            <label>Change Event Date</label>
-            <input type="text" />
-          </div>
+            <div>
+              <label>Change Event Date:</label>
+              <input type="text" />
+            </div>
 
-          <div>
-            <label>Change Event Title</label>
-            <input type="text" />
-          </div>
+            <div>
+              <label>Change Event Title:</label>
+              <input type="text" />
+            </div>
 
-          <div>
-            <label>Change Event Description</label>
-            <input type="text" />
-          </div>
+            <div>
+              <label>Change Event Description:</label>
+              <input type="text" />
+            </div>
 
-          {/* Edit Event Button moved outside of select */}
-          <Button>Submit Changes </Button>
-        </form>
+            {/* Edit Event Button moved outside of select */}
+            <Button>Submit Changes </Button>
+          </form>
+        </div>
       </div>
     </div>
   );
