@@ -8,7 +8,7 @@ export default function ModifyEventPage() {
 
       {/* Button to go back to Admin page */}
       <div>
-        <Link href="/admin">Go back to Admin Page</Link>
+        <Link href="/Admin">Go back to Admin Page</Link>
       </div>
 
       {/* Button to go back to Home page */}
