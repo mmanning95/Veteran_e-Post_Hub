@@ -1,11 +1,28 @@
-import Link from 'next/link'
-import React from 'react'
+import { Button } from "@nextui-org/react";
+import Link from "next/link";
+import React from "react";
 
 export default function Adminpage() {
   return (
     <div>
-        <h3 className= 'text-3xl'>This will be the admin page</h3>
-        <Link href='/'>Go back home</Link>
+      <h3 className="text-3xl">This will be the admin page</h3>
+
+      <div>
+        <Button
+          as={Link}
+          href="/Admin/modifyevent"
+          color="primary"
+          variant="bordered"
+        >
+          Modify Event
+        </Button>
+      </div>
+
+      <div>
+        <Button as={Link} href="/" color="primary" variant="bordered">
+          Back to Homepage
+        </Button>
+      </div>
     </div>
-  )
+  );
 }

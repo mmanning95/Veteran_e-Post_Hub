@@ -1,19 +1,22 @@
 import React from "react";
 import Link from "next/link";
+import { Button } from "@nextui-org/react";
 
 export default function ModifyEventPage() {
   return (
     <div>
-      <h3 className="text-3xl">This will be the modify Event Page</h3>
+      <h3 className="text-3xl">This will be the modify event page</h3>
 
-      {/* Button to go back to Admin page */}
       <div>
-        <Link href="/Admin">Go back to Admin Page</Link>
+        <Button as={Link} href="/Admin" color="primary" variant="bordered">
+          Back to Admin
+        </Button>
       </div>
 
-      {/* Button to go back to Home page */}
       <div>
-        <Link href="/">Go back to Homepage</Link>
+        <Button as={Link} href="/" color="primary" variant="bordered">
+          Back to Homepage
+        </Button>
       </div>
     </div>
   );
