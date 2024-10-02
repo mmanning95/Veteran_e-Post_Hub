@@ -7,7 +7,7 @@ export default function Adminpage() {
     <div>
       <h3 className="text-3xl">This will be the admin page</h3>
 
-      <div>
+      <div style={{ margin: "20px 0" }}>
         <Button
           as={Link}
           href="/Admin/modifyevent"
@@ -18,7 +18,7 @@ export default function Adminpage() {
         </Button>
       </div>
 
-      <div>
+      <div style={{ margin: "20px 0" }}>
         <Button as={Link} href="/" color="primary" variant="bordered">
           Back to Homepage
         </Button>

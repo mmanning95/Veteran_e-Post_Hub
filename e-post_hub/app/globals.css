@@ -2,11 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
-/* create new blog form */
+
 .formCreate {
   max-width: 400px;
   margin: 0 auto;
   text-align: center;
+  padding: 20px;
+  border: 1px solid rgba(128, 128, 128, 1);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(128, 128, 128, 1);
 }
 .formCreate label {
   text-align: left;
@@ -14,19 +18,19 @@
 }
 .formCreate h1 {
   font-size: 20px;
-  color: #000000;
+  color: rgba(128, 128, 128, 1);
   margin-bottom: 30px;
 }
 .formCreate input, .formCreate select {
   width: 100%;
   padding: 6px 10px;
   margin: 10px 0;
-  border: 1px solid rgba(0, 0, 0, 0.8); /* Adjust opacity here */
+  border: 1px solid rgba(128, 128, 128, 1); /* Adjust opacity here */
   box-sizing: border-box;
   display: block;
 }
 .formCreate button {
-  background: #000000;
+  background: rgba(128, 128, 128, 1);
   color: #fff;
   border: 0;
   padding: 8px;
