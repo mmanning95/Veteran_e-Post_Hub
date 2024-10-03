@@ -1,3 +1,50 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* formCreate class, basic template for creating a form, used to adjust appearance of form */
+.formCreate {
+  max-width: 720px;
+  margin: 0 auto;
+  color: rgba(128, 128, 128, 1);
+  text-align: center;
+  padding: 20px;
+  border: 1px solid rgba(128, 128, 128, 1);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(128, 128, 128, 1);
+}
+
+/* Label property of formCreate class, used to adjust appearance of label */
+.formCreate label {
+  text-align: left;
+  display: block;
+}
+
+/* Header property of formCreate class, used to adjust appearance of header */
+.formCreate h1 {
+  font-size: 20px;
+  color: rgba(128, 128, 128, 1);
+  margin-bottom: 30px;
+}
+
+/* Input and Select properties of formCreate class, used to adjust appearance of input and select */
+.formCreate input, .formCreate select {
+  width: 100%;
+  padding: 6px 10px;
+  margin: 10px 0;
+  border: 1px solid rgba(128, 128, 128, 1);
+  box-sizing: border-box;
+  display: block;
+}
+
+/* Button property of formCreate class, used to adjust appearance of buttons */
+.formCreate button {
+  background: rgba(128, 128, 128, 1);
+  margin: 20px;
+  color: #fff;
+  width:  120px;
+  border: 0;  
+  padding: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+}
