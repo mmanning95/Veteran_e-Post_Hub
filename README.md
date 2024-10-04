@@ -60,4 +60,5 @@ TODO: Provide links to additional documentation that may exist in the repo, e.g.
 - [React Hook Forms](https://react-hook-form.com/)
 - [Prisma](https://www.prisma.io/)
 - [Auth.js](https://authjs.dev/getting-started/installation?framework=Next.js)
+- [Neon tech Free tir database](neon.tech)
 
