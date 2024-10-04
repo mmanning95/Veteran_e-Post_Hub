@@ -30,7 +30,7 @@ Here's what went well:
 * Once we completed the setup, tailwind CSS was straightforward to use. We also enjoyed modifying the frontend parts of the e-Post Hub.
 
 ## Videos for sprint 1
-*[Before Changes](https://youtu.be/FSuBtvmkcfc)
+* [Before Changes](https://youtu.be/FSuBtvmkcfc)
 * [After Changes](https://www.youtube.com/watch?v=_BBfLVxVo3M&feature=youtu.be)
  
 Here's what we'd like to improve:
