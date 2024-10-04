@@ -2,13 +2,13 @@
 
 ## Project summary
 
-### This website is designed as a user-friendly hub for events near Whitman County for veterans and their familes
+### This website is designed as a user-friendly hub for events near Whitman County for veterans and their families
 
 TODO: A 20-second elevator pitch of your project - its core idea summarized in one sentence.
 
 ### Additional information about the project
 
-TODO: Write a compelling/creative/informative project description / summary
+TODO: Write a compelling/creative/informative project description/summary
 
 ## Installation
 
@@ -51,6 +51,7 @@ TODO: Leave the steps below if you want others to contribute to your project.
 ## Additional Documentation
 
 TODO: Provide links to additional documentation that may exist in the repo, e.g.,
-  * Sprint reports
-  * User links
+  * [Sprint 1 report](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Documentation/Sprint%20Reports/Sprint%201%20Report.md)
+  * [Meeting Minutes](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Meeting%20Minutes/MoM.md)
+  * [Training Document](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Training/training.md)
 
