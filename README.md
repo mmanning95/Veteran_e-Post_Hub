@@ -18,7 +18,7 @@ TODO: List what a user needs to have installed before running the installation i
 
 ### Add-ons
 
-TODO: List which add-ons are included in the project, and the purpose each add-on serves in your app.
+
 
 ### Installation Steps
 
@@ -53,4 +53,11 @@ TODO: Leave the steps below if you want others to contribute to your project.
 TODO: Provide links to additional documentation that may exist in the repo, e.g.,
   * Sprint reports
   * User links
+
+### Packages Used Documentation 
+- [Zod](zod.dev)
+- [React Icons](https://react-icons.github.io/react-icons/)
+- [React Hook Forms](https://react-hook-form.com/)
+- [Prisma](https://www.prisma.io/)
+- [Auth.js](https://authjs.dev/getting-started/installation?framework=Next.js)
 
