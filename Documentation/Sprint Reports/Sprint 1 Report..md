@@ -19,19 +19,19 @@ to-do
 * https://github.com/mmanning95/ACME26WCV-Cpts421/issues/7
 
  ## Incomplete Issues/User Stories
-to-do
+- https://github.com/mmanning95/ACME26WCV-Cpts421/issues/7
+  - Create an admin user, which is mostly complete, but not ready for merging. We are having issues creating a database. 
 
 ## Code Files for Review
 N/A
 
 ## Retrospective Summary
 Here's what went well:
-* Once we were able to complete the setup, tailwind css was straightforward to use
+* Once we completed the setup, tailwind CSS was straightforward to use. We also enjoyed modifying the frontend parts of the e-Post Hub.
  
 Here's what we'd like to improve:
 * We would like to improve our knowledge of databases and user authentication.
   
 Here are the changes we plan to implement in the next sprint:
 * User Authentication
-* Creating Events
 * User types: Member and Admin
