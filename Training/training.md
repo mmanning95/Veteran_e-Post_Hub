@@ -19,7 +19,7 @@ While creating the Veteran e-Post hub, we will also be learning and reviewing va
 ### Resources
 - [HTML and CSS Course](https://www.youtube.com/watch?v=G3e-cpL7ofc)
   - Anthony Graves - Completed
-  [JavaScript Course](https://www.youtube.com/watch?v=EerdGm-ehJQ&t)
+- [JavaScript Course](https://www.youtube.com/watch?v=EerdGm-ehJQ&t)
   - Anthony Graves - 7 Hours completed.
 - [UML use case diagram](https://youtu.be/4emxjxonNRI?si=kCPDMs0kWstI8tcS)
 - [Relationships in databases](https://condor.depaul.edu/gandrus/240IT/accesspages/relationships.htm#:~:text=There%20are%20three%20types%20of,and%20many%2Dto%2Dmany.)
