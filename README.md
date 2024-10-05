@@ -6,21 +6,33 @@ Introducing the Veteran E-Post Hub, a dynamic full-stack application designed to
 
 ### Additional information about the project
 
-Veteran e-Post Hub is designed to be a full-stack app platform for keeping the Veterans of Whitman County informed about local events and opportunities. The website will be administered by Becky Buri, the Whitman County Veterans' Services Officer, enabling her to serve the veteran community more effectively. The platform will feature user event submissions, personalized event filtering based on user interests, and social media integration, all within a user-friendly and accessible interface. The e-Post team is enthusiastic about this project and considers it an honor to assist in serving the local veteran community.
+The Veteran E-Post Hub is a full-stack app designed to keep the Veterans of Whitman County informed about local events and opportunities. This platform empowers the veteran community by enabling easy event submissions and personalized filtering based on individual interests, ensuring that users can quickly find relevant information. With seamless social media integration and a user-friendly, accessible interface, the E-Post Hub aims to foster engagement and connection among veterans. Our dedicated team is excited about this initiative and is committed to serving the local veteran community with pride and passion
 
-## Installation
-
+## Installation 
+N/A
+    
 ### Prerequisites
 
 The only thing needed to use Veteran e-Post Hub is an internet-connected device, such as a PC, laptop, tablet, or smartphone.
 
 ### Add-ons
 
-N/A
+- [Next UI](nextui.org) - Used for the front end design
+- [Next JS](nextjs.org) - The framework used for our e-Post Hub
+- [Tailwind CSS](tailwindcss.com) - A script command for css. Helps by scripting front end design commands
 
-### Installation Steps
+### Installation Steps - (Dev steps)
 
-N/A
+1. Clone the Repository:
+  - git clone https://github.com/yourusername/veteran-e-post-hub.git
+  - cd veteran-e-post-hub
+2. Install Dependencies:
+  - Bundle install
+3. Setup database:
+  - npx prisma generate
+  - npx prisma db push
+4. Start Server:
+  - npx run dev
 
 ### Functionality
 
