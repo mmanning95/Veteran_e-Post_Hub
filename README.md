@@ -26,7 +26,7 @@ N/A
 
 At this stage of the project, we have completed key development tasks, including laying the foundation for the website, creating a homepage, an admin page, an event editing page for administrators.
 
-When on the  homepage, to access the admin page, click the button located in the top-left corner of the screen, which will direct you to the dedicated admin interface. On this page, you will find two buttons: one to return to the homepage and another to access the event editing page. By selecting the "Edit Events" button, you will be taken to the admin event editing page, where you can modify fields such as Event Title, Event Description, and more. The page also includes two buttons in the top-left corner, one to return to the homepage and the other to navigate back to the admin interface.
+When on the  homepage, to access the admin page, click the button located in the top-left corner of the screen which will direct you to the dedicated admin interface. On this page you will find two buttons: one to return to the homepage and another to access the event editing page. By selecting the "Edit Events" button you will be taken to the admin event editing page where you can modify fields such as Event Title, Event Description, and more. The page also includes two buttons in the top-left corner, one to return to the homepage and the other to navigate back to the admin interface.
 
 ## Known Problems
 
