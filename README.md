@@ -24,7 +24,7 @@ The only thing needed to use Veteran e-Post Hub is an internet-connected device,
 ### Installation Steps - (Dev steps)
 
 1. Clone the Repository:
-    - git clone https://github.com/yourusername/veteran-e-post-hub.git
+    - git clone https://github.com/mmanning95/veteran-e-post-hub.git
     - cd veteran-e-post-hub
 2. Install Dependencies:
     - Bundle install
