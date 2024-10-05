@@ -2,11 +2,11 @@
 
 ## Project summary
 
-This website is designed as a user-friendly hub for events near Whitman County for veterans and their families.
+Introducing the Veteran E-Post Hub, a dynamic full-stack application designed to empower our community! Admin users can seamlessly moderate events—approving, rejecting, or deleting submissions—while also creating their own. Member users can submit events for approval, manage their own posts, and engage with comments. Plus, everyone—logged in or not—can explore a curated list of events, filter to find what matters most, and easily reach out to admins with any questions. Join us in fostering a vibrant community where every voice is heard!
 
 ### Additional information about the project
 
-Veteran e-Post Hub is designed to be a state-of-the-art platform for keeping the Veterans of Whitman County informed about local events and opportunities. The website will be administered by Becky Buri, the Whitman County Veterans' Services Officer, enabling her to serve the veteran community more effectively. The platform will feature user event submissions, personalized event filtering based on user interests, and social media integration, all within a user-friendly and accessible interface. The e-Post team is enthusiastic about this project and considers it an honor to assist in serving the local veteran community.
+Veteran e-Post Hub is designed to be a full-stack app platform for keeping the Veterans of Whitman County informed about local events and opportunities. The website will be administered by Becky Buri, the Whitman County Veterans' Services Officer, enabling her to serve the veteran community more effectively. The platform will feature user event submissions, personalized event filtering based on user interests, and social media integration, all within a user-friendly and accessible interface. The e-Post team is enthusiastic about this project and considers it an honor to assist in serving the local veteran community.
 
 ## Installation
 
@@ -48,4 +48,5 @@ N/A
   * [Training Document](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Training/training.md)
   * [Project Description](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Documentation/Sprint%201%20Documentation/Project_Description.docx)
   * [System Requirements and Specifications](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Documentation/Sprint%201%20Documentation/Requirements_and_Specifications_Template.docx)
+  * [Presentations](https://github.com/mmanning95/ACME26WCV-Cpts421/tree/main/Presentations)
 
