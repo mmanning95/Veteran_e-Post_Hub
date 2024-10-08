@@ -1,6 +1,7 @@
 'use client'
 
-import { adminRegisterSchema, AdminRegisterSchema } from '@/app/lib/schemas/adminRegisterSchema';
+import { registerAdminUser } from '@/app/actions/authActions';
+import { adminRegisterSchema, AdminRegisterSchema } from '@/lib/schemas/adminRegisterSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Card, CardBody, CardHeader, Input } from '@nextui-org/react'
 import React from 'react'
@@ -9,12 +10,13 @@ import { GiPadlock } from 'react-icons/gi'
 
 export default function AdminRegisterForm() {
   const {register,handleSubmit, formState: {errors, isValid}} = useForm<AdminRegisterSchema>({
-    resolver: zodResolver(adminRegisterSchema),  //look at schema folder for output
+    //resolver: zodResolver(adminRegisterSchema),  //look at schema folder for output
     mode: 'onTouched'
   });
 
-  const onSubmit = (data: AdminRegisterSchema) => {
-    console.log(data);
+  const onSubmit = async (data: AdminRegisterSchema) => {
+    const results = await registerAdminUser(data);
+    console.log(results);
   }
   return (
     <Card className='w-2/5 mx-auto' >
@@ -37,6 +39,7 @@ export default function AdminRegisterForm() {
               {...register('name')}
               isInvalid = {!!errors.name}
               errorMessage ={errors.name?.message}
+              autoComplete='name'
             />
             <Input 
               defaultValue=''
@@ -69,6 +72,7 @@ export default function AdminRegisterForm() {
               {...register('email')}
               isInvalid = {!!errors.email}
               errorMessage ={errors.email?.message}
+              autoComplete='email'
             />
             <Input 
               defaultValue=''
@@ -78,6 +82,15 @@ export default function AdminRegisterForm() {
               {...register('password')}
               isInvalid = {!!errors.password}
               errorMessage ={errors.password?.message}
+            />
+            <Input 
+              defaultValue=''
+              label="Creator Code"
+              variant='bordered'
+              type='creatorCode'
+              {...register('creatorCode')}
+              isInvalid = {!!errors.creatorCode}
+              errorMessage ={errors.creatorCode?.message}
             />
             <Button isDisabled={!isValid} fullWidth className='bg-orange-400 text-white' type='submit'>
               Register Admin

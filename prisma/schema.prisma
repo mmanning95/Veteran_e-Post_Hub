@@ -22,7 +22,7 @@ model Account { //https://authjs.dev/getting-started/adapters/prisma
   id_token           String? @db.Text
   session_state      String?
 
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
  
   @@unique([provider, providerAccountId])
   @@map("accounts")
@@ -33,13 +33,12 @@ model User {
   name          String?
   email         String?   @unique
   emailVerified DateTime? @map("email_verified")
-  //image         String?
   passwordHash  String
   accounts      Account[]
   role          Role      @default(MEMBER)
   member        Member?
   admin         Admin?
-
+  //image         String?
   @@map("users")
 }
 //one-to-one relationship
@@ -58,9 +57,10 @@ model Admin {
   userId String @unique
   
   // Admin-specific fields
-  workPhoneNumber String?
-  workHours       String?
-  officeLocation  String?
+  officeNumber      String?
+  officeHours       String?
+  officeLocation    String?
+  creatorCode       String @default("wc_create_admin")
 }
 
 enum Role {

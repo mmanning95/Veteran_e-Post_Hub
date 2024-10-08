@@ -13,6 +13,9 @@ export const adminRegisterSchema = z.object({
     email: z.string().email(),
     password: z.string().min(6, {
         message: 'Password must be at least 6 characters'
+    }),
+    creatorCode: z.string().refine(val => val === "wc_create_admin", {
+        message: 'Invalid creator code'
     })
 })
 
