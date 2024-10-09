@@ -1,6 +1,6 @@
 'use client'
 
-import { registerAdminUser } from '@/app/actions/authActions';
+//import { registerAdminUser } from '@/app/actions/authActions';
 import { adminRegisterSchema, AdminRegisterSchema } from '@/lib/schemas/adminRegisterSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Card, CardBody, CardHeader, Input } from '@nextui-org/react'
@@ -15,8 +15,8 @@ export default function AdminRegisterForm() {
   });
 
   const onSubmit = async (data: AdminRegisterSchema) => {
-    const results = await registerAdminUser(data);
-    console.log(results);
+    //const results = await registerAdminUser(data);
+    //console.log(results);
   }
   return (
     <Card className='w-2/5 mx-auto' >
