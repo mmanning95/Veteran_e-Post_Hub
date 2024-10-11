@@ -15,7 +15,7 @@ export const adminRegisterSchema = z.object({
         message: 'Password must be at least 6 characters'
     }),
     creatorCode: z.string().refine(val => val === "wc_create_admin", {
-        message: 'Invalid creator code'
+        message: 'Invalid creator code' //give admin option to change later, hardcode for now
     })
 })
 
