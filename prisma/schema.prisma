@@ -4,15 +4,14 @@
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL") 
+
+}
 generator client {
   provider = "prisma-client-js"
 }
-
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-
 model Account { 
   id                 String  @id @default(cuid())
   userId             String  @map("user_id")
@@ -35,16 +34,16 @@ model Account {
 
 model User {
   id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  passwordHash  String
+  name          String
+  email         String   @unique
+  //emailVerified DateTime? @map("email_verified")
+  passwordHash  String //Hashed password for security
   accounts      Account[]
   role          String      @default("MEMBER")
   member        Member?
   admin         Admin?
   //image         String?
-  @@map("users")
+
 }
 //one-to-one relationship
 //? means optional
@@ -62,11 +61,11 @@ model Admin {
   userId String @unique
   
   // Admin-specific fields
-  officeNumber      String?
+  officeNumber      Int?
   officeHours       String?
   officeLocation    String?
   creatorCode       String @default("wc_create_admin")
 }
 
 
-//dont forget npx prisma db push
+//dont forget npx prisma migrate dev --name ...

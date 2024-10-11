@@ -1,6 +1,5 @@
 'use client'
 
-//import { registerAdminUser } from '@/app/actions/authActions';
 import { adminRegisterSchema, AdminRegisterSchema } from '@/lib/schemas/adminRegisterSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Card, CardBody, CardHeader, Input } from '@nextui-org/react'
@@ -10,14 +9,33 @@ import { GiPadlock } from 'react-icons/gi'
 
 export default function AdminRegisterForm() {
   const {register,handleSubmit, formState: {errors, isValid}} = useForm<AdminRegisterSchema>({
-    //resolver: zodResolver(adminRegisterSchema),  //look at schema folder for output
+    resolver: zodResolver(adminRegisterSchema),  //look at schema folder for output
     mode: 'onTouched'
   });
 
   const onSubmit = async (data: AdminRegisterSchema) => {
     //const results = await registerAdminUser(data);
     //console.log(results);
-  }
+    try {
+      const response = await fetch('/api/admins', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        alert('Admin registered successfully!');
+      } else {
+        alert('Failed to register admin.');
+      }
+    } catch (error) {
+      console.error('An error occurred during registration', error);
+      alert('An error occurred while registering the admin.');
+    }
+  };
+  
   return (
     <Card className='w-2/5 mx-auto' >
       <CardHeader className='flex flex-col items-center justify-center'>

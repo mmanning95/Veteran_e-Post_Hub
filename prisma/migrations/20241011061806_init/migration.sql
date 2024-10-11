@@ -18,9 +18,8 @@ CREATE TABLE "accounts" (
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "name" TEXT,
-    "email" TEXT,
-    "email_verified" DATETIME,
+    "name" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
     "passwordHash" TEXT NOT NULL,
     "role" TEXT NOT NULL DEFAULT 'MEMBER'
 );
@@ -36,7 +35,7 @@ CREATE TABLE "Member" (
 CREATE TABLE "Admin" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "userId" TEXT NOT NULL,
-    "officeNumber" TEXT,
+    "officeNumber" INTEGER,
     "officeHours" TEXT,
     "officeLocation" TEXT,
     "creatorCode" TEXT NOT NULL DEFAULT 'wc_create_admin',

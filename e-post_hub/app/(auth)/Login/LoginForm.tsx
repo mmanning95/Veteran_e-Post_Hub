@@ -14,8 +14,30 @@ export default function LoginForm() {
     mode: 'onTouched'
   });
 
-  const onSubmit = (data: LoginSchema) => {
-    console.log(data);
+  const onSubmit = async (data: LoginSchema) => {
+    //console.log(data);
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert('Login successful!');
+        // Store the JWT token in localStorage or cookies (for future authenticated requests)
+        localStorage.setItem('token', result.token);
+      } else {
+        const errorResponse = await response.json();
+        alert(`Login failed: ${errorResponse.message}`);
+      }
+    } catch (error) {
+      console.error('An error occurred during login:', error);
+      alert('An error occurred during login.');
+    }
   }
 
   return (
