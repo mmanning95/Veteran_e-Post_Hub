@@ -1,36 +1,63 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Veteran e-Post Hub
 
-## Getting Started
+## Project summary
 
-First, run the development server:
+### This website is designed as a user-friendly hub for events near Whitman County for veterans and their familes
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+TODO: A 20-second elevator pitch of your project - its core idea summarized in one sentence.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Additional information about the project
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+TODO: Write a compelling/creative/informative project description / summary
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Installation
 
-## Learn More
+### Prerequisites
 
-To learn more about Next.js, take a look at the following resources:
+TODO: List what a user needs to have installed before running the installation instructions below (e.g., git, which versions of Ruby/Rails)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Add-ons
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Installation Steps
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+TODO: Describe the installation process (making sure you mention `bundle install`).
+Instructions need to be such that a user can just copy/paste the commands to get things set up and running. 
+
+
+## Functionality
+
+TODO: Write usage instructions. Structuring it as a walkthrough can help structure this section,
+and showcase your features.
+
+
+## Known Problems
+
+TODO: Describe any known issues, bugs, odd behaviors or code smells. 
+Provide steps to reproduce the problem and/or name a file or a function where the problem lives.
+
+
+## Contributing
+
+TODO: Leave the steps below if you want others to contribute to your project.
+
+1. Fork it!
+2. Create your feature branch: `git checkout -b my-new-feature`
+3. Commit your changes: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin my-new-feature`
+5. Submit a pull request :D
+
+## Additional Documentation
+
+TODO: Provide links to additional documentation that may exist in the repo, e.g.,
+  * Sprint reports
+  * User links
+
+### Packages Used Documentation 
+- [Zod](zod.dev)
+- [React Icons](https://react-icons.github.io/react-icons/)
+- [React Hook Forms](https://react-hook-form.com/)
+- [Prisma](https://www.prisma.io/)
+- [SQLlite](https://www.sqlite.org/)
+

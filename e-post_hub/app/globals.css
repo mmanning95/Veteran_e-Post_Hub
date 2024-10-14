@@ -48,3 +48,9 @@
   border-radius: 8px;
   cursor: pointer;
 }
+
+@layer Components {
+    .vertical-center {
+        height: calc(100vh - 64px);
+    }
+}

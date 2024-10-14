@@ -25,9 +25,9 @@ export default function TopNav() {
             <NavLink href={'/fakelink'} label='add_links_here' />
         </NavbarContent>
         <NavbarContent justify='end'>
-            <Button variant='bordered' className='text-white'>Login</Button>
-            <Button variant='bordered' className='text-white'>Register Admin</Button>
-            <Button variant='bordered' className='text-white'>Register Member</Button>
+            <Button as={Link} href='/Login' variant='bordered' className='text-white'>Login</Button>
+            <Button as={Link} href='/Registeradmin' variant='bordered' className='text-white'>Register Admin</Button>
+            <Button as={Link} href='/Registermember' variant='bordered' className='text-white'>Register Member</Button>
         </NavbarContent>
     </Navbar>
   )

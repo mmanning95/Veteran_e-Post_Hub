@@ -1,0 +1,71 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+
+}
+generator client {
+  provider = "prisma-client-js"
+}
+model Account { 
+  id                 String  @id @default(cuid())
+  userId             String  @map("user_id")
+  type               String
+  provider           String
+  providerAccountId  String  @map("provider_account_id")
+  refresh_token      String? 
+  access_token       String? 
+  expires_at         Int?
+  token_type         String?
+  scope              String?
+  id_token           String? 
+  session_state      String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+ 
+  @@unique([provider, providerAccountId])
+  @@map("accounts")
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String   @unique
+  //emailVerified DateTime? @map("email_verified")
+  passwordHash  String //Hashed password for security
+  accounts      Account[]
+  role          String      @default("MEMBER")
+  member        Member?
+  admin         Admin?
+  //image         String?
+
+}
+//one-to-one relationship
+//? means optional
+model Member {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  
+  // Any additional fields specific to members
+}
+
+model Admin {
+  id     String @id @default(cuid())
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String @unique
+  
+  // Admin-specific fields
+  officeNumber      String?
+  officeHours       String?
+  officeLocation    String?
+  creatorCode       String @default("wc_create_admin")
+}
+
+
+//dont forget npx prisma migrate dev --name ...
