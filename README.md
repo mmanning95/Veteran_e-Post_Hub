@@ -62,3 +62,10 @@ N/A
   * [System Requirements and Specifications](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Documentation/Sprint%201%20Documentation/Requirements_and_Specifications_Template.docx)
   * [Presentations](https://github.com/mmanning95/ACME26WCV-Cpts421/tree/main/Presentations)
 
+### Packages Used Documentation 
+- [Zod](zod.dev)
+- [React Icons](https://react-icons.github.io/react-icons/)
+- [React Hook Forms](https://react-hook-form.com/)
+- [Prisma](https://www.prisma.io/)
+- [SQLlite](https://www.sqlite.org/)
+
