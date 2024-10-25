@@ -1,3 +1,5 @@
+//Form used to register Admin accounts
+
 'use client'
 
 import { adminRegisterSchema, AdminRegisterSchema } from '@/lib/schemas/adminRegisterSchema';
@@ -25,11 +27,21 @@ export default function AdminRegisterForm() {
         body: JSON.stringify(data),
       });
 
+      //sends message directly to browser example: chrome would give a pop up
+      // if (response.ok) {
+      //   alert('Admin registered successfully!');
+      // } else {
+      //   alert('Failed to register admin.');
+      // }
       if (response.ok) {
-        alert('Admin registered successfully!');
-      } else {
-        alert('Failed to register admin.');
+        const { token } = await response.json();
+        //save token in local storage or cookies
+        localStorage.setItem('token',token);
       }
+
+      //redirect to admin-only page
+      window.location.href = '/Admin';
+
     } catch (error) {
       console.error('An error occurred during registration', error);
       alert('An error occurred while registering the admin.');
@@ -69,7 +81,7 @@ export default function AdminRegisterForm() {
             />
             <Input 
               defaultValue=''
-              label = "Office Hours"
+              label = "Office Hours (Not Required)"
               variant='bordered'
               {...register('officeHours')}
               isInvalid = {!!errors.officeHours}
@@ -77,7 +89,7 @@ export default function AdminRegisterForm() {
             />
             <Input 
               defaultValue=''
-              label = "Office Location"
+              label = "Office Location (Not Required)"
               variant='bordered'
               {...register('officeLocation')}
               isInvalid = {!!errors.officeLocation}
