@@ -1,4 +1,5 @@
 // This route is used when creating a new admin user
+
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import bcrypt from 'bcryptjs'

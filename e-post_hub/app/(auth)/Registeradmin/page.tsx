@@ -1,3 +1,5 @@
+//Form used to display the AdminRegisterForm
+
 import React from 'react'
 import AdminRegisterForm from './AdminRegisterForm'
 

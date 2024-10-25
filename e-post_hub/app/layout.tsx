@@ -1,3 +1,5 @@
+//Used for base layout for all pages. For instance the self contained navBar
+
 import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./Components/Providers";
@@ -23,6 +25,6 @@ export default function RootLayout({
           </main>
         </Providers>
       </body>
-    </html>
+    </html> 
   );
 }

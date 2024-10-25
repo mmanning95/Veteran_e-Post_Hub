@@ -1,3 +1,5 @@
+// Admin page that will be displayed. Does not allow unauthorized users to visit page
+
 "use client"
 import { Button } from "@nextui-org/react";
 import Link from "next/link";
@@ -44,7 +46,7 @@ export default function Adminpage() {
         if (decodedToken && decodedToken.role === 'ADMIN') {
           setIsAdmin(true); // User is an admin
           if (decodedToken.name) {
-            setAdminName(decodedToken.name); // Store the admin's name for display
+            setAdminName(decodedToken.name || 'Admin'); // Store the admin's name for display
           }
         } else {
           // If not an admin, redirect to a different page (e.g., login page)

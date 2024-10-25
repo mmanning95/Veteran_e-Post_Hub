@@ -1,3 +1,5 @@
+//Form used to register Admin accounts
+
 'use client'
 
 import { adminRegisterSchema, AdminRegisterSchema } from '@/lib/schemas/adminRegisterSchema';

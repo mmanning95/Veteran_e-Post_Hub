@@ -11,7 +11,7 @@ export default function page() {
       href="/Admin"
       color='primary' variant='bordered' startContent={<FaRegSmile/>}>
         Click me!
-      </Button> */}
+      </Button> */} remeber to add some redirects depending on user login type
     </div>
   );
 }

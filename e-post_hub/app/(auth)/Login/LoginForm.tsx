@@ -1,21 +1,20 @@
+// Form used when loggin in
 'use client'
 
-import { loginSchema, LoginSchema } from '@/lib/schemas/loginSchema'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { Button, Card, CardBody, CardHeader, Input } from '@nextui-org/react'
-import { error } from 'console'
-import React from 'react'
-import { useForm } from 'react-hook-form'
-import { GiPadlock } from 'react-icons/gi'
+import { loginSchema, LoginSchema } from '@/lib/schemas/loginSchema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Button, Card, CardBody, CardHeader, Input } from '@nextui-org/react';
+import React from 'react';
+import { useForm } from 'react-hook-form';
+import { GiPadlock } from 'react-icons/gi';
 
 export default function LoginForm() {
-  const {register,handleSubmit, formState: {errors, isValid}} = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema),  //look at schema folder for output
-    mode: 'onTouched'
+  const { register, handleSubmit, formState: { errors, isValid } } = useForm<LoginSchema>({
+    resolver: zodResolver(loginSchema), // look at schema folder for output
+    mode: 'onTouched',
   });
 
   const onSubmit = async (data: LoginSchema) => {
-    //console.log(data);
     try {
       const response = await fetch('/api/auth/login', {
         method: 'POST',
@@ -27,9 +26,11 @@ export default function LoginForm() {
 
       if (response.ok) {
         const result = await response.json();
-        alert('Login successful!');
-        // Store the JWT token in localStorage or cookies (for future authenticated requests)
+        // Store the JWT token in localStorage or cookies for future authenticated requests
         localStorage.setItem('token', result.token);
+        
+        // Redirect the user to the admin page if the login is successful
+        window.location.href = '/Admin';
       } else {
         const errorResponse = await response.json();
         alert(`Login failed: ${errorResponse.message}`);
@@ -38,10 +39,10 @@ export default function LoginForm() {
       console.error('An error occurred during login:', error);
       alert('An error occurred during login.');
     }
-  }
+  };
 
   return (
-    <Card className='w-2/5 mx-auto' >
+    <Card className='w-2/5 mx-auto'>
       <CardHeader className='flex flex-col items-center justify-center'>
         <div className='flex flex-col gap-2 items-center text-orange-500'>
           <div className='flex flex-row items-center gap-3'>
@@ -54,22 +55,22 @@ export default function LoginForm() {
       <CardBody>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className='space-y-4'>
-            <Input 
+            <Input
               defaultValue=''
-              label = "Email"
+              label='Email'
               variant='bordered'
               {...register('email')}
-              isInvalid = {!!errors.email}
-              errorMessage ={errors.email?.message as string}
+              isInvalid={!!errors.email}
+              errorMessage={errors.email?.message as string}
             />
-            <Input 
+            <Input
               defaultValue=''
-              label="Password"
+              label='Password'
               variant='bordered'
               type='password'
               {...register('password')}
-              isInvalid = {!!errors.password}
-              errorMessage ={errors.password?.message as string}
+              isInvalid={!!errors.password}
+              errorMessage={errors.password?.message as string}
             />
             <Button isDisabled={!isValid} fullWidth className='bg-orange-400 text-white' type='submit'>
               Login
@@ -78,5 +79,5 @@ export default function LoginForm() {
         </form>
       </CardBody>
     </Card>
-  )
+  );
 }

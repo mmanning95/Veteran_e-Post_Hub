@@ -1,3 +1,5 @@
+//Schema used to accept inputs for admin account registaration
+
 import {z} from 'zod'
 
 export const adminRegisterSchema = z.object({
