@@ -1,4 +1,4 @@
-# Sprint 1 Report (8/05/24 - 9/05/2024)
+# Sprint 1 Report (8/05/24 - 10/05/2024)
 
 ## What's New (User Facing)
 * Homepage (No Login)
