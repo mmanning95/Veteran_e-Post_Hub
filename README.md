@@ -61,7 +61,7 @@ N/A
 
 ## Additional Documentation
 
-  * [Sprint 1 report](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Documentation/Sprint%20Reports/Sprint%201%20Report.md)
+  * [Sprint reports](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Documentation/Sprint%20Reports/)
   * [Meeting Minutes](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Meeting%20Minutes/MoM.md)
   * [Training Document](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Training/training.md)
   * [Project Description](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Documentation/Sprint%201%20Documentation/Project_Description.docx)
