@@ -7,7 +7,7 @@ import jwt from 'jsonwebtoken'
 
 const prisma = new PrismaClient();
 
-export async function POST(req: Request) {
+export async function POST(req: Request) {  
   try {
     const { name, email, password, officeNumber, officeHours, officeLocation, creatorCode } = await req.json();
 
