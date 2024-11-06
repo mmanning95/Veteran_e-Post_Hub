@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       { expiresIn: '1h' }
     );
 
-    return NextResponse.json({ message: 'Login successful', token }, { status: 200 });
+    return NextResponse.json({ message: 'Login successful', token, role: user.role }, { status: 200 });
   } catch (error) {
     console.error('Error logging in:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

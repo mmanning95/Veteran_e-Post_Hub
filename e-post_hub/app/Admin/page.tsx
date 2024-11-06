@@ -27,24 +27,24 @@ export default function Adminpage() {
         } else {
           // If not an admin, redirect to a different page (e.g., login page)
           alert('Unauthorized access. Only admin users can view this page.');
-          window.location.href = '/Login';
+          window.location.href = './';
         }
       } catch (error) {
         console.error("Invalid token", error);
         alert('Invalid token. Please log in again.');
-        window.location.href = '/Login'; // Redirect to login page if token is invalid
+        window.location.href = './'; // Redirect to login page if token is invalid
       }
     } else {
       // If no token found, redirect to the login page
       alert('You need to log in to access the admin page.');
-      window.location.href = '/Login';
+      window.location.href = './';
     }
   }, []);
 
    // Function to handle logout
   const handleLogout = () => {
     localStorage.removeItem('token'); // Remove the token from localStorage
-    window.location.href = '/Login'; // Redirect to the login page
+    window.location.href = './'; // Redirect to the login page
   };
 
   if (!isAdmin) {
