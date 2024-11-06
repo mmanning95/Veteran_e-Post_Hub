@@ -6,30 +6,6 @@ import Link from "next/link";
 import React, {useEffect, useState} from "react";
 import jwt from 'jsonwebtoken'
 
-
-// export default function Adminpage() {
-//   return (
-//     <div>
-//       <h3 className="text-3xl">This will be the admin page</h3>
-//       <div style={{ margin: "20px 0" }}>
-//         <Button
-//           as={Link}
-//           href="/Admin/editevent"
-//           color="primary"
-//           variant="bordered"
-//         >
-//           Edit Event
-//         </Button>
-//       </div>
-//       <div style={{ margin: "20px 0" }}>
-//         <Button as={Link} href="/" color="primary" variant="bordered">
-//           Back to Homepage
-//         </Button>
-//       </div>
-//     </div>
-//   );
-// }
-
 export default function Adminpage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminName, setAdminName] = useState<string | null>(null);
@@ -65,6 +41,12 @@ export default function Adminpage() {
     }
   }, []);
 
+   // Function to handle logout
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Remove the token from localStorage
+    window.location.href = '/Login'; // Redirect to the login page
+  };
+
   if (!isAdmin) {
     // Show a loading message while we verify if the user is an admin
     return <div>Loading...</div>;
@@ -90,6 +72,13 @@ export default function Adminpage() {
       <div style={{ margin: "20px 0" }}>
         <Button as={Link} href="/" color="primary" variant="bordered">
           Back to Homepage
+        </Button>
+      </div>
+
+      {/* Add Logout Button */}
+      <div style={{ margin: "20px 0" }}>
+        <Button onClick={handleLogout} color="secondary" variant="bordered">
+          Logout
         </Button>
       </div>
     </div>
