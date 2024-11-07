@@ -29,9 +29,22 @@ export default function LoginForm() {
         // Store the JWT token in localStorage or cookies for future authenticated requests
         localStorage.setItem('token', result.token);
         
+         // Extract the role from the result to redirect appropriately
+         const userRole = result.role; // Assuming the response includes user role, e.g., result.role
+        
         // Redirect the user to the admin page if the login is successful
-        window.location.href = '/Admin';
-      } else {
+        if (userRole === 'ADMIN') {
+          // Redirect the user to the admin page if the login is successful and role is ADMIN
+          window.location.href = '/Admin';
+        } else if (userRole === 'MEMBER') {
+          // Redirect the user to the member page if the role is MEMBER
+          window.location.href = '/Member';
+        } else {
+          // Fallback - handle any other roles or cases
+          alert('Unauthorized user role. Please contact support.');
+          window.location.href = '/Login';
+        } 
+    }else {
         const errorResponse = await response.json();
         alert(`Login failed: ${errorResponse.message}`);
       }

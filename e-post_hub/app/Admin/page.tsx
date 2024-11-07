@@ -6,30 +6,6 @@ import Link from "next/link";
 import React, {useEffect, useState} from "react";
 import jwt from 'jsonwebtoken'
 
-
-// export default function Adminpage() {
-//   return (
-//     <div>
-//       <h3 className="text-3xl">This will be the admin page</h3>
-//       <div style={{ margin: "20px 0" }}>
-//         <Button
-//           as={Link}
-//           href="/Admin/editevent"
-//           color="primary"
-//           variant="bordered"
-//         >
-//           Edit Event
-//         </Button>
-//       </div>
-//       <div style={{ margin: "20px 0" }}>
-//         <Button as={Link} href="/" color="primary" variant="bordered">
-//           Back to Homepage
-//         </Button>
-//       </div>
-//     </div>
-//   );
-// }
-
 export default function Adminpage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminName, setAdminName] = useState<string | null>(null);
@@ -51,19 +27,25 @@ export default function Adminpage() {
         } else {
           // If not an admin, redirect to a different page (e.g., login page)
           alert('Unauthorized access. Only admin users can view this page.');
-          window.location.href = '/Login';
+          window.location.href = './';
         }
       } catch (error) {
         console.error("Invalid token", error);
         alert('Invalid token. Please log in again.');
-        window.location.href = '/Login'; // Redirect to login page if token is invalid
+        window.location.href = './'; // Redirect to login page if token is invalid
       }
     } else {
       // If no token found, redirect to the login page
       alert('You need to log in to access the admin page.');
-      window.location.href = '/Login';
+      window.location.href = './';
     }
   }, []);
+
+   // Function to handle logout
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Remove the token from localStorage
+    window.location.href = './'; // Redirect to the login page
+  };
 
   if (!isAdmin) {
     // Show a loading message while we verify if the user is an admin
@@ -90,6 +72,13 @@ export default function Adminpage() {
       <div style={{ margin: "20px 0" }}>
         <Button as={Link} href="/" color="primary" variant="bordered">
           Back to Homepage
+        </Button>
+      </div>
+
+      {/* Add Logout Button */}
+      <div style={{ margin: "20px 0" }}>
+        <Button onClick={handleLogout} color="secondary" variant="bordered">
+          Logout
         </Button>
       </div>
     </div>
