@@ -47,7 +47,7 @@ export default function Memberpage() {
      // Function to handle logout
      const handleLogout = () => {
       localStorage.removeItem('token'); // Remove the token from localStorage
-      window.location.href = './'; // Redirect to the login page
+      window.location.href = '/Login'; // Redirect to the login page
     };
 
   if (!isMember) {
