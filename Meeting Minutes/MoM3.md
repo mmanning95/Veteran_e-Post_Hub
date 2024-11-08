@@ -87,7 +87,7 @@ The following points are meant to map to their respective sections in Client Req
 
 3.) No decisions made at this time.
 
-4) Manual screening will be performed before adding a Veteran resource to the resource page.
+4.) Manual screening will be performed before adding a Veteran resource to the resource page.
 
 5.) A calendar will be added to the homepage.
 
@@ -126,7 +126,12 @@ NEXT STEPS:
 
 NEXT MEETING:
 
+
 Date: Undetermined
+
 Time: Undetermined
+
 Location: Pullman Veteran's Service Office
+
 Meeting Notes Prepared by: Anthony Graves
+
