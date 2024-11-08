@@ -42,7 +42,7 @@ model User {
   role          String      @default("MEMBER")
   member        Member?
   admin         Admin?
-  //image         String?
+  events        Event[] // Relation: One user can have many events
 
 }
 //one-to-one relationship
@@ -65,6 +65,22 @@ model Admin {
   officeHours       String?
   officeLocation    String?
   creatorCode       String @default("wc_create_admin")
+}
+
+model Event {
+  id                String @id @default(cuid())
+  userId            String
+  createdBy         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  website      String?
+  title        String
+  startDate    DateTime?
+  endDate      DateTime? //optional since one day events do not need it
+  description  String?
+  startTime    String?
+  endTime      String?
+  flyer        String?  // Flyer file (URL or storage path)
+
 }
 
 
