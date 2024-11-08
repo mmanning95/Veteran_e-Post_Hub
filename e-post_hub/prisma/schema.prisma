@@ -69,8 +69,8 @@ model Admin {
 
 model Event {
   id                String @id @default(cuid())
-  userId            String
-  createdBy         User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdById            String
+  createdBy         User   @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   website      String?
   title        String
@@ -80,7 +80,6 @@ model Event {
   startTime    String?
   endTime      String?
   flyer        String?  // Flyer file (URL or storage path)
-
 }
 
 
