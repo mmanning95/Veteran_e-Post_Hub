@@ -5,7 +5,8 @@ export const createEventSchema = z.object({
     title: z.string(),
     startDate: z.string(), // date should be given as mm/dd/yyyy
     endDate: z.string(),
-    time: z.string(), //  time should be provided as a string in "HH:MM AM/PM" format
+    startTime: z.string(), //  time should be provided as a string in "HH:MM AM/PM" format
+    endTime: z.string(),
     description: z.string(),
     flyer: z.string(), //flyer is a URL or file path, may change later
   
