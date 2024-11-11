@@ -40,6 +40,11 @@ export default function ProfilePage() {
 
           if (response.ok) {
             const profileData = await response.json();
+            if (profileData.role !== 'MEMBER') {
+              // Redirect non-member users to a different page, like a "not authorized" page
+              window.location.href = '/not-authorized';
+              return;
+            }
             setMemberProfile(profileData);
           } else {
             const errorResponse = await response.json();

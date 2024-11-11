@@ -27,7 +27,12 @@ export async function GET(req: NextRequest) {
     console.log('Decoded Token:', decodedToken);
 
 
-    const { userId } = decodedToken as { userId: string };
+    const { userId, role } = decodedToken as { userId: string, role: string };
+
+        // Ensure the user has the admin role
+        if (role !== 'MEMBER') {
+          return NextResponse.json({ message: 'Unauthorized: Insufficient privileges' }, { status: 403 });
+        }
 
     // Fetch the user's profile from the database
     const user = await prisma.user.findUnique({

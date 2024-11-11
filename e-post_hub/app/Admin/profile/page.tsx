@@ -43,6 +43,10 @@ export default function ProfilePage() {
 
           if (response.ok) {
             const profileData = await response.json();
+            if(profileData.role !== 'ADMIN'){
+              window.location.href = '/not-authorized';
+              return;
+            }
             setAdminProfile(profileData);
           } else {
             const errorResponse = await response.json();
