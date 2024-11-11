@@ -5,19 +5,16 @@ import { Card, CardBody, CardHeader, Button, Input } from '@nextui-org/react';
 
 // Define the type for AdminProfile with optional properties
 // This ensures that TypeScript knows the structure of the admin profile object
-type AdminProfile = {
+type MemberProfile = {
   id: string;
   name: string;
   email: string;
-  officeNumber?: string;
-  officeHours?: string;
-  officeLocation?: string;
   role: string;
 };
 
 //States to store data
 export default function ProfilePage() {
-  const [adminProfile, setAdminProfile] = useState<AdminProfile | null>(null);
+  const [memberProfile, setMemberProfile] = useState<MemberProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +32,7 @@ export default function ProfilePage() {
           }
 
           //calls to api
-          const response = await fetch('/api/admins/profile', {
+          const response = await fetch('/api/members/profile', {
             headers: {
               'Authorization': `Bearer ${token}`
             }
@@ -43,7 +40,7 @@ export default function ProfilePage() {
 
           if (response.ok) {
             const profileData = await response.json();
-            setAdminProfile(profileData);
+            setMemberProfile(profileData);
           } else {
             const errorResponse = await response.json();
             setError(`Failed to fetch profile: ${errorResponse.message}`);
@@ -70,20 +67,17 @@ export default function ProfilePage() {
   return (
     <Card className="w-3/5 mx-auto my-10">
       <CardHeader className="flex flex-col items-center justify-center">
-        <h2 className="text-3xl font-semibold">Admin Profile</h2>
+        <h2 className="text-3xl font-semibold">Member Profile</h2>
       </CardHeader>
       <CardBody className="space-y-6">
         <div className="flex flex-col gap-4 self-center">
-            <p><strong>Name:</strong>     {adminProfile?.name}</p>
-            <p><strong>Email:</strong>     {adminProfile?.email}</p>
-            <p><strong>Office Number:     </strong>{adminProfile?.officeNumber}</p>
-            <p><strong>Office Location     </strong>{adminProfile?.officeLocation}</p>
-            <p><strong>Office Hours     </strong>{adminProfile?.officeHours}</p>
+            <p><strong>Name:</strong>     {memberProfile?.name}</p>
+            <p><strong>Email:</strong>     {memberProfile?.email}</p>
         </div>
 
         <Button
           className="bg-orange-400 text-white mt-4"
-          onClick={() => (window.location.href = '/Admin')}
+          onClick={() => (window.location.href = '/Member')}
         >
           Back to Dashboard
         </Button>
@@ -98,10 +92,12 @@ export default function ProfilePage() {
 
         <Button
           className="bg-orange-400 text-white mt-4"
-          onClick={() => (window.location.href = '/Admin/profile/edit')}
+          onClick={() => (window.location.href = '/Member/profile/edit')}
         >
           Edit Profile
         </Button>
+
+
 
       </CardBody>
     </Card>
