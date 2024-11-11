@@ -72,6 +72,14 @@ export default function Memberpage() {
           Logout
         </Button>
       </div>
+
+      <Button
+          className="bg-orange-400 text-white mt-4"
+          onClick={() => (window.location.href = '/Member/profile')}
+        >
+          Profile
+        </Button>
+
     </div>
 
   );

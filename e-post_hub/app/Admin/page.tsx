@@ -81,6 +81,13 @@ export default function Adminpage() {
           Logout
         </Button>
       </div>
+
+      <div style={{ margin: "20px 0" }}>
+        <Button as={Link} href="/Admin/profile" color="primary" variant="bordered">
+          profile page
+        </Button>
+      </div>
+
     </div>
   );
 }
