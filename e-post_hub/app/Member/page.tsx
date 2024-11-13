@@ -80,6 +80,13 @@ export default function Memberpage() {
           Profile
         </Button>
 
+
+      <div style={{ margin: "20px 0" }}>
+        <Button as={Link} href="/Event/create" color="secondary" variant="bordered">
+          create event
+        </Button>
+      </div>
+
     </div>
 
   );

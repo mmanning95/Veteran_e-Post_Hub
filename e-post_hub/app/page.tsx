@@ -3,6 +3,8 @@
 import { useEffect } from 'react';
 import jwt from 'jsonwebtoken';
 import { useRouter } from 'next/navigation';
+import { Button } from '@nextui-org/react';
+import Link from "next/link";
 
 export default function HomePage() {
   const router = useRouter();
@@ -32,7 +34,10 @@ export default function HomePage() {
 
   return (
     <div>
-      <h1>Welcome to the Veteran e-Post Hub</h1>
+      <div>
+        <h1>Welcome to the Veteran e-Post Hub</h1>
+      </div>
+
     </div>
   );
 }

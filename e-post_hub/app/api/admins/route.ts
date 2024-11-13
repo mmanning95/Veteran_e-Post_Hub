@@ -62,22 +62,7 @@ export async function POST(req: Request) {
       },
     });
     
-//     //error checking to browser console
-//     console.log('Admin successfully created:', newUser)
-//     return NextResponse.json(newUser, { status: 201 });
-//   } catch (error: any) {
-//     console.error('Error registering admin:', error.message);
-//     if (error.code) {
-//       console.error('Error code:', error.code);
-//     }
-//     if (error.meta) {
-//       console.error('Error metadata:', error.meta);
-//     }
-//     return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
-//   } finally {
-//     await prisma.$disconnect();
-//   }
-// }
+
 
     // Create a JWT for the newly created admin user
     const token = jwt.sign(
