@@ -38,11 +38,6 @@ export default function HomePage() {
         <h1>Welcome to the Veteran e-Post Hub</h1>
       </div>
 
-      <div style={{ margin: "20px 0" }}>
-        <Button as={Link} href="/Event/create" color="secondary" variant="bordered">
-          create event
-        </Button>
-      </div>
     </div>
   );
 }
