@@ -1,16 +1,17 @@
 // Form used when loggin in
 'use client'
 
-import { loginSchema, LoginSchema } from '@/lib/schemas/loginSchema';
+import { loginSchema, LoginSchema } from '../../../lib/schemas/loginSchema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button, Card, CardBody, CardHeader, Input } from '@nextui-org/react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { GiPadlock } from 'react-icons/gi';
 
 export default function LoginForm() {
+  const [errorMessage, setErrorMessage] = useState<string | null>(null); // State to store error messages
   const { register, handleSubmit, formState: { errors, isValid } } = useForm<LoginSchema>({
-    resolver: zodResolver(loginSchema), // look at schema folder for output
+    resolver: zodResolver(loginSchema),
     mode: 'onTouched',
   });
 
@@ -26,35 +27,31 @@ export default function LoginForm() {
 
       if (response.ok) {
         const result = await response.json();
-        // Store the JWT token in localStorage or cookies for future authenticated requests
         localStorage.setItem('token', result.token);
-        
-         // Extract the role from the result to redirect appropriately
-         const userRole = result.role; // Assuming the response includes user role, e.g., result.role
-        
-        // Redirect the user to the admin page if the login is successful
+
+        const userRole = result.role;
+        // Redirect based on role
         if (userRole === 'ADMIN') {
-          // Redirect the user to the admin page if the login is successful and role is ADMIN
           window.location.href = '/Admin';
         } else if (userRole === 'MEMBER') {
-          // Redirect the user to the member page if the role is MEMBER
           window.location.href = '/Member';
         } else {
-          // Fallback - handle any other roles or cases
-          alert('Unauthorized user role. Please contact support.');
-          window.location.href = '/Login';
-        } 
-    }else {
+          
+          setErrorMessage('Unauthorized user role. Please contact support.');
+        }
+      } else {
         const errorResponse = await response.json();
-        alert(`Login failed: ${errorResponse.message}`);
+        setErrorMessage(`Login failed: ${errorResponse.message}`);
+        console.log("Error response:", errorResponse.message);
       }
     } catch (error) {
       console.error('An error occurred during login:', error);
-      alert('An error occurred during login.');
+      setErrorMessage('An error occurred during login. Please try again later.');
     }
   };
 
   return (
+    
     <Card className='w-2/5 mx-auto'>
       <CardHeader className='flex flex-col items-center justify-center'>
         <div className='flex flex-col gap-2 items-center text-orange-500'>
@@ -68,6 +65,11 @@ export default function LoginForm() {
       <CardBody>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className='space-y-4'>
+            {errorMessage && (
+              <p role="alert" className="text-red-500">
+                {errorMessage}
+              </p>
+            )}
             <Input
               defaultValue=''
               label='Email'
@@ -92,5 +94,6 @@ export default function LoginForm() {
         </form>
       </CardBody>
     </Card>
+    
   );
 }
