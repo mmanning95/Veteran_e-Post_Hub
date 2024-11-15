@@ -71,6 +71,7 @@ export default function LoginForm() {
               </p>
             )}
             <Input
+              isRequired
               defaultValue=''
               label='Email'
               variant='bordered'
@@ -79,6 +80,7 @@ export default function LoginForm() {
               errorMessage={errors.email?.message as string}
             />
             <Input
+              isRequired
               defaultValue=''
               label='Password'
               variant='bordered'
@@ -87,7 +89,7 @@ export default function LoginForm() {
               isInvalid={!!errors.password}
               errorMessage={errors.password?.message as string}
             />
-            <Button isDisabled={!isValid} fullWidth className='bg-orange-400 text-white' type='submit'>
+            <Button isDisabled={!isValid} fullWidth className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black" type='submit'>
               Login
             </Button>
           </div>

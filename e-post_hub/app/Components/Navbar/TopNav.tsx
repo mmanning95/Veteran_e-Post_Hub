@@ -1,5 +1,7 @@
 'use client'
 
+//https://nextui.org/docs/components/dropdown
+
 import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react'
 import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
@@ -103,12 +105,11 @@ export default function TopNav() {
                     </>
                 )}
 
-                <Dropdown>
+                <Dropdown backdrop='blur'>
                     <NavbarItem>
                         <DropdownTrigger>
                             <Button
-                                disableRipple
-                                className="w-[160px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-gray-100"
+                                className="w-[160px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black "
                                 radius="sm"
                                 variant="light"
                             >
@@ -120,10 +121,7 @@ export default function TopNav() {
                     </NavbarItem>
                     <DropdownMenu
                         aria-label="e-Post Help"
-                        className="w-[340px]"
-                        itemClasses={{
-                            base: "gap-4",
-                        }}
+                        className="w-[200px]"
                     >
                         <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
                             <Link href="./" className='text-black no-underline'>
@@ -143,11 +141,10 @@ export default function TopNav() {
                     </DropdownMenu>
                 </Dropdown>
 
-                <Dropdown>
+                <Dropdown backdrop='blur'>
                     <NavbarItem>
                         <DropdownTrigger>
                             <Button
-                                disableRipple
                                 className="w-[120px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-gray-100"
                                 radius="sm"
                                 variant="light"
@@ -160,7 +157,7 @@ export default function TopNav() {
                     </NavbarItem>
                     <DropdownMenu
                         aria-label="e-Post registration"
-                        className="w-[340px]"
+                        className="w-[200px]"
                         itemClasses={{
                             base: "gap-4",
                         }}
@@ -181,7 +178,7 @@ export default function TopNav() {
                 <div className='relative'>
                     {isAdmin && (
                         <Link href={'/Admin/event/management'}>
-                            <AiOutlineNotification size={30} color='#4B5563' />
+                            <AiOutlineNotification size={30} color='#000000' />
                             {pendingCount > 0 && (
                                 <div className='absolute -top-3 -right-3 w-5 h-5 flex items-center justify-center bg-purple-400 text-white rounded-full text-xs'>
                                     {pendingCount}
@@ -192,7 +189,7 @@ export default function TopNav() {
                 </div>
                 {isUserLoggedIn && (
                     <Link href={isAdmin ? '/Admin/profile' : '/Member/profile'}>
-                        <CiUser size={30} color='#4B5563' />
+                        <CiUser size={30} color='#000000' />
                     </Link>
                 )}
             </NavbarContent>

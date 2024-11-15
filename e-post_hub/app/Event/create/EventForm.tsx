@@ -139,7 +139,8 @@ export default function EventForm() {
               errorMessage={errors.website?.message}
               placeholder='For the use of external webpages'
             />
-            <Button isDisabled={!isValid} fullWidth type='submit' className='bg-orange-400 text-white'>
+            <Button isDisabled={!isValid} fullWidth type='submit' 
+                className='bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black'>
               Submit Event
             </Button>
             <div className="text-[#757575]" style={{ fontSize: '12px' }}>
