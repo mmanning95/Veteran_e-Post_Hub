@@ -94,7 +94,6 @@ export default function Adminpage() {
           profile page
         </Button>
       </div>
-
     </div>
   );
 }
