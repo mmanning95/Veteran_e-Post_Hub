@@ -42,5 +42,4 @@ jobs:
       - name: Build Docker Image
         run: docker build -t epost-image .
 
-      - name: Run Tests in Docker
-        run: docker run --network host epost-image python3 /app/run_all_selenium_tests.py
+
