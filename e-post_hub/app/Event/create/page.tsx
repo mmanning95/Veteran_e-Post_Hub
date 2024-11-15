@@ -46,7 +46,12 @@ export default function CreateEventPage() {
   return (
     <div className='flex items-center justify-center' style={{ height: 'calc(100vh - 64px)' }}>
       {statusMessage && (
-        <div className={`absolute top-10 px-4 py-2 rounded shadow-lg ${statusMessage.type === 'success' ? 'bg-green-500' : 'bg-red-500'} text-white`}>
+        <div
+          className={`fixed top-16 left-1/2 transform -translate-x-1/2 px-6 py-4 rounded shadow-lg ${
+            statusMessage.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+          } text-white z-50`}
+          style={{ maxWidth: '90vw', textAlign: 'center' }}
+        >
           {statusMessage.text}
         </div>
       )}

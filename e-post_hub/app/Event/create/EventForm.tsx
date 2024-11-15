@@ -48,7 +48,7 @@ export default function EventForm() {
 
       if (response.ok) {
         setMessage({ type: 'success', text: 'Event successfully created!' });
-        // Optionally redirect after some time
+        //redirect after some time
         setTimeout(() => {
           window.location.href = '/Event/create';
         }, 3000);
