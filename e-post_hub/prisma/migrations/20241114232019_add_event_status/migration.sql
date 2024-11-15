@@ -35,11 +35,27 @@ CREATE TABLE "Member" (
 CREATE TABLE "Admin" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "userId" TEXT NOT NULL,
-    "officeNumber" INTEGER,
+    "officeNumber" TEXT,
     "officeHours" TEXT,
     "officeLocation" TEXT,
     "creatorCode" TEXT NOT NULL DEFAULT 'wc_create_admin',
     CONSTRAINT "Admin_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+);
+
+-- CreateTable
+CREATE TABLE "Event" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "createdById" TEXT NOT NULL,
+    "website" TEXT,
+    "title" TEXT NOT NULL,
+    "startDate" DATETIME,
+    "endDate" DATETIME,
+    "description" TEXT,
+    "startTime" TEXT,
+    "endTime" TEXT,
+    "flyer" TEXT,
+    "status" TEXT NOT NULL DEFAULT 'PENDING',
+    CONSTRAINT "Event_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateIndex

@@ -80,6 +80,7 @@ model Event {
   startTime    String?
   endTime      String?
   flyer        String?  // Flyer file (URL or storage path)
+  status       String   @default("PENDING") // Status of event: APPROVED, DENIED, PENDING
 }
 
 

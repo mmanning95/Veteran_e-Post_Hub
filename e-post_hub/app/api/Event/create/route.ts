@@ -43,6 +43,9 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Either title or flyer is required' }, { status: 400 });
     }
 
+    // Set status based on role
+    const eventStatus = role === 'ADMIN' ? 'APPROVED' : 'PENDING';
+
     // Create the event
     const newEvent = await prisma.event.create({
       data: {
@@ -55,6 +58,7 @@ export async function POST(req: NextRequest) {
         startTime,
         endTime,
         flyer,
+        status: eventStatus, // Automatically set status based on role
       },
     });
 

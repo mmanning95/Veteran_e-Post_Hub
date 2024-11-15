@@ -44,11 +44,6 @@ export default function Memberpage() {
     }
   }, []);
 
-     // Function to handle logout
-     const handleLogout = () => {
-      localStorage.removeItem('token'); // Remove the token from localStorage
-      window.location.href = '/Login'; // Redirect to the login page
-    };
 
   if (!isMember) {
     // Show a loading message while we verify if the user is an admin
@@ -65,28 +60,6 @@ export default function Memberpage() {
           Back to Homepage
         </Button>
       </div>
-    
-          {/* Add Logout Button */}
-          <div style={{ margin: "20px 0" }}>
-        <Button onClick={handleLogout} color="secondary" variant="bordered">
-          Logout
-        </Button>
-      </div>
-
-      <Button
-          className="bg-orange-400 text-white mt-4"
-          onClick={() => (window.location.href = '/Member/profile')}
-        >
-          Profile
-        </Button>
-
-
-      <div style={{ margin: "20px 0" }}>
-        <Button as={Link} href="/Event/create" color="secondary" variant="bordered">
-          create event
-        </Button>
-      </div>
-
     </div>
 
   );

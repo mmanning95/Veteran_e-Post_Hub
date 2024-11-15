@@ -41,11 +41,6 @@ export default function Adminpage() {
     }
   }, []);
 
-   // Function to handle logout
-  const handleLogout = () => {
-    localStorage.removeItem('token'); // Remove the token from localStorage
-    window.location.href = '/Login'; // Redirect to the login page
-  };
 
   if (!isAdmin) {
     // Show a loading message while we verify if the user is an admin
@@ -74,27 +69,6 @@ export default function Adminpage() {
           Back to Homepage
         </Button>
       </div>
-
-      {/* Add Logout Button */}
-      <div style={{ margin: "20px 0" }}>
-        <Button onClick={handleLogout} color="secondary" variant="bordered">
-          Logout
-        </Button>
-      </div>
-
-      <div style={{ margin: "20px 0" }}>
-        <Button as={Link} href="/Event/create" color="secondary" variant="bordered">
-          create event
-        </Button>
-      </div>
-
-
-      <div style={{ margin: "20px 0" }}>
-        <Button as={Link} href="/Admin/profile" color="primary" variant="bordered">
-          profile page
-        </Button>
-      </div>
-
     </div>
   );
 }

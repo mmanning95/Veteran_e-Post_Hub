@@ -1,34 +1,201 @@
-import { Button, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react'
+'use client'
+
+import { Button, Dropdown, DropdownItem, DropdownMenu, DropdownTrigger, Navbar, NavbarBrand, NavbarContent, NavbarItem } from '@nextui-org/react'
 import Image from 'next/image'
-import React from 'react'
-import { GiMatchTip } from 'react-icons/gi'
+import React, { useEffect, useState } from 'react'
+import jwt from 'jsonwebtoken'
 import whitman_img from "../../Images/whitman.png"
+import { AiOutlineNotification } from "react-icons/ai";
 import Link from 'next/link'
 import NavLink from './NavLink'
+import { CiLogin, CiLogout, CiUser } from "react-icons/ci";
+import { GoChevronDown } from "react-icons/go";
+import { GrHelpBook } from "react-icons/gr";
+import { LuUserPlus2 } from "react-icons/lu";
+import { MdOutlineCreate } from "react-icons/md";
 
 export default function TopNav() {
-  return (
-    <Navbar maxWidth='xl' className='bg-gradient-to-r from-orange-400 to bg-orange-600'
-        classNames={{item: [
-                                'text-xl',
-                                'text-white',
-                                'uppercase',
-                                'data-[active=true]:text-green-400']}}
-        > 
-        <NavbarBrand as={Link} href={"/"}>
-            <Image src={whitman_img} alt="" width={40} height={40} />
-            <div className='font-bold text-3lg flex'>
-                <span className='text-gray-800'>Veteran e-Post Hub</span>
-            </div>
-        </NavbarBrand>
-        <NavbarContent justify= 'center'>
-            <NavLink href={'/fakelink'} label='add_links_here' />
-        </NavbarContent>
-        <NavbarContent justify='end'>
-            <Button as={Link} href='/Login' variant='bordered' className='text-white'>Login</Button>
-            <Button as={Link} href='/Registeradmin' variant='bordered' className='text-white'>Register Admin</Button>
-            <Button as={Link} href='/Registermember' variant='bordered' className='text-white'>Register Member</Button>
-        </NavbarContent>
-    </Navbar>
-  )
+    const [isAdmin, setIsAdmin] = useState(false);
+    const [isUserLoggedIn, setIsUserLoggedIn] = useState(false); // New state for user login status
+    const [pendingCount, setPendingCount] = useState(0);
+
+    useEffect(() => {
+        // Check admin token
+        const token = localStorage.getItem('token');
+        if (token) {
+            const decodedToken = jwt.decode(token) as { role?: string };
+            if (decodedToken?.role === 'ADMIN') {
+                setIsAdmin(true);
+                fetchPendingCount(); // Fetch pending count if user is admin
+            }
+            setIsUserLoggedIn(true); // Set user logged in status to true if token exists
+        }
+    }, []);
+
+    // Function to fetch count of pending events
+    const fetchPendingCount = async () => {
+        try {
+            const response = await fetch('/api/Event/pending/count');
+            if (response.ok) {
+                const data = await response.json();
+                setPendingCount(data.count);
+            } else {
+                console.error('Failed to fetch pending count:', response.statusText);
+            }
+        } catch (error) {
+            console.error('Error fetching pending count:', error);
+        }
+    };
+
+    // Function to handle logout
+    const handleLogout = () => {
+        localStorage.removeItem('token'); // Remove the token from localStorage
+        setIsUserLoggedIn(false); // Update state
+        window.location.href = '/Login'; // Redirect to the login page
+    };
+
+    return (
+        <Navbar maxWidth='xl' className='bg-gradient-to-r from-[#f7960d] to-[#f95d09]'
+            classNames={{
+                item: [
+                    'text-xl',
+                    'text-white',
+                    'uppercase',
+                    'data-[active=true]:text-green-400'
+                ]
+            }}
+        >
+            <NavbarBrand as={Link} href={"/"}>
+                <Image src={whitman_img} alt="" width={40} height={40} />
+                <div className='font-bold text-3lg flex'>
+                    <span className='text-gray-800'>Veteran e-Post Hub</span>
+                </div>
+            </NavbarBrand>
+            <NavbarContent className="hidden sm:flex gap-4" justify="center">
+              
+            </NavbarContent>
+            <NavbarContent className="flex items-center justify-end gap-2 ml-auto" >
+                {!isUserLoggedIn ? (
+                    <Button as={Link} href='/Login' variant='bordered'
+                        className='w-[100px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300'>
+                        <span className="text-center text-black text-small font-normal font-['Inter'] leading-none">
+                            Login
+                        </span>
+                        <CiLogin className="text-black" size={20} />
+                    </Button>
+                ) : (
+                    <>
+                        <Button onClick={handleLogout} variant='bordered'
+                            className='w-[100px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300'>
+                            <span className="text-center text-black text-small font-normal font-['Inter'] leading-none">
+                                Logout
+                            </span>
+                            <CiLogout className="text-black" size={20} />
+                        </Button>
+
+                        <Button as={Link} href='/Event/create' variant='bordered'
+                            className='w-[140px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300'>
+                            <span className="text-center text-black text-small font-normal font-['Inter'] leading-none">
+                                Create Event
+                            </span>
+                            <MdOutlineCreate className="text-black" size={20} />
+                        </Button>
+                    </>
+                )}
+
+                <Dropdown>
+                    <NavbarItem>
+                        <DropdownTrigger>
+                            <Button
+                                disableRipple
+                                className="w-[160px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-gray-100"
+                                radius="sm"
+                                variant="light"
+                            >
+                                Help & Support
+                                <GoChevronDown />
+                                <GrHelpBook />
+                            </Button>
+                        </DropdownTrigger>
+                    </NavbarItem>
+                    <DropdownMenu
+                        aria-label="e-Post Help"
+                        className="w-[340px]"
+                        itemClasses={{
+                            base: "gap-4",
+                        }}
+                    >
+                        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
+                            <Link href="./" className='text-black no-underline'>
+                                External Resources
+                            </Link>
+                        </DropdownItem>
+                        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
+                            <Link href="./" className='text-black no-underline'>
+                                Community Questions
+                            </Link>
+                        </DropdownItem>
+                        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
+                            <Link href="./" className='text-black no-underline'>
+                                Report a Problem
+                            </Link>
+                        </DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+
+                <Dropdown>
+                    <NavbarItem>
+                        <DropdownTrigger>
+                            <Button
+                                disableRipple
+                                className="w-[120px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-gray-100"
+                                radius="sm"
+                                variant="light"
+                            >
+                                Register
+                                <GoChevronDown />
+                                <LuUserPlus2 size={20} />
+                            </Button>
+                        </DropdownTrigger>
+                    </NavbarItem>
+                    <DropdownMenu
+                        aria-label="e-Post registration"
+                        className="w-[340px]"
+                        itemClasses={{
+                            base: "gap-4",
+                        }}
+                    >
+                        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
+                            <Link href="/Registeradmin" className='text-black no-underline'>
+                                Admin Registration
+                            </Link>
+                        </DropdownItem>
+                        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
+                            <Link href="/Registermember" className='text-black no-underline'>
+                                Member Registration
+                            </Link>
+                        </DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+
+                <div className='relative'>
+                    {isAdmin && (
+                        <Link href={'/Admin/event/management'}>
+                            <AiOutlineNotification size={30} color='#4B5563' />
+                            {pendingCount > 0 && (
+                                <div className='absolute -top-3 -right-3 w-5 h-5 flex items-center justify-center bg-purple-400 text-white rounded-full text-xs'>
+                                    {pendingCount}
+                                </div>
+                            )}
+                        </Link>
+                    )}
+                </div>
+                {isUserLoggedIn && (
+                    <Link href={isAdmin ? '/Admin/profile' : '/Member/profile'}>
+                        <CiUser size={30} color='#4B5563' />
+                    </Link>
+                )}
+            </NavbarContent>
+        </Navbar>
+    );
 }
