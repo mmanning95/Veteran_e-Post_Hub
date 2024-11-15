@@ -57,16 +57,9 @@ export default function Adminpage() {
         <Button
           as={Link}
           href="/Admin/editevent"
-          color="primary"
-          variant="bordered"
+          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
         >
           Edit Event
-        </Button>
-      </div>
-
-      <div style={{ margin: "20px 0" }}>
-        <Button as={Link} href="/" color="primary" variant="bordered">
-          Back to Homepage
         </Button>
       </div>
     </div>

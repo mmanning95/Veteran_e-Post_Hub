@@ -27,12 +27,6 @@ export default function AdminRegisterForm() {
         body: JSON.stringify(data),
       });
 
-      //sends message directly to browser example: chrome would give a pop up
-      // if (response.ok) {
-      //   alert('Admin registered successfully!');
-      // } else {
-      //   alert('Failed to register admin.');
-      // }
       if (response.ok) {
         const { token } = await response.json();
         //save token in local storage or cookies
@@ -63,6 +57,7 @@ export default function AdminRegisterForm() {
         <form onSubmit={handleSubmit(onSubmit)}>
         <div className='space-y-4'>
             <Input 
+              isRequired
               defaultValue=''
               label = "Name"
               variant='bordered'
@@ -72,6 +67,7 @@ export default function AdminRegisterForm() {
               autoComplete='name'
             />
             <Input 
+
               defaultValue=''
               label = "Office Number"
               variant='bordered'
@@ -81,7 +77,7 @@ export default function AdminRegisterForm() {
             />
             <Input 
               defaultValue=''
-              label = "Office Hours (Not Required)"
+              label = "Office Hours"
               variant='bordered'
               {...register('officeHours')}
               isInvalid = {!!errors.officeHours}
@@ -89,13 +85,14 @@ export default function AdminRegisterForm() {
             />
             <Input 
               defaultValue=''
-              label = "Office Location (Not Required)"
+              label = "Office Location"
               variant='bordered'
               {...register('officeLocation')}
               isInvalid = {!!errors.officeLocation}
               errorMessage ={errors.officeLocation?.message}
             />
             <Input 
+              isRequired
               defaultValue=''
               label = "Email"
               variant='bordered'
@@ -105,6 +102,7 @@ export default function AdminRegisterForm() {
               autoComplete='email'
             />
             <Input 
+              isRequired
               defaultValue=''
               label="Password"
               variant='bordered'
@@ -114,6 +112,7 @@ export default function AdminRegisterForm() {
               errorMessage ={errors.password?.message}
             />
             <Input 
+              isRequired
               defaultValue=''
               label="Creator Code"
               variant='bordered'
@@ -122,7 +121,7 @@ export default function AdminRegisterForm() {
               isInvalid = {!!errors.creatorCode}
               errorMessage ={errors.creatorCode?.message}
             />
-            <Button isDisabled={!isValid} fullWidth className='bg-orange-400 text-white' type='submit'>
+            <Button isDisabled={!isValid} fullWidth className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black" type='submit'>
               Register Admin
             </Button>
           </div>

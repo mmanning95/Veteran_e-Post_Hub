@@ -1,30 +1,30 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Button, Card, CardBody, CardHeader } from '@nextui-org/react';
-import { AiOutlineCheck, AiOutlineClose } from 'react-icons/ai';
+import { Button, Card, CardBody, CardHeader, Checkbox } from '@nextui-org/react';
 import jwt from 'jsonwebtoken';
 
 type Event = {
-    id: string;
-    title: string;
-    description?: string;
-    createdBy: {
-      name: string;
-      email: string;
-    };
-    status: string;
-    startDate?: string;
-    endDate?: string;
-    startTime?: string;
-    endTime?: string;
-    website?: string;
-    flyer?: string;
+  id: string;
+  title: string;
+  description?: string;
+  createdBy: {
+    name: string;
+    email: string;
   };
+  status: string;
+  startDate?: string;
+  endDate?: string;
+  startTime?: string;
+  endTime?: string;
+  website?: string;
+  flyer?: string;
+};
 
 export default function EventManagement() {
   const [events, setEvents] = useState<Event[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [selectedActions, setSelectedActions] = useState<{ [key: string]: 'approve' | 'deny' | null }>({});
 
   useEffect(() => {
     // Check admin token
@@ -42,44 +42,63 @@ export default function EventManagement() {
       window.location.href = '/';
     }
 
-  // Fetch pending events
-  async function fetchPendingEvents() {
-    try {
-      const response = await fetch('/api/Event/pending');
-      if (response.ok) {
-        const data = await response.json();
-        setEvents(data.events);
-      } else {
-        console.error('Failed to fetch pending events:', response.statusText);
+    // Fetch pending events
+    async function fetchPendingEvents() {
+      try {
+        const response = await fetch('/api/Event/pending');
+        if (response.ok) {
+          const data = await response.json();
+          setEvents(data.events);
+          // Initialize selectedActions state
+          const initialActions: { [key: string]: 'approve' | 'deny' | null } = {};
+          data.events.forEach((event: Event) => {
+            initialActions[event.id] = null;
+          });
+          setSelectedActions(initialActions);
+        } else {
+          console.error('Failed to fetch pending events:', response.statusText);
+        }
+      } catch (error) {
+        console.error('Error fetching pending events:', error);
       }
-    } catch (error) {
-      console.error('Error fetching pending events:', error);
     }
-  }
 
     if (isAdmin) {
       fetchPendingEvents();
     }
   }, [isAdmin]);
 
+  const handleCheckboxChange = (eventId: string, action: 'approve' | 'deny') => {
+    setSelectedActions((prev) => ({
+      ...prev,
+      [eventId]: prev[eventId] === action ? null : action,
+    }));
+  };
+
+  const handleSubmitActions = async () => {
+    for (const [eventId, action] of Object.entries(selectedActions)) {
+      if (action === 'approve') {
+        await handleApprove(eventId);
+      } else if (action === 'deny') {
+        await handleDeny(eventId);
+      }
+    }
+  };
+
   const handleApprove = async (eventId: string) => {
     try {
-        console.log("Approving Event ID:", eventId); // Log the event ID
-
       const response = await fetch(`/api/Event/approve/${eventId}`, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
       if (response.ok) {
-        alert('Event approved successfully.');
-        setEvents(events.filter(event => event.id !== eventId));
+        setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
       } else {
         const errorData = await response.json();
-        console.error('Error approving event:', errorData); // Log detailed error
-        alert(`Failed to approve event: ${errorData.message}`);
+        console.error('Error approving event:', errorData);
       }
     } catch (error) {
       console.error('Error approving event:', error);
@@ -91,16 +110,15 @@ export default function EventManagement() {
       const response = await fetch(`/api/Event/deny/${eventId}`, {
         method: 'PATCH',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
       if (response.ok) {
-        alert('Event denied successfully.');
-        setEvents(events.filter(event => event.id !== eventId));
+        setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
       } else {
         const errorData = await response.json();
-        alert(`Failed to deny event: ${errorData.message}`);
+        console.error('Error denying event:', errorData);
       }
     } catch (error) {
       console.error('Error denying event:', error);
@@ -144,24 +162,31 @@ export default function EventManagement() {
                     Flyer: <a href={event.flyer} target="_blank" rel="noopener noreferrer" className='text-blue-500 underline'>View Flyer</a>
                   </p>
                 )}
-                <div className='flex gap-2 mt-2'>
-                  <Button
-                    className='bg-green-500 text-white'
-                    onClick={() => handleApprove(event.id)}
-                    startContent={<AiOutlineCheck />}
+                <div className='flex justify-between mt-2'>
+                  <Checkbox
+                    isSelected={selectedActions[event.id] === 'approve'}
+                    onChange={() => handleCheckboxChange(event.id, 'approve')}
+                    color='primary'
                   >
                     Approve
-                  </Button>
-                  <Button
-                    className='bg-red-500 text-white'
-                    onClick={() => handleDeny(event.id)}
-                    startContent={<AiOutlineClose />}
+                  </Checkbox>
+                  <Checkbox
+                    isSelected={selectedActions[event.id] === 'deny'}
+                    onChange={() => handleCheckboxChange(event.id, 'deny')}
+                   color='danger'
                   >
                     Deny
-                  </Button>
+                  </Checkbox>
                 </div>
               </div>
             ))
+          )}
+          {events.length > 0 && (
+            <div className='flex justify-center mt-8'>
+              <Button onClick={handleSubmitActions} className='bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-white'>
+                Submit Actions
+              </Button>
+            </div>
           )}
         </CardBody>
       </Card>

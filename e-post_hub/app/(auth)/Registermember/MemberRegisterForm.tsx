@@ -60,6 +60,7 @@ export default function MemberRegisterForm() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <Input
+              isRequired  
               defaultValue=""
               label="Name"
               variant="bordered"
@@ -69,6 +70,7 @@ export default function MemberRegisterForm() {
               autoComplete="name"
             />
             <Input
+              isRequired
               defaultValue=""
               label="Email"
               variant="bordered"
@@ -78,6 +80,7 @@ export default function MemberRegisterForm() {
               autoComplete="email"
             />
             <Input
+              isRequired
               defaultValue=""
               label="Password"
               variant="bordered"
@@ -89,7 +92,7 @@ export default function MemberRegisterForm() {
             <Button
               isDisabled={!isValid}
               fullWidth
-              className="bg-orange-400 text-white"
+              className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
               type="submit"
             >
               Register Member
