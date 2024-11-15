@@ -12,13 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      # You need to add a service to run Edge in a separate container
-      selenium:
-        image: selenium/standalone-edge
-        ports:
-          - 4444:4444
-
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v3
@@ -40,7 +33,9 @@ jobs:
         run: npm install
 
       - name: Build Docker Image
-        run: docker build -t myapp-test .
+        run: |
+          docker build -t myapp-test .
 
-      - name: Run Selenium Tests
-        run: npm run selenium
+      - name: Run Tests in Docker
+        run: |
+          docker run myapp-test

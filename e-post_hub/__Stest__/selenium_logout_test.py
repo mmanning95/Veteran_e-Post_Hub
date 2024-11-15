@@ -1,17 +1,19 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.edge.service import Service
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
-# Set up the WebDriver for Microsoft Edge
-driver = webdriver.Edge(service=Service(EdgeChromiumDriverManager().install()))
+# Connect to the Selenium Grid that will be running in your Docker container
+driver = webdriver.Remote(
+    command_executor='http://localhost:4444/wd/hub',  # Connect to Selenium Grid
+    desired_capabilities=DesiredCapabilities.EDGE  # Use Edge as the browser
+)
 
 try:
     # Step 1: Open the login page and wait for it to load
-    driver.get("http://localhost:3000/Login")  # Adjust URL if needed
+    driver.get("http://host.docker.internal:3000/Login")  # Adjust URL if needed
     WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.NAME, "email")))
 
     # Step 2: Enter login credentials

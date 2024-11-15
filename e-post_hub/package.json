@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
-    "test:watch": "vitest --watch"
+    "test:ci": "vitest run",
+    "selenium": "node selenium_login_test.js && node selenium_logout_test.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.5.3",
