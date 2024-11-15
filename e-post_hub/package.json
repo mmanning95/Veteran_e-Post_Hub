@@ -9,7 +9,7 @@
     "lint": "next lint",
     "test": "vitest",
     "test:ci": "vitest run",
-    "selenium": "node selenium_login_test.js && node selenium_logout_test.js"
+    "selenium": "node test_selenium_login.js && node test_selenium_logout.js"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^2.5.3",
