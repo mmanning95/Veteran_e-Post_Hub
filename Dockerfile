@@ -33,6 +33,9 @@ RUN python3 -m venv /app/venv && \
     /app/venv/bin/pip install --upgrade pip && \
     /app/venv/bin/pip install selenium webdriver-manager
 
+# Copy the Selenium test runner script to the container
+COPY run_all_selenium_tests.py .
+
 # Set the environment variables to use the virtual environment
 ENV PATH="/app/venv/bin:$PATH"
 
