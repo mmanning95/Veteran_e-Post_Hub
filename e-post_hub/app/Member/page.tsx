@@ -1,17 +1,29 @@
-"use client"
-import { Button } from "@nextui-org/react";
+"use client";
+import { Button, Card, CardBody, CardHeader } from "@nextui-org/react";
 import Link from "next/link";
-import React, {useEffect, useState} from "react";
-import jwt from 'jsonwebtoken'
-// export default function Memberpage() {
-//   return (
-//     <div>Member Page</div>
-//   )
-// }
+import React, { useEffect, useState } from "react";
+import jwt from 'jsonwebtoken';
+
+type Event = {
+  id: string;
+  title: string;
+  description?: string;
+  createdBy: {
+    name: string;
+    email: string;
+  };
+  startDate?: string;
+  endDate?: string;
+  startTime?: string;
+  endTime?: string;
+  website?: string;
+  flyer?: string;
+};
 
 export default function Memberpage() {
   const [isMember, setIsMember] = useState(false);
   const [memberName, setMemberName] = useState<string | null>(null);
+  const [events, setEvents] = useState<Event[]>([]);
 
   useEffect(() => {
     // Check if the token is present in localStorage
@@ -19,48 +31,93 @@ export default function Memberpage() {
 
     if (token) {
       try {
-        // Verify and decode the token to determine if the user is an admin
+        // Verify and decode the token to determine if the user is a member
         const decodedToken = jwt.decode(token) as { userId: string, role: string, name?: string };
         
         if (decodedToken && decodedToken.role === 'MEMBER') {
-          setIsMember(true); // User is an admin
-          if (decodedToken.name) {
-            setMemberName(decodedToken.name || 'Member'); // Store the admin's name for display
-          }
+          setIsMember(true);
+          setMemberName(decodedToken.name || 'Member');
+          fetchApprovedEvents();
         } else {
-          // If not an admin, redirect to a different page (e.g., login page)
           alert('Unauthorized access. Only member users can view this page.');
           window.location.href = './';
         }
       } catch (error) {
         console.error("Invalid token", error);
         alert('Invalid token. Please log in again.');
-        window.location.href = './'; // Redirect to login page if token is invalid
+        window.location.href = './';
       }
     } else {
-      // If no token found, redirect to the login page
       alert('You need to log in to access the member page.');
       window.location.href = './';
     }
   }, []);
 
+  // Fetch approved events from the API
+  const fetchApprovedEvents = async () => {
+    try {
+      const response = await fetch('/api/Event/approved');
+      if (response.ok) {
+        const data = await response.json();
+        setEvents(data.events);
+      } else {
+        console.error('Failed to fetch approved events:', response.statusText);
+      }
+    } catch (error) {
+      console.error('Error fetching approved events:', error);
+    }
+  };
 
   if (!isMember) {
-    // Show a loading message while we verify if the user is an admin
     return <div>Loading...</div>;
   }
 
-  // The content of the Admin page will only be shown if the user is an admin
   return (
     <div>
-      <h3 className="text-3xl">Welcome, {memberName || 'Member'}!</h3>
-      <h3 className="text-3xl">This will be the member page</h3>
-      <div style={{ margin: "20px 0" }}>
-        <Button as={Link} href="/" color="primary" variant="bordered">
-          Back to Homepage
-        </Button>
+      <div className="text-center mb-10">
+        <h3 className="text-3xl font-bold">Welcome, {memberName || 'Member'}!</h3>
+        <p className="text-lg mt-4">Check out the upcoming events that you can join!</p>
+      </div>
+
+      {/* Display the list of approved events */}
+      <div className='mt-10'>
+        <h4 className="text-2xl mb-4 text-center">Approved Events:</h4>
+        {events.length === 0 ? (
+          <p className='text-center'>No approved events at the moment.</p>
+        ) : (
+          <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3'>
+            {events.map((event) => (
+              <Card key={event.id} className="mb-4">
+                <CardHeader>
+                  <h5 className="text-xl font-bold">{event.title}</h5>
+                </CardHeader>
+                <CardBody>
+                  {event.description && <p className="text-gray-600">{event.description}</p>}
+                  <p className="text-gray-600">Created By: {event.createdBy.name} ({event.createdBy.email})</p>
+                  {event.startDate && (
+                    <p className="text-gray-600">Start Date: {new Date(event.startDate).toLocaleDateString()}</p>
+                  )}
+                  {event.endDate && (
+                    <p className="text-gray-600">End Date: {new Date(event.endDate).toLocaleDateString()}</p>
+                  )}
+                  {event.startTime && <p className="text-gray-600">Start Time: {event.startTime}</p>}
+                  {event.endTime && <p className="text-gray-600">End Time: {event.endTime}</p>}
+                  {event.website && (
+                    <p className="text-gray-600">
+                      Website: <a href={event.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">{event.website}</a>
+                    </p>
+                  )}
+                  {event.flyer && (
+                    <p className="text-gray-600">
+                      Flyer: <a href={event.flyer} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">View Flyer</a>
+                    </p>
+                  )}
+                </CardBody>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </div>
-
   );
 }
