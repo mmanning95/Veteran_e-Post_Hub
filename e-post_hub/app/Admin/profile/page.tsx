@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Card, CardBody, CardHeader, Button, Input } from '@nextui-org/react';
+import { Card, CardBody, CardHeader, Button } from '@nextui-org/react';
 
 // Define the type for AdminProfile with optional properties
 // This ensures that TypeScript knows the structure of the admin profile object
@@ -15,7 +15,7 @@ type AdminProfile = {
   role: string;
 };
 
-//States to store data
+// States to store data
 export default function ProfilePage() {
   const [adminProfile, setAdminProfile] = useState<AdminProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -34,7 +34,7 @@ export default function ProfilePage() {
             return;
           }
 
-          //calls to api
+          // calls to api
           const response = await fetch('/api/admins/profile', {
             headers: {
               'Authorization': `Bearer ${token}`
@@ -43,7 +43,7 @@ export default function ProfilePage() {
 
           if (response.ok) {
             const profileData = await response.json();
-            if(profileData.role !== 'ADMIN'){
+            if (profileData.role !== 'ADMIN') {
               window.location.href = '/not-authorized';
               return;
             }
@@ -63,6 +63,42 @@ export default function ProfilePage() {
     }
   }, []);
 
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm(
+      'Are you sure you want to delete your account? This action cannot be undone.'
+    );
+
+    if (confirmDelete) {
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          setError('No token found. Please log in.');
+          return;
+        }
+
+        const response = await fetch('/api/admins/delete', {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        });
+
+        if (response.ok) {
+          alert('Your account has been deleted successfully.');
+          // Clear localStorage and redirect to homepage after successful deletion
+          localStorage.removeItem('token');
+          window.location.href = '/';
+        } else {
+          const errorResponse = await response.json();
+          setError(`Failed to delete account: ${errorResponse.message}`);
+        }
+      } catch (error) {
+        setError('An error occurred while deleting the account');
+      }
+    }
+  };
+
   if (loading) {
     return <div>Loading profile...</div>;
   }
@@ -78,11 +114,11 @@ export default function ProfilePage() {
       </CardHeader>
       <CardBody className="space-y-6">
         <div className="flex flex-col gap-4 self-center">
-            <p><strong>Name:</strong>     {adminProfile?.name}</p>
-            <p><strong>Email:</strong>     {adminProfile?.email}</p>
-            <p><strong>Office Number:     </strong>{adminProfile?.officeNumber}</p>
-            <p><strong>Office Location     </strong>{adminProfile?.officeLocation}</p>
-            <p><strong>Office Hours     </strong>{adminProfile?.officeHours}</p>
+          <p><strong>Name:</strong> {adminProfile?.name}</p>
+          <p><strong>Email:</strong> {adminProfile?.email}</p>
+          <p><strong>Office Number:</strong> {adminProfile?.officeNumber}</p>
+          <p><strong>Office Location:</strong> {adminProfile?.officeLocation}</p>
+          <p><strong>Office Hours:</strong> {adminProfile?.officeHours}</p>
         </div>
 
         <Button
@@ -107,6 +143,14 @@ export default function ProfilePage() {
           Edit Profile
         </Button>
 
+        <Button
+          className="bg-red-500 text-white mt-4"
+          onClick={handleDeleteAccount}
+        >
+          Delete Account
+        </Button>
+
+        {error && <p className="text-red-500">{error}</p>}
       </CardBody>
     </Card>
   );
