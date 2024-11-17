@@ -124,23 +124,24 @@ export default function TopNav() {
                         className="w-[200px]"
                     >
                         <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
-                            <Link href="./" className='text-black no-underline'>
+                            <Link href="/Support/external" className='text-black no-underline'>
                                 External Resources
                             </Link>
                         </DropdownItem>
                         <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
-                            <Link href="./" className='text-black no-underline'>
+                            <Link href="/Support/community" className='text-black no-underline'>
                                 Community Questions
                             </Link>
                         </DropdownItem>
                         <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
-                            <Link href="./" className='text-black no-underline'>
+                            <Link href="/Support/issue" className='text-black no-underline'>
                                 Report a Problem
                             </Link>
                         </DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
 
+                {!isUserLoggedIn && (
                 <Dropdown backdrop='blur'>
                     <NavbarItem>
                         <DropdownTrigger>
@@ -174,6 +175,7 @@ export default function TopNav() {
                         </DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
+                )}
 
                 <div className='relative'>
                     {isAdmin && (
