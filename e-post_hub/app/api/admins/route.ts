@@ -1,50 +1,91 @@
-// This route is used when creating a new admin user
-
 import { NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import bcrypt from 'bcryptjs'
-import jwt from 'jsonwebtoken'
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 const prisma = new PrismaClient();
 
-export async function POST(req: Request) {  
+// Handle GET requests to fetch the current creator code
+export async function GET() {
   try {
-    const { name, email, password, officeNumber, officeHours, officeLocation, creatorCode } = await req.json();
+    const setting = await prisma.settings.findUnique({
+      where: { key: 'creatorCode' },
+    });
 
-    //Error checking
+    if (!setting) {
+      return NextResponse.json({ message: 'Creator code not found' }, { status: 404 });
+    }
+
+    return NextResponse.json({ creatorCode: setting.value }, { status: 200 });
+  } catch (error: any) {
+    console.error('Error fetching creator code:', error.message);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+export async function POST(req: Request) {
+  try {
+    const body = await req.json();
+
+    // If the request is for updating the creator code
+    if (body.newCreatorCode) {
+      const { newCreatorCode } = body;
+
+      if (!newCreatorCode || newCreatorCode.trim().length < 6) {
+        return NextResponse.json({ message: 'Invalid creator code' }, { status: 400 });
+      }
+      
+      const updated = await prisma.settings.upsert({
+        where: { key: 'creatorCode' },
+        update: { value: newCreatorCode },
+        create: { key: 'creatorCode', value: newCreatorCode },
+      });
+
+      return NextResponse.json(
+        { message: 'Creator code updated successfully', data: updated },
+        { status: 200 }
+      );
+    }
+
+    // Admin registration logic
+    const { name, email, password, officeNumber, officeHours, officeLocation, creatorCode } = body;
+
+    // Validate user input
     if (!name || name.trim().length < 3) {
-      console.error('Invalid or missing name');
       return NextResponse.json({ message: 'Invalid or missing name' }, { status: 400 });
     }
-
     if (!email || !email.includes('@')) {
-      console.error('Invalid or missing email');
       return NextResponse.json({ message: 'Invalid or missing email' }, { status: 400 });
     }
-
     if (!password || password.length < 6) {
-      console.error('Invalid or missing password');
       return NextResponse.json({ message: 'Invalid or missing password' }, { status: 400 });
     }
-
-    if (!creatorCode || creatorCode !== 'wc_create_admin') {
-      console.error('Invalid creator code');
-      return NextResponse.json({ message: 'Invalid creator code' }, { status: 400 });
-    }
-
     if (officeNumber && isNaN(parseInt(officeNumber))) {
-      console.error('Invalid office number (should be numeric)');
       return NextResponse.json({ message: 'Invalid office number' }, { status: 400 });
     }
-    // Input validation
-    if (!name || !email || !password || !creatorCode) {
-      return NextResponse.json({ message: 'Missing required fields' }, { status: 400 });
+
+    // Retrieve the current creator code from the database
+    const currentCreatorCode = await prisma.settings.findUnique({
+      where: { key: 'creatorCode' },
+    });
+
+    console.log('Provided creator code:', creatorCode);
+    console.log('Creator code in database:', currentCreatorCode?.value);
+
+    // Validation logic for creator code
+    const defaultCreatorCode = "wc_create_admin"; // Your default code
+    if (
+      currentCreatorCode?.value // If an updated creator code exists
+        ? creatorCode !== currentCreatorCode.value // It must match the updated code
+        : creatorCode !== defaultCreatorCode // Otherwise, it must match the default
+    ) {
+      return NextResponse.json({ message: 'Invalid creator code' }, { status: 400 });
     }
 
     // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new admin user
+    // Create a new admin user
     const newUser = await prisma.user.create({
       data: {
         name,
@@ -53,7 +94,7 @@ export async function POST(req: Request) {
         role: 'ADMIN',
         admin: {
           create: {
-            officeNumber: officeNumber.toString(),
+            officeNumber: officeNumber?.toString(),
             officeHours,
             officeLocation,
             creatorCode,
@@ -61,23 +102,20 @@ export async function POST(req: Request) {
         },
       },
     });
-    
 
-
-    // Create a JWT for the newly created admin user
+    // Generate a JWT for the newly created admin user
     const token = jwt.sign(
       { userId: newUser.id, role: newUser.role, name: newUser.name },
-      process.env.JWT_SECRET as string, // uses secret code in .env
+      process.env.JWT_SECRET as string,
       { expiresIn: '4h' }
     );
 
-    // Return the new user and the token
     return NextResponse.json(
       { user: newUser, token },
       { status: 201, headers: { 'Set-Cookie': `token=${token}; HttpOnly; Path=/; Max-Age=7200` } }
     );
   } catch (error: any) {
-    console.error('Error registering admin:', error.message);
+    console.error('Error:', error.message);
     return NextResponse.json({ error: 'Internal Server Error', details: error.message }, { status: 500 });
   } finally {
     await prisma.$disconnect();
