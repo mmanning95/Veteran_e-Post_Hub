@@ -7,4 +7,7 @@ This document provides links to our presentation videos, organized by sprint. Th
 ## Sprint 2 - User Authentication and Creation
 - [Sprint 2 Presentation](https://youtu.be/chs6M8d50AE)
 
+## Alpha Prototype Presentation
+- [Alpha Prototype](https://www.canva.com/design/DAGW3gaWbJs/x4VVizACvHApaYqRB9_Pug/edit?utm_content=DAGW3gaWbJs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
+
 Feel free to refer to these links during your discussions or for further insights into our work. Additional videos will be added as we progress through upcoming sprints.
