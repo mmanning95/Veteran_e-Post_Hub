@@ -32,6 +32,13 @@ model Account {
   @@map("accounts")
 }
 
+//table for dynamic storage of creator code
+model Settings {
+  id    Int    @id @default(autoincrement())
+  key   String @unique
+  value String
+}
+
 model User {
   id            String    @id @default(cuid())
   name          String
