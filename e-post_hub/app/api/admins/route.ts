@@ -12,10 +12,12 @@ export async function GET() {
       where: { key: 'creatorCode' },
     });
 
+    // Return 404 if creator code not found
     if (!setting) {
       return NextResponse.json({ message: 'Creator code not found' }, { status: 404 });
     }
 
+    // Return current creator code
     return NextResponse.json({ creatorCode: setting.value }, { status: 200 });
   } catch (error: any) {
     console.error('Error fetching creator code:', error.message);
@@ -23,18 +25,21 @@ export async function GET() {
   }
 }
 
+// Handle POST request for updating creator code or admin registration.
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    // If the request is for updating the creator code
+    // Handle creator code update
     if (body.newCreatorCode) {
       const { newCreatorCode } = body;
 
+      //Validate creator code length.
       if (!newCreatorCode || newCreatorCode.trim().length < 6) {
         return NextResponse.json({ message: 'Invalid creator code' }, { status: 400 });
       }
       
+      //Update  or create new creator code.
       const updated = await prisma.settings.upsert({
         where: { key: 'creatorCode' },
         update: { value: newCreatorCode },
@@ -69,11 +74,8 @@ export async function POST(req: Request) {
       where: { key: 'creatorCode' },
     });
 
-    console.log('Provided creator code:', creatorCode);
-    console.log('Creator code in database:', currentCreatorCode?.value);
-
-    // Validation logic for creator code
-    const defaultCreatorCode = "wc_create_admin"; // Your default code
+\    // Validation logic for creator code
+    const defaultCreatorCode = "wc_create_admin"; // Default code
     if (
       currentCreatorCode?.value // If an updated creator code exists
         ? creatorCode !== currentCreatorCode.value // It must match the updated code

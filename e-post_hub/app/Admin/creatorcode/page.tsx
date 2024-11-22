@@ -1,4 +1,4 @@
-"use client"; // Add this at the top of the file
+"use client";
 
 import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
@@ -13,13 +13,14 @@ const NewCreatorCode = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminName, setAdminName] = useState<string | null>(null);
 
+  // Check admin status and fetch creator code.
   useEffect(() => {
     const fetchCreatorCode = async () => {
       try {
         const response = await fetch("/api/admins");
         if (response.ok) {
           const { creatorCode } = await response.json();
-          setCurrentCreatorCode(creatorCode);
+          setCurrentCreatorCode(creatorCode); // Update creator code.
         } else {
           console.error("Failed to fetch the current creator code.");
           setCurrentCreatorCode(null);
@@ -30,7 +31,7 @@ const NewCreatorCode = () => {
       }
     };
 
-    // Check if the token is present in localStorage
+    // check for valid JWT token
     const token = localStorage.getItem("token");
 
     if (token) {
@@ -60,9 +61,11 @@ const NewCreatorCode = () => {
     }
   }, []);
 
+  // handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Post request to update
     try {
       const response = await fetch("/api/admins", {
         method: "POST",
@@ -82,10 +85,12 @@ const NewCreatorCode = () => {
     }
   };
 
+  // Loading message until user is verified as admin
   if (!isAdmin) {
     return <div>Loading...</div>;
   }
 
+  // Render UI
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <Card className="w-2/5">
@@ -96,7 +101,7 @@ const NewCreatorCode = () => {
           <p className="text-neutral-500 mt-2">
             Current Creator Code:{" "}
             <span className="font-bold text-black">
-              {currentCreatorCode || "Fetching..."}
+              {currentCreatorCode || creatorCode || "wc_create_admin"}
             </span>
           </p>
         </CardHeader>

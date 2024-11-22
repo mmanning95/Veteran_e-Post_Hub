@@ -22,6 +22,7 @@ export default function AdminRegisterForm() {
     mode: "onTouched",
   });
 
+  // Creator code needed for admin account creation
   const creatorCode = watch("creatorCode");
 
   const onSubmit = async (data: AdminRegisterSchema) => {
