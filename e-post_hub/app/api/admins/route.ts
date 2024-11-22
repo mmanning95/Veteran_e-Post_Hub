@@ -66,9 +66,8 @@ export async function POST(req: Request) {
 
     // Create a JWT for the newly created admin user
     const token = jwt.sign(
-      { userId: newUser.id, role: newUser.role, name: newUser.name },
+      { userId: newUser.id, role: newUser.role,email: newUser.email, name: newUser.name },
       process.env.JWT_SECRET as string, // uses secret code in .env
-      { expiresIn: '4h' }
     );
 
     // Return the new user and the token
