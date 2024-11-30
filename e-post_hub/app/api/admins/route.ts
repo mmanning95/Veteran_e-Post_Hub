@@ -74,7 +74,7 @@ export async function POST(req: Request) {
       where: { key: 'creatorCode' },
     });
 
-\    // Validation logic for creator code
+   // Validation logic for creator code
     const defaultCreatorCode = "wc_create_admin"; // Default code
     if (
       currentCreatorCode?.value // If an updated creator code exists
