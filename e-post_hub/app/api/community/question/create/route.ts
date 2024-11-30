@@ -7,45 +7,46 @@ const prisma = new PrismaClient();
 export async function POST(req: Request) {
   try {
     // Parse the request body to get question details
-    const { text, isPrivate } = await req.json();
+    const { text, isPrivate, username, contactEmail } = await req.json();
     const authHeader = req.headers.get('authorization');
-    
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-      return NextResponse.json({ message: 'Unauthorized access' }, { status: 401 });
+
+    let userId = null;
+    let email = contactEmail;
+    let name = username;
+
+    // If there's an Authorization header, verify the user is logged in
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      if (token) {
+        try {
+          const decodedToken = jwt.verify(token, process.env.JWT_SECRET!);
+          const { userId: decodedUserId, email: decodedEmail, name: decodedName } = decodedToken as {
+            userId: string;
+            email: string;
+            name: string;
+          };
+          userId = decodedUserId;
+          email = decodedEmail;
+          name = decodedName;
+        } catch (err) {
+          return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
+        }
+      }
     }
 
-    // Extract token from Authorization header
-    const token = authHeader.split(' ')[1];
-    if (!token) {
-      return NextResponse.json({ message: 'No token found' }, { status: 401 });
-    }
-
-    // Verify token and extract user information
-    let decodedToken;
-    try {
-      decodedToken = jwt.verify(token, process.env.JWT_SECRET!);
-    } catch (err) {
-      return NextResponse.json({ message: 'Invalid token' }, { status: 401 });
-    }
-
-    if (!decodedToken) {
-      return NextResponse.json({ message: 'Unauthorized access' }, { status: 401 });
-    }
-
-    const { userId, email, name } = decodedToken as { userId: string; email: string; name: string };
-
+    // Ensure that either email or contactEmail is present
     if (!email) {
-      return NextResponse.json({ message: 'User email not found in token' }, { status: 400 });
+      return NextResponse.json({ message: 'Email is required for posting a question' }, { status: 400 });
     }
 
     // Create new question in the database
     const newQuestion = await prisma.question.create({
       data: {
         text,
-        username: name,
-        userEmail: email, // Ensure userEmail is correctly provided
+        username: name || 'Anonymous', // Default to 'Anonymous' if name is not provided
+        userEmail: email,
         isPrivate,
-        userId,
+        userId, // userId will be null if the user is not logged in
         datePosted: new Date(),
       },
     });
