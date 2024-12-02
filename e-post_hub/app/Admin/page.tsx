@@ -1,5 +1,3 @@
-// Admin page that will be displayed. Does not allow unauthorized users to visit page
-
 "use client";
 import { Button, Card, CardBody, CardHeader } from "@nextui-org/react";
 import Link from "next/link";
@@ -74,6 +72,34 @@ export default function Adminpage() {
     }
   }, []);
 
+  const handleDelete = async (eventId: string) => {
+    if (confirm("Are you sure you want to delete this event?")) {
+      try {
+        const response = await fetch("/api/Event/delete", {
+          method: "DELETE",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify({ eventIds: [eventId] }),
+        });
+
+        if (response.ok) {
+          setEvents((prevEvents) =>
+            prevEvents.filter((event) => event.id !== eventId)
+          );
+          alert("Event deleted successfully.");
+        } else {
+          console.error("Failed to delete event:", await response.json());
+          alert("Failed to delete the event.");
+        }
+      } catch (error) {
+        console.error("Error deleting event:", error);
+        alert("An error occurred while deleting the event.");
+      }
+    }
+  };
+
   if (!isAdmin) {
     // Show a loading message while we verify if the user is an admin
     return <div>Loading...</div>;
@@ -93,14 +119,14 @@ export default function Adminpage() {
         <Button
           as={Link}
           href="/Admin/creatorcode"
-          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-white"
+          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
         >
           Creator Code
         </Button>
         <Button
           as={Link}
           href="/Admin/editevent"
-          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-white"
+          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
         >
           Edit Event
         </Button>
@@ -170,6 +196,14 @@ export default function Adminpage() {
                       </a>
                     </p>
                   )}
+                  {/* Smaller Delete Button */}
+                  <Button
+                    size="sm"
+                    className="mt-4 w-32 bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-black border border-black"
+                    onClick={() => handleDelete(event.id)}
+                  >
+                    Delete Event
+                  </Button>
                 </CardBody>
               </Card>
             ))}
