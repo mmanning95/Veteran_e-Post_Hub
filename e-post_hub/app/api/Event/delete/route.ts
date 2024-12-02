@@ -1,35 +1,40 @@
 import { NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
+import { deleteEventSchema } from "@/lib/schemas/deleteEventSchema";
 
 const prisma = new PrismaClient();
 
-// DELETE handler for deleting expired events
 export async function DELETE(request: Request) {
   try {
-    const { eventIds } = await request.json(); // Get event IDs from the request body
+    // Parse the request body
+    const body = await request.json();
 
-    if (!eventIds || !Array.isArray(eventIds)) {
+    // Validate the request body using deleteEventSchema
+    const validation = deleteEventSchema.safeParse(body);
+    if (!validation.success) {
       return NextResponse.json(
-        { error: "Invalid request. Provide an array of event IDs." },
+        { error: validation.error.errors },
         { status: 400 }
       );
     }
 
-    // Delete events based on the provided IDs
-    const deletedEvents = await prisma.event.deleteMany({
-      where: {
-        id: {
-          in: eventIds, // Matches any of the provided event IDs
-        },
-      },
+    // Extract the eventId from the validated data
+    const { eventId } = validation.data;
+
+    // Delete the event with the matching ID
+    const deletedEvent = await prisma.event.delete({
+      where: { id: eventId },
     });
 
     return NextResponse.json(
-      { message: "Events deleted successfully.", deletedCount: deletedEvents.count },
+      {
+        message: "Event deleted successfully.",
+        deletedEvent,
+      },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting events:", error);
+    console.error("Error deleting event:", error);
     return NextResponse.json(
       { error: "Internal Server Error" },
       { status: 500 }

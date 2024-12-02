@@ -28,7 +28,8 @@
 }
 
 /* Input and Select properties of formCreate class, used to adjust appearance of input and select */
-.formCreate input, .formCreate select {
+.formCreate input,
+.formCreate select {
   width: 100%;
   padding: 6px 10px;
   margin: 10px 0;
@@ -42,15 +43,29 @@
   background: rgba(128, 128, 128, 1);
   margin: 20px;
   color: #fff;
-  width:  120px;
-  border: 0;  
+  width: 120px;
+  border: 0;
   padding: 8px;
   border-radius: 8px;
   cursor: pointer;
 }
 
+.delete-button {
+  background: linear-gradient(to right, #f7960d, #f95d09);
+  color: black;
+  border: 1px solid black;
+  border-radius: 10px;
+  text-align: center;
+  padding: 10px;
+  width: 100px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: auto;
+}
+
 @layer Components {
-    .vertical-center {
-        height: calc(100vh - 64px);
-    }
+  .vertical-center {
+    height: calc(100vh - 64px);
+  }
 }

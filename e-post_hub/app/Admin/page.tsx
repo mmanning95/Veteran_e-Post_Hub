@@ -72,18 +72,22 @@ export default function Adminpage() {
     }
   }, []);
 
+  // handleDelete function
   const handleDelete = async (eventId: string) => {
     if (confirm("Are you sure you want to delete this event?")) {
+      // Prompt user for confirmation
       try {
         const response = await fetch("/api/Event/delete", {
+          // API route for deletion
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
-          body: JSON.stringify({ eventIds: [eventId] }),
+          body: JSON.stringify({ eventId }),
         });
 
+        // Successful event deletion
         if (response.ok) {
           setEvents((prevEvents) =>
             prevEvents.filter((event) => event.id !== eventId)
@@ -93,6 +97,7 @@ export default function Adminpage() {
           console.error("Failed to delete event:", await response.json());
           alert("Failed to delete the event.");
         }
+        // Unsuccessful deletion
       } catch (error) {
         console.error("Error deleting event:", error);
         alert("An error occurred while deleting the event.");
@@ -196,10 +201,9 @@ export default function Adminpage() {
                       </a>
                     </p>
                   )}
-                  {/* Smaller Delete Button */}
+                  {/*delete event button*/}
                   <Button
-                    size="sm"
-                    className="mt-4 w-32 bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-black border border-black"
+                    className="delete-button"
                     onClick={() => handleDelete(event.id)}
                   >
                     Delete Event
