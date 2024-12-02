@@ -47,9 +47,8 @@ export async function POST(req: Request) {
 
     // Generate JWT for the new member
     const token = jwt.sign(
-      { userId: newUser.id, role: newUser.role, name: newUser.name },
+      { userId: newUser.id, role: newUser.role, name: newUser.name, email: newUser.email },
       process.env.JWT_SECRET as string,
-      { expiresIn: '4h' }
     );
 
     // Return the new user and the token

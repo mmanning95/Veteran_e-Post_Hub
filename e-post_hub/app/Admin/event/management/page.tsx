@@ -1,16 +1,9 @@
-"use client";
+'use client';
 
-import React, { useEffect, useState } from "react";
-import {
-  Button,
-  Card,
-  CardBody,
-  CardHeader,
-  Checkbox,
-} from "@nextui-org/react";
-import jwt from "jsonwebtoken";
+import React, { useEffect, useState } from 'react';
+import { Button, Card, CardBody, CardHeader, Checkbox } from '@nextui-org/react';
+import jwt from 'jsonwebtoken';
 
-// Event type definition
 type Event = {
   id: string;
   title: string;
@@ -28,133 +21,174 @@ type Event = {
   flyer?: string;
 };
 
+type Question = {
+  id: string;
+  text: string;
+  username: string;
+  userEmail: string;
+  isPrivate: boolean;
+  datePosted: string;
+};
+
 export default function EventManagement() {
-  const [events, setEvents] = useState<Event[]>([]); // Pending events
-  const [expiredEvents, setExpiredEvents] = useState<Event[]>([]); // Expired events
+  const [events, setEvents] = useState<Event[]>([]);
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [selectedActions, setSelectedActions] = useState<{
-    [key: string]: "approve" | "deny" | null;
-  }>({});
+  const [selectedActions, setSelectedActions] = useState<{ [key: string]: 'approve' | 'deny' | null }>({});
+  const [globalStatusMessage, setGlobalStatusMessage] = useState<string | null>(null);
 
   useEffect(() => {
     // Check admin token
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (token) {
       const decodedToken = jwt.decode(token) as { role?: string };
-      if (decodedToken?.role === "ADMIN") {
+      if (decodedToken?.role === 'ADMIN') {
         setIsAdmin(true);
       } else {
-        alert("Unauthorized access. Only admin users can view this page.");
-        window.location.href = "/";
+        setGlobalStatusMessage('Unauthorized access. Only admin users can view this page.');
+        setTimeout(() => {
+          window.location.href = '/';
+        }, 2000);
       }
     } else {
-      alert("Unauthorized access. Only admin users can view this page.");
-      window.location.href = "/";
+      setGlobalStatusMessage('Unauthorized access. Only admin users can view this page.');
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 2000);
     }
 
-    // Fetch pending events
-    async function fetchEvents() {
+    // Fetch pending events and private questions
+    async function fetchPendingEventsAndQuestions() {
       try {
-        // Fetch pending events
-        const pendingResponse = await fetch("/api/Event/pending");
-        if (pendingResponse.ok) {
-          const pendingData = await pendingResponse.json();
-          setEvents(pendingData.events);
-          const initialActions: { [key: string]: "approve" | "deny" | null } =
-            {};
-          pendingData.events.forEach((event: Event) => {
+        const [eventsResponse, questionsResponse] = await Promise.all([
+          fetch('/api/Event/pending'),
+          fetch('/api/community/question/private'),
+        ]);
+
+        if (eventsResponse.ok) {
+          const eventsData = await eventsResponse.json();
+          setEvents(eventsData.events);
+
+          // Initialize selectedActions state for events
+          const initialActions: { [key: string]: 'approve' | 'deny' | null } = {};
+          eventsData.events.forEach((event: Event) => {
             initialActions[event.id] = null;
           });
           setSelectedActions(initialActions);
         } else {
-          console.error(
-            "Failed to fetch pending events:",
-            pendingResponse.statusText
-          );
+          setGlobalStatusMessage('Failed to fetch pending events.');
         }
 
-        // Fetch expired events
-        const expiredResponse = await fetch("/api/Event/expired");
-        if (expiredResponse.ok) {
-          const expiredData = await expiredResponse.json();
-          setExpiredEvents(expiredData.events);
+        if (questionsResponse.ok) {
+          const questionsData = await questionsResponse.json();
+          setQuestions(questionsData.questions);
         } else {
-          console.error(
-            "Failed to fetch expired events:",
-            expiredResponse.statusText
-          );
+          setGlobalStatusMessage('Failed to fetch private questions.');
         }
       } catch (error) {
-        console.error("Error fetching events:", error);
+        console.error('Error fetching data:', error);
+        setGlobalStatusMessage('An error occurred while fetching data.');
       }
     }
 
     if (isAdmin) {
-      fetchEvents();
+      fetchPendingEventsAndQuestions();
     }
   }, [isAdmin]);
 
-  const handleCheckboxChange = (
-    eventId: string,
-    action: "approve" | "deny"
-  ) => {
+  // Define handleCheckboxChange function for events
+  const handleCheckboxChange = (itemId: string, action: 'approve' | 'deny') => {
     setSelectedActions((prev) => ({
       ...prev,
-      [eventId]: prev[eventId] === action ? null : action,
+      [itemId]: prev[itemId] === action ? null : action,
     }));
   };
 
+  // Submit all actions for events
   const handleSubmitActions = async () => {
+    let allSuccess = true;
     for (const [eventId, action] of Object.entries(selectedActions)) {
-      if (action === "approve") {
-        await handleApprove(eventId);
-      } else if (action === "deny") {
-        await handleDeny(eventId);
+      if (action === 'approve') {
+        const success = await handleApproveEvent(eventId);
+        if (!success) allSuccess = false;
+      } else if (action === 'deny') {
+        const success = await handleDenyEvent(eventId);
+        if (!success) allSuccess = false;
       }
     }
+
+    setGlobalStatusMessage(allSuccess ? 'All event actions completed successfully.' : 'Some actions failed.');
   };
 
-  const handleApprove = async (eventId: string) => {
+  // Approve event
+  const handleApproveEvent = async (eventId: string) => {
     try {
       const response = await fetch(`/api/Event/approve/${eventId}`, {
-        method: "PATCH",
+        method: 'PATCH',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
       if (response.ok) {
-        setEvents((prevEvents) =>
-          prevEvents.filter((event) => event.id !== eventId)
-        );
+        setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
+        return true;
       } else {
         const errorData = await response.json();
-        console.error("Error approving event:", errorData);
+        console.error('Error approving event:', errorData);
+        return false;
       }
     } catch (error) {
-      console.error("Error approving event:", error);
+      console.error('Error approving event:', error);
+      return false;
     }
   };
 
-  const handleDeny = async (eventId: string) => {
+  // Deny event
+  const handleDenyEvent = async (eventId: string) => {
     try {
       const response = await fetch(`/api/Event/deny/${eventId}`, {
-        method: "PATCH",
+        method: 'PATCH',
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
         },
       });
 
       if (response.ok) {
-        setEvents((prevEvents) =>
-          prevEvents.filter((event) => event.id !== eventId)
-        );
+        setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
+        return true;
       } else {
         const errorData = await response.json();
-        console.error("Error denying event:", errorData);
+        console.error('Error denying event:', errorData);
+        return false;
       }
     } catch (error) {
-      console.error("Error denying event:", error);
+      console.error('Error denying event:', error);
+      return false;
+    }
+  };
+
+  // Resolve (delete) question
+  const handleResolveQuestion = async (questionId: string) => {
+    try {
+      const response = await fetch(`/api/community/question/${questionId}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      });
+
+      if (response.ok) {
+        setQuestions((prevQuestions) => prevQuestions.filter((question) => question.id !== questionId));
+        setGlobalStatusMessage('Question resolved successfully.');
+      } else {
+        const errorData = await response.json();
+        console.error('Error resolving question:', errorData);
+        setGlobalStatusMessage('Failed to resolve question.');
+      }
+    } catch (error) {
+      console.error('Error resolving question:', error);
+      setGlobalStatusMessage('An error occurred while resolving the question.');
     }
   };
 
@@ -163,96 +197,98 @@ export default function EventManagement() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-8 flex justify-center items-start gap-6">
-      {/* Pending Events Section */}
-      <Card className="w-2/5 p-4 border-2" style={{ borderColor: "#f7960d" }}>
-        <CardHeader className="flex flex-col items-center justify-center">
-          <h3 className="text-3xl font-semibold">Manage Pending Events</h3>
-        </CardHeader>
-        <CardBody className="h-[80vh] overflow-y-auto">
-          {events.length === 0 ? (
-            <p className="text-center">No pending events at the moment.</p>
-          ) : (
-            events.map((event) => (
-              <div key={event.id} className="mb-4 p-4 border-b">
-                <h4 className="text-xl font-bold">{event.title}</h4>
-                <p className="text-gray-600">{event.description}</p>
-                <p className="text-gray-600">
-                  Created By: {event.createdBy.name} ({event.createdBy.email})
-                </p>
-                {event.startDate && (
-                  <p className="text-gray-600">
-                    Start Date: {new Date(event.startDate).toLocaleDateString()}
-                  </p>
-                )}
-                {event.endDate && (
-                  <p className="text-gray-600">
-                    End Date: {new Date(event.endDate).toLocaleDateString()}
-                  </p>
-                )}
-                <div className="flex gap-2 mt-2">
-                  <Checkbox
-                    isSelected={selectedActions[event.id] === "approve"}
-                    onChange={() => handleCheckboxChange(event.id, "approve")}
-                    color="primary"
-                  >
-                    Approve
-                  </Checkbox>
-                  <Checkbox
-                    isSelected={selectedActions[event.id] === "deny"}
-                    onChange={() => handleCheckboxChange(event.id, "deny")}
-                    color="danger"
-                  >
-                    Deny
-                  </Checkbox>
-                </div>
-              </div>
-            ))
-          )}
-          {events.length > 0 && (
-            <div className="flex justify-center mt-8">
-              <Button
-                onClick={handleSubmitActions}
-                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-white"
-              >
-                Submit Actions
-              </Button>
-            </div>
-          )}
-        </CardBody>
-      </Card>
+    <div className='w-4/5 mx-auto'>
+      {/* Global Status Message */}
+      {globalStatusMessage && (
+        <div className='text-center mb-4 p-2 bg-blue-100 text-blue-800 border border-blue-300 rounded'>
+          {globalStatusMessage}
+        </div>
+      )}
 
-      {/* Expired Events Section */}
-      <Card className="w-2/5 p-4 border-2" style={{ borderColor: "#f7960d" }}>
-        <CardHeader className="flex flex-col items-center justify-center">
-          <h3 className="text-3xl font-semibold">Expired Events</h3>
-        </CardHeader>
-        <CardBody className="h-[80vh] overflow-y-auto">
-          {expiredEvents.length === 0 ? (
-            <p className="text-center">No expired events at the moment.</p>
-          ) : (
-            expiredEvents.map((event) => (
-              <div key={event.id} className="mb-4 p-4 border-b">
-                <h4 className="text-xl font-bold">{event.title}</h4>
-                <p className="text-gray-600">{event.description}</p>
-                <p className="text-gray-600">
-                  Created By: {event.createdBy.name} ({event.createdBy.email})
-                </p>
-                {event.startDate && (
-                  <p className="text-gray-600">
-                    Start Date: {new Date(event.startDate).toLocaleDateString()}
-                  </p>
-                )}
-                {event.endDate && (
-                  <p className="text-gray-600">
-                    End Date: {new Date(event.endDate).toLocaleDateString()}
-                  </p>
-                )}
+      <div className='flex gap-8'>
+        {/* Left side: Events */}
+        <div className='w-1/2'>
+          <Card>
+            <CardHeader className='flex flex-col items-center justify-center'>
+              <h3 className='text-2xl font-semibold'>Pending Events</h3>
+            </CardHeader>
+            <CardBody className='max-h-[600px] overflow-y-auto'>
+              {events.length === 0 ? (
+                <p className='text-center'>No pending events at the moment.</p>
+              ) : (
+                events.map((event) => (
+                  <div key={event.id} className='mb-4 p-4 border-b'>
+                    <h4 className='text-xl font-bold'>{event.title}</h4>
+                    <p className='text-gray-600'>{event.description}</p>
+                    <p className='text-gray-600'>Created By: {event.createdBy.name} ({event.createdBy.email})</p>
+                    {event.startDate && (
+                      <p className='text-gray-600'>Start Date: {new Date(event.startDate).toLocaleDateString()}</p>
+                    )}
+                    <div className='flex justify-between mt-2'>
+                      <Checkbox
+                        isSelected={selectedActions[event.id] === 'approve'}
+                        onChange={() => handleCheckboxChange(event.id, 'approve')}
+                        color='primary'
+                      >
+                        Approve
+                      </Checkbox>
+                      <Checkbox
+                        isSelected={selectedActions[event.id] === 'deny'}
+                        onChange={() => handleCheckboxChange(event.id, 'deny')}
+                        color='danger'
+                      >
+                        Deny
+                      </Checkbox>
+                    </div>
+                  </div>
+                ))
+              )}
+            </CardBody>
+            {events.length > 0 && (
+              <div className='flex justify-center mt-8'>
+                <Button onClick={handleSubmitActions} className='bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-white'>
+                  Submit Actions
+                </Button>
               </div>
-            ))
-          )}
-        </CardBody>
-      </Card>
+            )}
+          </Card>
+        </div>
+
+        {/* Right side: Private Questions */}
+        <div className='w-1/2'>
+          <Card>
+            <CardHeader className='flex flex-col items-center justify-center'>
+              <h3 className='text-2xl font-semibold'>Private Questions</h3>
+              <div className="text-[#757575]" style={{ fontSize: '12px' }}>
+                Note: Once an email is sent to user, please resolve the question. Resolved questions cannot be retrived.
+              </div>
+            </CardHeader>
+            <CardBody className='max-h-[600px] overflow-y-auto'>
+              {questions.length === 0 ? (
+                <p className='text-center'>No private questions at the moment.</p>
+              ) : (
+                questions.map((question) => (
+                  <div key={question.id} className='mb-4 p-4 border-b'>
+                    <h4 className='text-xl font-bold'>Question from {question.username}</h4>
+                    <p className='text-gray-600'>{question.text}</p>
+                    <p className='text-gray-600'>User Email: {question.userEmail}</p>
+                    <p className='text-gray-600'>Posted on: {new Date(question.datePosted).toLocaleDateString()}</p>
+                    <div className='flex justify-end mt-4'>
+                      <Button
+                        onClick={() => handleResolveQuestion(question.id)}
+                        color='success'
+                        className='bg-blue-500 text-white'
+                      >
+                        Resolved
+                      </Button>
+                    </div>
+                  </div>
+                ))
+              )}
+            </CardBody>
+          </Card>
+        </div>
+      </div>
     </div>
   );
 }
