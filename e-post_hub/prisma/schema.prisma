@@ -50,7 +50,7 @@ model User {
   member        Member?
   admin         Admin?
   events        Event[] // Relation: One user can have many events
-
+  questions     Question[]
 }
 //one-to-one relationship
 //? means optional
@@ -89,6 +89,18 @@ model Event {
   flyer        String?  // Flyer file (URL or storage path)
   status       String   @default("PENDING") // Status of event: APPROVED, DENIED, PENDING
 }
+
+model Question {
+  id          String   @id @default(cuid())
+  text        String
+  username    String   // Required name for the user who posted the question
+  userEmail   String   // Required email for all questions, even for private
+  isPrivate   Boolean  @default(false)
+  datePosted  DateTime @default(now())
+  userId      String?  // If posted by logged-in user
+  createdBy   User?    @relation(fields: [userId], references: [id])
+}
+
 
 
 //dont forget npx prisma migrate dev --name ...

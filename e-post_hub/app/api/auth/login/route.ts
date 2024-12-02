@@ -32,7 +32,6 @@ export async function POST(req: Request) {
     const token = jwt.sign(
       { userId: user.id, email: user.email, role: user.role, name: user.name },
       process.env.JWT_SECRET!, // Ensure you set JWT_SECRET in your .env file
-      { expiresIn: '1h' }
     );
 
     return NextResponse.json({ message: 'Login successful', token, role: user.role }, { status: 200 });

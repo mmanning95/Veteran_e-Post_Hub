@@ -11,7 +11,13 @@ export async function GET() {
       },
     });
 
-    return NextResponse.json({ count: pendingCount }, { status: 200 });
+    const privateQuestionsCount = await prisma.question.count({
+      where: {
+        isPrivate: true,
+      },
+    });
+
+    return NextResponse.json({ count: pendingCount + privateQuestionsCount }, { status: 200 });
   } catch (error) {
     console.error('Error fetching pending events count:', error);
     return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
