@@ -10,4 +10,7 @@ This document provides links to our presentation videos, organized by sprint. Th
 ## Alpha Prototype Presentation
 - [Alpha Prototype](https://www.canva.com/design/DAGW3gaWbJs/x4VVizACvHApaYqRB9_Pug/edit?utm_content=DAGW3gaWbJs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
+## Client Prototype Demonstration
+- [Prototype with client](https://youtu.be/yhmBGRdXeME)
+  
 Feel free to refer to these links during your discussions or for further insights into our work. Additional videos will be added as we progress through upcoming sprints.
