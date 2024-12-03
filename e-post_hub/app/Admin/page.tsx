@@ -1,5 +1,3 @@
-// Admin page that will be displayed. Does not allow unauthorized users to visit page
-
 "use client";
 import { Button, Card, CardBody, CardHeader } from "@nextui-org/react";
 import Link from "next/link";
@@ -27,6 +25,9 @@ export default function Adminpage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminName, setAdminName] = useState<string | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     // Check if the token is present in localStorage
@@ -74,6 +75,39 @@ export default function Adminpage() {
     }
   }, []);
 
+  // handleDelete function
+  const handleDelete = async () => {
+    if (!selectedEventId) return;
+
+    try {
+      const response = await fetch("/api/Event/delete", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ eventId: selectedEventId }),
+      });
+
+      if (response.ok) {
+        setEvents((prevEvents) =>
+          prevEvents.filter((event) => event.id !== selectedEventId)
+        );
+        setMessage("Event deleted successfully.");
+      } else {
+        const errorData = await response.json();
+        setMessage("Failed to delete the event: " + errorData.error);
+        console.error("Failed to delete event:", errorData);
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      setMessage("An error occurred while deleting the event.");
+    } finally {
+      setModalOpen(false);
+      setSelectedEventId(null);
+    }
+  };
+
   if (!isAdmin) {
     // Show a loading message while we verify if the user is an admin
     return <div>Loading...</div>;
@@ -86,6 +120,7 @@ export default function Adminpage() {
         <p className="text-lg mt-4">
           Manage the events, edit them, or take other administrative actions.
         </p>
+        {message && <p className="text-red-500 mt-2">{message}</p>}
       </div>
 
       {/* Button container */}
@@ -93,14 +128,14 @@ export default function Adminpage() {
         <Button
           as={Link}
           href="/Admin/creatorcode"
-          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-white"
+          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
         >
           Creator Code
         </Button>
         <Button
           as={Link}
           href="/Admin/editevent"
-          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-white"
+          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
         >
           Edit Event
         </Button>
@@ -125,57 +160,46 @@ export default function Adminpage() {
                   <p className="text-gray-600">
                     Created By: {event.createdBy.name} ({event.createdBy.email})
                   </p>
-                  {event.startDate && (
-                    <p className="text-gray-600">
-                      Start Date:{" "}
-                      {new Date(event.startDate).toLocaleDateString()}
-                    </p>
-                  )}
-                  {event.endDate && (
-                    <p className="text-gray-600">
-                      End Date: {new Date(event.endDate).toLocaleDateString()}
-                    </p>
-                  )}
-                  {event.startTime && (
-                    <p className="text-gray-600">
-                      Start Time: {event.startTime}
-                    </p>
-                  )}
-                  {event.endTime && (
-                    <p className="text-gray-600">End Time: {event.endTime}</p>
-                  )}
-                  {event.website && (
-                    <p className="text-gray-600">
-                      Website:{" "}
-                      <a
-                        href={event.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 underline"
-                      >
-                        {event.website}
-                      </a>
-                    </p>
-                  )}
-                  {event.flyer && (
-                    <p className="text-gray-600">
-                      Flyer:{" "}
-                      <a
-                        href={event.flyer}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-500 underline"
-                      >
-                        View Flyer
-                      </a>
-                    </p>
-                  )}
+                  <Button
+                    className="delete-button"
+                    onClick={() => {
+                      setSelectedEventId(event.id);
+                      setModalOpen(true);
+                    }}
+                  >
+                    Delete Event
+                  </Button>
                 </CardBody>
               </Card>
             ))}
           </div>
         )}
       </div>
+
+      {/* Delete event confirmation modal.  Replaced alert based system for event deletion */}
+      {modalOpen && (
+        <div className="modal">
+          <div className="modal-content bg-white p-6 rounded-lg shadow-lg">
+            <p className="text-lg font-semibold mb-4 text-center">
+              Are you sure you want to delete this event?
+            </p>
+            <div className="flex justify-center gap-4 mt-4">
+              <Button
+                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black px-4 py-2 rounded-md"
+                onClick={handleDelete}
+              >
+                Yes, Delete
+              </Button>
+              <Button
+                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black px-4 py-2 rounded-md"
+                onClick={() => setModalOpen(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
