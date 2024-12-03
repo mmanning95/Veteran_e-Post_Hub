@@ -34,6 +34,7 @@ Here's what went well:
 * We encountered some challenges while creating a database using Neon. We later switched to SQLite, and after a full reset, everything worked as expected. The database now functions properly, and new users are successfully saved to the system.
 
 ## Videos for sprint 2
+ - [Before Changes](https://www.youtube.com/watch?v=_BBfLVxVo3M&feature=youtu.be)
  - [After Sprint 2](https://youtu.be/UxViRgtdd04)
  
 Here's what we'd like to improve:
