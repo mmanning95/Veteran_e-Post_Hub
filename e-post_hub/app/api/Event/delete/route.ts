@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 
 export async function DELETE(request: Request) {
   try {
-    // Parse the request body
     const body = await request.json();
 
     // Validate the request body using deleteEventSchema
@@ -17,8 +16,7 @@ export async function DELETE(request: Request) {
         { status: 400 }
       );
     }
-
-    // Extract the eventId from the validated data
+    
     const { eventId } = validation.data;
 
     // Delete the event with the matching ID
