@@ -46,17 +46,23 @@ export default function Adminpage() {
           setAdminName(decodedToken.name || "Admin"); // Store the admin's name for display
           fetchEvents();
         } else {
-          alert("Unauthorized access. Only admin users can view this page.");
-          window.location.href = "./";
+          setMessage("Unauthorized access. Only admin users can view this page.");
+          setTimeout(() => {
+            window.location.href = "./";
+          }, 3000);
         }
       } catch (error) {
         console.error("Invalid token", error);
-        alert("Invalid token. Please log in again.");
-        window.location.href = "./"; // Redirect to login page if token is invalid
+        setMessage("Invalid token. Please log in again.");
+        setTimeout(() => {
+          window.location.href = "./"; // Redirect to login page if token is invalid
+        }, 3000);
       }
     } else {
-      alert("You need to log in to access the admin page.");
-      window.location.href = "./";
+      setMessage("You need to log in to access the admin page.");
+      setTimeout(() => {
+        window.location.href = "./";
+      }, 3000);
     }
 
     // Fetch approved events (or all events depending on requirements)
@@ -67,10 +73,12 @@ export default function Adminpage() {
           const data = await response.json();
           setEvents(data.events);
         } else {
+          setMessage("Failed to fetch events.");
           console.error("Failed to fetch events:", response.statusText);
         }
       } catch (error) {
         console.error("Error fetching events:", error);
+        setMessage("An error occurred while fetching events.");
       }
     }
   }, []);
@@ -120,7 +128,11 @@ export default function Adminpage() {
         <p className="text-lg mt-4">
           Manage the events, edit them, or take other administrative actions.
         </p>
-        {message && <p className="text-red-500 mt-2">{message}</p>}
+        {message && (
+          <div className="text-center mt-4 p-2 bg-blue-100 text-blue-800 border border-blue-300 rounded">
+            {message}
+          </div>
+        )}
       </div>
 
       {/* Button container */}
@@ -160,15 +172,24 @@ export default function Adminpage() {
                   <p className="text-gray-600">
                     Created By: {event.createdBy.name} ({event.createdBy.email})
                   </p>
-                  <Button
-                    className="delete-button"
-                    onClick={() => {
-                      setSelectedEventId(event.id);
-                      setModalOpen(true);
-                    }}
-                  >
-                    Delete Event
-                  </Button>
+                  <div className="flex gap-2 mt-4">
+                    <Button
+                      className="delete-button bg-red-500 text-white"
+                      onClick={() => {
+                        setSelectedEventId(event.id);
+                        setModalOpen(true);
+                      }}
+                    >
+                      Delete Event
+                    </Button>
+                    <Link href={`/Event/${event.id}`} passHref>
+                      <Button
+                        className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                      >
+                        View Details
+                      </Button>
+                    </Link>
+                  </div>
                 </CardBody>
               </Card>
             ))}
@@ -176,9 +197,9 @@ export default function Adminpage() {
         )}
       </div>
 
-      {/* Delete event confirmation modal.  Replaced alert based system for event deletion */}
+      {/* Delete event confirmation modal */}
       {modalOpen && (
-        <div className="modal">
+        <div className="modal fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
           <div className="modal-content bg-white p-6 rounded-lg shadow-lg">
             <p className="text-lg font-semibold mb-4 text-center">
               Are you sure you want to delete this event?

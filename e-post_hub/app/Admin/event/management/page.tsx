@@ -45,16 +45,10 @@ export default function EventManagement() {
       if (decodedToken?.role === 'ADMIN') {
         setIsAdmin(true);
       } else {
-        setGlobalStatusMessage('Unauthorized access. Only admin users can view this page.');
-        setTimeout(() => {
-          window.location.href = '/';
-        }, 2000);
+          window.location.href = '/Unauthorized';
       }
     } else {
-      setGlobalStatusMessage('Unauthorized access. Only admin users can view this page.');
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 2000);
+        window.location.href = '/Unauthorized';
     }
 
     // Fetch pending events and private questions
