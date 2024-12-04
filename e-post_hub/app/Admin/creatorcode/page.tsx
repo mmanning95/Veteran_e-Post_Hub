@@ -47,17 +47,14 @@ const NewCreatorCode = () => {
           setAdminName(decodedToken.name || "Admin");
           fetchCreatorCode(); // Fetch the current creator code if the user is an admin
         } else {
-          alert("Unauthorized access. Only admins can view this page.");
-          window.location.href = "./"; // Redirect to homepage
+          window.location.href = "/Unauthorized"; 
         }
       } catch (error) {
         console.error("Invalid token", error);
-        alert("Invalid token. Please log in again.");
-        window.location.href = "./"; // Redirect to homepage if the token is invalid
+        window.location.href = "/Unauthorized"; // Redirect to homepage if the token is invalid
       }
     } else {
-      alert("You need to log in to access this page.");
-      window.location.href = "./";
+      window.location.href = "/Unauthorized";
     }
   }, []);
 

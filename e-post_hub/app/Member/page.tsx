@@ -39,17 +39,14 @@ export default function Memberpage() {
           setMemberName(decodedToken.name || 'Member');
           fetchApprovedEvents();
         } else {
-          alert('Unauthorized access. Only member users can view this page.');
-          window.location.href = './';
+          window.location.href = '/Unauthorized';
         }
       } catch (error) {
         console.error("Invalid token", error);
-        alert('Invalid token. Please log in again.');
-        window.location.href = './';
+        window.location.href = '/Unauthorized';
       }
     } else {
-      alert('You need to log in to access the member page.');
-      window.location.href = './';
+      window.location.href = '/Unauthorized';
     }
   }, []);
 
@@ -112,6 +109,14 @@ export default function Memberpage() {
                       Flyer: <a href={event.flyer} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">View Flyer</a>
                     </p>
                   )}
+                  <Link href={`/Event/${event.id}`} passHref>
+                      <Button
+                        className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                      >
+                        View Details
+                      </Button>
+                  </Link>
+
                 </CardBody>
               </Card>
             ))}

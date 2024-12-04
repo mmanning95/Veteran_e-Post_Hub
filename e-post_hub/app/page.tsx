@@ -105,6 +105,15 @@ export default function HomePage() {
                       Flyer: <a href={event.flyer} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">View Flyer</a>
                     </p>
                   )}
+                    <Link href={`/Event/${event.id}`} passHref>
+                      <Button
+                        className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                      >
+                        View Details
+                      </Button>
+                    </Link>
+
+
                 </div>
               </Card>
             ))}
