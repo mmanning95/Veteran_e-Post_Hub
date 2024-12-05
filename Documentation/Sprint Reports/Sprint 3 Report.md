@@ -4,12 +4,13 @@
 * Event Creation
 * Event approval/rejection
 * Account deletion
+* Ask a question page
 
 ## Work Summary (Developer Facing)
 During this sprint, we focused on implementing the start of event management. We successfully resolved most related issues.
 
 ## Unfinished Work
-- 
+- Flyer images are not implemented as of now
 
 ## Completed Issues/ User Stories
 * [Issue 19](https://github.com/mmanning95/ACME26WCV-Cpts421/issues/19)
