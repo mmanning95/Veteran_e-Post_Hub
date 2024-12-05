@@ -7,6 +7,9 @@ This document provides links to our presentation videos, organized by sprint. Th
 ## Sprint 2 - User Authentication and Creation
 - [Sprint 2 Presentation](https://youtu.be/chs6M8d50AE)
 
+## Sprint 3 - Event Management and "ask a question"
+- [Sprint 3 Presentation](https://youtu.be/SUh638VlcPo)
+
 ## Alpha Prototype Presentation
 - [Alpha Prototype](https://www.canva.com/design/DAGW3gaWbJs/x4VVizACvHApaYqRB9_Pug/edit?utm_content=DAGW3gaWbJs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
