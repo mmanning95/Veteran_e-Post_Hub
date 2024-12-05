@@ -19,6 +19,7 @@ type Event = {
   endTime?: string;
   website?: string;
   flyer?: string;
+  interested: number;
 };
 
 export default function Adminpage() {
@@ -30,23 +31,21 @@ export default function Adminpage() {
   const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    // Check if the token is present in localStorage
     const token = localStorage.getItem("token");
 
     if (token) {
       try {
-        // Verify and decode the token to determine if the user is an admin
         const decodedToken = jwt.decode(token) as {
           userId: string;
           role: string;
           name?: string;
         };
         if (decodedToken && decodedToken.role === "ADMIN") {
-          setIsAdmin(true); // User is an admin
-          setAdminName(decodedToken.name || "Admin"); // Store the admin's name for display
+          setIsAdmin(true);
+          setAdminName(decodedToken.name || "Admin");
           fetchEvents();
         } else {
-          setMessage("Unauthorized access. Only admin users can view this page.");
+          setMessage("Unauthorized access.");
           setTimeout(() => {
             window.location.href = "./";
           }, 3000);
@@ -55,7 +54,7 @@ export default function Adminpage() {
         console.error("Invalid token", error);
         setMessage("Invalid token. Please log in again.");
         setTimeout(() => {
-          window.location.href = "./"; // Redirect to login page if token is invalid
+          window.location.href = "./";
         }, 3000);
       }
     } else {
@@ -65,16 +64,14 @@ export default function Adminpage() {
       }, 3000);
     }
 
-    // Fetch approved events (or all events depending on requirements)
     async function fetchEvents() {
       try {
-        const response = await fetch("/api/Event/approved"); // Update the endpoint based on your backend
+        const response = await fetch("/api/Event/approved");
         if (response.ok) {
           const data = await response.json();
           setEvents(data.events);
         } else {
           setMessage("Failed to fetch events.");
-          console.error("Failed to fetch events:", response.statusText);
         }
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -83,7 +80,6 @@ export default function Adminpage() {
     }
   }, []);
 
-  // handleDelete function
   const handleDelete = async () => {
     if (!selectedEventId) return;
 
@@ -105,7 +101,6 @@ export default function Adminpage() {
       } else {
         const errorData = await response.json();
         setMessage("Failed to delete the event: " + errorData.error);
-        console.error("Failed to delete event:", errorData);
       }
     } catch (error) {
       console.error("Error deleting event:", error);
@@ -116,8 +111,49 @@ export default function Adminpage() {
     }
   };
 
+  const handleInterest = async (eventId: string) => {
+    const interestedEvents = JSON.parse(
+      localStorage.getItem("interestedEvents") || "[]"
+    ) as string[];
+
+    if (interestedEvents.includes(eventId)) {
+      setMessage("You have already expressed interest in this event.");
+      setTimeout(() => setMessage(null), 3000);
+      return;
+    }
+
+    localStorage.setItem(
+      "interestedEvents",
+      JSON.stringify([...interestedEvents, eventId])
+    );
+
+    try {
+      const response = await fetch(`/api/Event/interest/${eventId}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      });
+
+      if (response.ok) {
+        setEvents((prevEvents) =>
+          prevEvents.map((event) =>
+            event.id === eventId
+              ? { ...event, interested: event.interested + 1 }
+              : event
+          )
+        );
+        setMessage("Your interest has been recorded.");
+      } else {
+        setMessage("Failed to register interest.");
+      }
+    } catch (error) {
+      console.error("Error registering interest:", error);
+      setMessage("An error occurred. Please try again.");
+    }
+
+    setTimeout(() => setMessage(null), 3000);
+  };
+
   if (!isAdmin) {
-    // Show a loading message while we verify if the user is an admin
     return <div>Loading...</div>;
   }
 
@@ -129,13 +165,10 @@ export default function Adminpage() {
           Manage the events, edit them, or take other administrative actions.
         </p>
         {message && (
-          <div className="text-center mt-4 p-2 bg-blue-100 text-blue-800 border border-blue-300 rounded">
-            {message}
-          </div>
+          <div className="text-center mt-4 text-green-500">{message}</div>
         )}
       </div>
 
-      {/* Button container */}
       <div className="text-center mb-10 flex justify-center gap-4">
         <Button
           as={Link}
@@ -153,7 +186,6 @@ export default function Adminpage() {
         </Button>
       </div>
 
-      {/* Display the list of approved events */}
       <div className="mt-10">
         <h4 className="text-2xl mb-4 text-center">Approved Events:</h4>
         {events.length === 0 ? (
@@ -172,7 +204,19 @@ export default function Adminpage() {
                   <p className="text-gray-600">
                     Created By: {event.createdBy.name} ({event.createdBy.email})
                   </p>
+                  <p className="text-gray-600">Interested: {event.interested}</p>
                   <div className="flex gap-2 mt-4">
+                    <Button
+                      className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                      onClick={() => handleInterest(event.id)}
+                    >
+                      I'm Interested
+                    </Button>
+                    <Link href={`/Event/${event.id}`} passHref>
+                      <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
+                        View Details
+                      </Button>
+                    </Link>
                     <Button
                       className="delete-button bg-red-500 text-white"
                       onClick={() => {
@@ -182,13 +226,6 @@ export default function Adminpage() {
                     >
                       Delete Event
                     </Button>
-                    <Link href={`/Event/${event.id}`} passHref>
-                      <Button
-                        className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-                      >
-                        View Details
-                      </Button>
-                    </Link>
                   </div>
                 </CardBody>
               </Card>
@@ -197,7 +234,6 @@ export default function Adminpage() {
         )}
       </div>
 
-      {/* Delete event confirmation modal */}
       {modalOpen && (
         <div className="modal fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
           <div className="modal-content bg-white p-6 rounded-lg shadow-lg">

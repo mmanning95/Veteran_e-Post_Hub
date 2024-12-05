@@ -88,6 +88,7 @@ model Event {
   endTime      String?
   flyer        String?  // Flyer file (URL or storage path)
   status       String   @default("PENDING") // Status of event: APPROVED, DENIED, PENDING
+  interested   Int     @default(0) // New field for storing interest count
 }
 
 model Question {
