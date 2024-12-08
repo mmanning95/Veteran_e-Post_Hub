@@ -106,7 +106,7 @@ model Question {
 
 model Comment {
   id          String   @id @default(cuid())
-  text        String   // The comment text
+  content     String   // The comment text
   createdAt   DateTime @default(now()) // When the comment was created
   updatedAt   DateTime @updatedAt // When the comment was last updated
   eventId     String   // Foreign key to associate with an event
