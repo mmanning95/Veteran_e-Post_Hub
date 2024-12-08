@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Card, CardBody, CardHeader, Button, Textarea } from "@nextui-org/react";
+import Link from "next/link";
 
 type Event = {
   id: string;
@@ -28,6 +29,8 @@ type Comment = {
     name: string;
     email: string;
   };
+  parentId?: string | null; // To differentiate parent and child comments
+  replies: Comment[]; // Nested replies
 };
 
 export default function EventDetailsPage() {
@@ -35,6 +38,8 @@ export default function EventDetailsPage() {
   const [event, setEvent] = useState<Event | null>(null);
   const [comments, setComments] = useState<Comment[]>([]);
   const [newComment, setNewComment] = useState<string>("");
+  const [replyingTo, setReplyingTo] = useState<string | null>(null); // For replies
+  const [replyContent, setReplyContent] = useState<string>("");
   const [message, setMessage] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
 
@@ -69,7 +74,7 @@ export default function EventDetailsPage() {
       }
     };
 
-    // Fetch comments
+    // Fetch comments and replies
     const fetchComments = async () => {
       try {
         const response = await fetch(`/api/Event/comments/${eventId}`);
@@ -90,6 +95,31 @@ export default function EventDetailsPage() {
     fetchComments();
   }, [eventId]);
 
+  const handleShareEvent = () => {
+    const eventUrl = `${window.location.origin}/Event/${eventId}`;
+    if (navigator.share) {
+      navigator
+        .share({
+          title: event?.title || "Event",
+          text: `Check out this event: ${event?.title}`,
+          url: eventUrl,
+        })
+        .catch((error) => console.error("Error sharing", error));
+    } else {
+      navigator.clipboard
+        .writeText(eventUrl)
+        .then(() => {
+          setMessage("Event link copied to clipboard!");
+          setTimeout(() => setMessage(null), 3000);
+        })
+        .catch((error) => {
+          console.error("Error copying to clipboard", error);
+          setMessage("Failed to copy event link.");
+          setTimeout(() => setMessage(null), 3000);
+        });
+    }
+  };
+
   // Submit a new comment
   const handleCommentSubmit = async () => {
     if (!newComment.trim()) {
@@ -101,10 +131,8 @@ export default function EventDetailsPage() {
     const token = localStorage.getItem("token");
     const decodedToken = token ? JSON.parse(atob(token.split(".")[1])) : null;
     const userId = decodedToken?.userId;
-    const userName = decodedToken?.name;
-    const userEmail = decodedToken?.email;
 
-    if (!userId || !userName || !userEmail) {
+    if (!userId) {
       setMessage("You must be logged in to comment.");
       setTimeout(() => setMessage(null), 3000);
       return;
@@ -129,17 +157,7 @@ export default function EventDetailsPage() {
         const addedComment = await response.json();
 
         // Update comments with the new comment
-        setComments((prevComments) => [
-          ...prevComments,
-          {
-            ...addedComment,
-            createdBy: {
-              name: userName,
-              email: userEmail,
-            },
-          },
-        ]);
-
+        setComments((prevComments) => [...prevComments, addedComment]);
         setNewComment("");
         setMessage("Comment added successfully.");
       } else {
@@ -148,6 +166,65 @@ export default function EventDetailsPage() {
     } catch (error) {
       console.error("Error adding comment:", error);
       setMessage("An error occurred while adding the comment.");
+    }
+
+    setTimeout(() => setMessage(null), 3000);
+  };
+
+  // Submit a reply
+  const handleReplySubmit = async () => {
+    if (!replyContent.trim()) {
+      setMessage("Reply cannot be empty.");
+      setTimeout(() => setMessage(null), 3000);
+      return;
+    }
+
+    const token = localStorage.getItem("token");
+    const decodedToken = token ? JSON.parse(atob(token.split(".")[1])) : null;
+    const userId = decodedToken?.userId;
+
+    if (!userId || !replyingTo) {
+      setMessage("You must be logged in to reply.");
+      setTimeout(() => setMessage(null), 3000);
+      return;
+    }
+
+    try {
+      const payload = {
+        content: replyContent,
+        eventId,
+        userId,
+        parentId: replyingTo, // Set the parent comment ID
+      };
+
+      const response = await fetch(`/api/Event/comments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (response.ok) {
+        const addedReply = await response.json();
+
+        // Update replies for the specific comment
+        setComments((prevComments) =>
+          prevComments.map((comment) =>
+            comment.id === replyingTo
+              ? { ...comment, replies: [...(comment.replies || []), addedReply] }
+              : comment
+          )
+        );
+        setReplyingTo(null);
+        setReplyContent("");
+        setMessage("Reply added successfully.");
+      } else {
+        setMessage("Failed to add reply.");
+      }
+    } catch (error) {
+      console.error("Error adding reply:", error);
+      setMessage("An error occurred while adding the reply.");
     }
 
     setTimeout(() => setMessage(null), 3000);
@@ -164,43 +241,56 @@ export default function EventDetailsPage() {
           <h1 className="text-3xl font-semibold">{event.title}</h1>
         </CardHeader>
         <CardBody>
-          <div className="space-y-4">
-            {message && (
-              <p role="alert" className="text-red-500 text-center">
-                {message}
-              </p>
-            )}
-            {event.flyer && (
-              <div className="text-center">
-                <img src={event.flyer} alt="Event Flyer" className="mx-auto w-full max-w-lg" />
-              </div>
-            )}
+          <p className="text-gray-600">
+            <strong>Description:</strong> {event.description || "No description provided."}
+          </p>
+          {event.startDate && (
             <p className="text-gray-600">
-              <strong>Description:</strong> {event.description || "No description provided."}
+              <strong>Start Date:</strong> {new Date(event.startDate).toLocaleDateString()}
             </p>
-            {event.startDate && (
-              <p className="text-gray-600">
-                <strong>Start Date:</strong> {new Date(event.startDate).toLocaleDateString()}
-              </p>
-            )}
-            {event.endDate && (
-              <p className="text-gray-600">
-                <strong>End Date:</strong> {new Date(event.endDate).toLocaleDateString()}
-              </p>
-            )}
-            {event.startTime && (
-              <p className="text-gray-600">
-                <strong>Start Time:</strong> {event.startTime}
-              </p>
-            )}
-            {event.endTime && (
-              <p className="text-gray-600">
-                <strong>End Time:</strong> {event.endTime}
-              </p>
-            )}
+          )}
+          {event.endDate && (
             <p className="text-gray-600">
-              <strong>Created By:</strong> {event.createdBy.name} ({event.createdBy.email})
+              <strong>End Date:</strong> {new Date(event.endDate).toLocaleDateString()}
             </p>
+          )}
+          {event.startTime && (
+            <p className="text-gray-600">
+              <strong>Start Time:</strong> {event.startTime}
+            </p>
+          )}
+          {event.endTime && (
+            <p className="text-gray-600">
+              <strong>End Time:</strong> {event.endTime}
+            </p>
+          )}
+          {event.website && (
+            <p className="text-gray-600">
+              <strong>Website:</strong>{" "}
+                <a
+                  href={event.website.startsWith("http") ? event.website : `https://${event.website}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-blue-500 underline"
+                >
+          {event.website}
+                </a>
+  </p>
+)}
+
+          {event.flyer && (
+            <div>
+              <strong>Flyer:</strong>
+              <img src={event.flyer} alt="Event Flyer" className="mt-2 w-full max-w-md" />
+            </div>
+          )}
+          <p className="text-gray-600">
+            <strong>Created By:</strong> {event.createdBy.name} ({event.createdBy.email})
+          </p>
+          <div className="mt-4 flex justify-center gap-4">
+            <Button onClick={handleShareEvent} className="bg-gradient-to-r from-orange-500 to-red-500">
+              Share Event
+            </Button>
           </div>
         </CardBody>
       </Card>
@@ -211,41 +301,61 @@ export default function EventDetailsPage() {
           <h2 className="text-2xl font-semibold">Comments</h2>
         </CardHeader>
         <CardBody>
-          <div className="space-y-4">
-            {comments.length > 0 ? (
-              comments.map((comment) => (
-                <div key={comment.id} className="border-b pb-4">
-                  <p className="text-gray-800">{comment.content}</p>
-                  <p className="text-gray-500 text-sm">
-                    - {comment.createdBy.name} ({new Date(comment.createdAt).toLocaleString()})
-                  </p>
-                </div>
-              ))
-            ) : (
-              <p className="text-gray-500">No comments yet. Be the first to comment!</p>
-            )}
-          </div>
+          {comments
+            .filter((comment) => !comment.parentId) // Only show parent comments
+            .map((comment) => (
+              <div key={comment.id} className="mb-4 border-b pb-4">
+                <p className="text-gray-800">{comment.content}</p>
+                <p className="text-gray-500 text-sm">
+                  - {comment.createdBy.name} ({new Date(comment.createdAt).toLocaleString()})
+                </p>
+                {/* Replies */}
+                {comment.replies?.length > 0 && (
+                  <div className="ml-4 border-l pl-4">
+                    {comment.replies.map((reply) => (
+                      <div key={reply.id} className="mt-2">
+                        <p className="text-gray-700">{reply.content}</p>
+                        <p className="text-gray-500 text-xs">
+                          - {reply.createdBy.name} ({new Date(reply.createdAt).toLocaleString()})
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {/* Reply Form */}
+                {isLoggedIn && replyingTo === comment.id && (
+                  <div className="mt-2">
+                    <Textarea
+                      placeholder="Write your reply..."
+                      value={replyContent}
+                      onChange={(e) => setReplyContent(e.target.value)}
+                    />
+                    <Button onClick={handleReplySubmit}>Submit Reply</Button>
+                  </div>
+                )}
+                {isLoggedIn && replyingTo !== comment.id && (
+                  <Button onClick={() => setReplyingTo(comment.id)}>Reply</Button>
+                )}
+              </div>
+            ))}
 
-          {/* Comment Form */}
+          {/* New Comment Form */}
           {isLoggedIn ? (
             <div className="mt-6">
               <Textarea
-                placeholder="Write your comment here..."
+                placeholder="Write your comment..."
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
-                className="w-full mb-4"
               />
-              <Button
-                onClick={handleCommentSubmit}
-                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-              >
-                Add Comment
-              </Button>
+              <Button onClick={handleCommentSubmit}>Add Comment</Button>
             </div>
           ) : (
-            <p className="text-gray-500 text-center mt-6">
-              Please <a href="/Login" className="text-blue-500 underline">log in</a> to leave a comment.
-            </p>
+            <div className="text-center mt-6">
+              <p>You need to log in to comment.</p>
+              <Link href="/Login" className="text-blue-500 underline">
+                Log in
+              </Link>
+            </div>
           )}
         </CardBody>
       </Card>

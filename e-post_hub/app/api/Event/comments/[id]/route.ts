@@ -21,12 +21,22 @@ export async function GET(
 
   try {
     const comments = await prisma.comment.findMany({
-      where: { eventId }, // Fetch only comments tied to this eventId
+      where: { eventId },
       include: {
         createdBy: {
           select: {
             name: true,
             email: true,
+          },
+        },
+        replies: { // Include replies in the query
+          include: {
+            createdBy: {
+              select: {
+                name: true,
+                email: true,
+              },
+            },
           },
         },
       },

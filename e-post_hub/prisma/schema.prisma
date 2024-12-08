@@ -113,6 +113,11 @@ model Comment {
   event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   userId      String   // Foreign key to associate with the user who commented
   createdBy   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  // Self-referencing relationship for replies
+  parentId    String?  // Foreign key to link a comment
+  parent      Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies     Comment[] @relation("CommentReplies")
 }
 
 
