@@ -362,12 +362,19 @@ export default function EventDetailsPage() {
           {comments
             .filter((comment) => !comment.parentId) // Only show parent comments
             .map((comment) => (
-              <div key={comment.id} className="mb-4 border-b pb-4">
-                {/* Comment Content */}
-                <p className="text-gray-800">{comment.content}</p>
-                <p className="text-gray-500 text-sm">
-                  - {comment.createdBy.name} ({new Date(comment.createdAt).toLocaleString()})
-                </p>
+              <div
+                key={comment.id}
+                className="mb-4 border border-gray-300 rounded-lg p-4 bg-white shadow-sm"
+              >
+                {/* Comment Details in Flex Container */}
+                <div className="flex justify-between items-center">
+                  <div>
+                    {/* Comment Content */}
+                    <p className="text-gray-800">{comment.content}</p>
+                    <p className="text-gray-500 text-sm">
+                      - {comment.createdBy.name} ({new Date(comment.createdAt).toLocaleString()})
+                    </p>
+                  </div>
   
                   {/* Delete Button for Comments */}
                   {isAuthorizedToDelete(comment.createdBy.email) && (
@@ -397,17 +404,26 @@ export default function EventDetailsPage() {
                       )}
                     </div>
                   )}
+                </div>
   
-                  {/* Replies */}
-                  {comment.replies?.length > 0 && (
-                    <div className="ml-4 border-l pl-4">
-                      {comment.replies.map((reply) => (
-                        <div key={reply.id} className="mt-2">
-                          <p className="text-gray-700">{reply.content}</p>
-                          <p className="text-gray-500 text-xs">
-                            - {reply.createdBy.name} ({new Date(reply.createdAt).toLocaleString()})
-                          </p>
-
+                {/* Replies */}
+                {comment.replies?.length > 0 && (
+                  <div className="ml-4 mt-4">
+                    {comment.replies.map((reply) => (
+                      <div
+                        key={reply.id}
+                        className="mb-2 border border-gray-200 rounded-lg p-3 bg-gray-50"
+                      >
+                        {/* Reply Details in Flex Container */}
+                        <div className="flex justify-between items-center">
+                          <div>
+                            {/* Reply Content */}
+                            <p className="text-gray-700">{reply.content}</p>
+                            <p className="text-gray-500 text-xs">
+                              - {reply.createdBy.name} ({new Date(reply.createdAt).toLocaleString()})
+                            </p>
+                          </div>
+  
                           {/* Delete Button for Replies */}
                           {isAuthorizedToDelete(reply.createdBy.email) && (
                             <div>
@@ -437,10 +453,10 @@ export default function EventDetailsPage() {
                             </div>
                           )}
                         </div>
-                      ))}
-                    </div>
-                  )}
-
+                      </div>
+                    ))}
+                  </div>
+                )}
   
                 {/* Reply Form */}
                 {isLoggedIn && replyingTo === comment.id && (
