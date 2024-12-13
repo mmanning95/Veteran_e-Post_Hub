@@ -42,6 +42,9 @@ export default function EventDetailsPage() {
   const [replyContent, setReplyContent] = useState<string>("");
   const [message, setMessage] = useState<string | null>(null);
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null); // Track the comment being confirmed
 
   useEffect(() => {
     // Extract event ID from the URL path
@@ -49,14 +52,22 @@ export default function EventDetailsPage() {
     const extractedId = pathSegments[pathSegments.length - 1]; // Get the last part of the path
     setEventId(extractedId);
     console.log("Extracted Event ID:", extractedId);
+
+    const token = localStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+      const decodedToken = JSON.parse(atob(token.split(".")[1]));
+      setUserId(decodedToken.email);
+      setUserRole(decodedToken.role);
+    }
   }, []);
 
   useEffect(() => {
     if (!eventId) return;
 
-    // Check if the user is logged in
-    const token = localStorage.getItem("token");
-    setIsLoggedIn(!!token);
+    // // Check if the user is logged in
+    // const token = localStorage.getItem("token");
+    // setIsLoggedIn(!!token);
 
     // Fetch event details
     const fetchEventDetails = async () => {
@@ -80,6 +91,7 @@ export default function EventDetailsPage() {
         const response = await fetch(`/api/Event/comments/${eventId}`);
         if (response.ok) {
           const data = await response.json();
+          console.log("Comments fetched from API:", data);
           setComments(data);
           console.log("Comments fetched:", data);
         } else {
@@ -171,6 +183,52 @@ export default function EventDetailsPage() {
     setTimeout(() => setMessage(null), 3000);
   };
 
+  // Delete a Comment
+  const handleDeleteComment = async (commentId: string) => {
+    const token = localStorage.getItem("token");
+    if (!token) {
+      setMessage("You must be logged in to delete a comment.");
+      return;
+    }
+  
+    try {
+      const response = await fetch(`/api/Event/comments/${commentId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+  
+      if (response.ok) {
+        // Update the comments state by filtering out the deleted comment or reply
+        setComments((prevComments) =>
+          prevComments
+            .filter((comment) => comment.id !== commentId) // Filter parent comments
+            .map((comment) => ({
+              ...comment,
+              replies: comment.replies.filter((reply) => reply.id !== commentId), // Filter replies
+            }))
+        );
+        setMessage("Comment deleted successfully.");
+      } else {
+        setMessage("Failed to delete comment.");
+      }
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+      setMessage("An error occurred while deleting the comment.");
+    }
+  
+    setConfirmDelete(null); // Reset the confirmation state
+    setTimeout(() => setMessage(null), 3000); // Clear the message after a delay
+  };
+  
+
+  // Utility Functions
+  const isAuthorizedToDelete = (commentUserEmail: string) => {
+    console.log("Current userId:", userId);
+    console.log("Current userRole:", userRole);
+    console.log("Comment userId:", commentUserEmail);
+    console.log("___________");
+    return userRole === "ADMIN" || userId === commentUserEmail;  };
+  
   // Submit a reply
   const handleReplySubmit = async () => {
     if (!replyContent.trim()) {
@@ -236,6 +294,7 @@ export default function EventDetailsPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+      {/* Event Details */}
       <Card className="w-3/4 mb-10">
         <CardHeader className="flex flex-col items-center justify-center">
           <h1 className="text-3xl font-semibold">{event.title}</h1>
@@ -267,17 +326,16 @@ export default function EventDetailsPage() {
           {event.website && (
             <p className="text-gray-600">
               <strong>Website:</strong>{" "}
-                <a
-                  href={event.website.startsWith("http") ? event.website : `https://${event.website}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-blue-500 underline"
-                >
-          {event.website}
-                </a>
-  </p>
-)}
-
+              <a
+                href={event.website.startsWith("http") ? event.website : `https://${event.website}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline"
+              >
+                {event.website}
+              </a>
+            </p>
+          )}
           {event.flyer && (
             <div>
               <strong>Flyer:</strong>
@@ -294,7 +352,7 @@ export default function EventDetailsPage() {
           </div>
         </CardBody>
       </Card>
-
+  
       {/* Comment Section */}
       <Card className="w-3/4">
         <CardHeader>
@@ -304,24 +362,102 @@ export default function EventDetailsPage() {
           {comments
             .filter((comment) => !comment.parentId) // Only show parent comments
             .map((comment) => (
-              <div key={comment.id} className="mb-4 border-b pb-4">
-                <p className="text-gray-800">{comment.content}</p>
-                <p className="text-gray-500 text-sm">
-                  - {comment.createdBy.name} ({new Date(comment.createdAt).toLocaleString()})
-                </p>
+              <div
+                key={comment.id}
+                className="mb-4 border border-gray-300 rounded-lg p-4 bg-white shadow-sm"
+              >
+                {/* Comment Details in Flex Container */}
+                <div className="flex justify-between items-center">
+                  <div>
+                    {/* Comment Content */}
+                    <p className="text-gray-800">{comment.content}</p>
+                    <p className="text-gray-500 text-sm">
+                      - {comment.createdBy.name} ({new Date(comment.createdAt).toLocaleString()})
+                    </p>
+                  </div>
+  
+                  {/* Delete Button for Comments */}
+                  {isAuthorizedToDelete(comment.createdBy.email) && (
+                    <div>
+                      {confirmDelete === comment.id ? (
+                        <div className="flex gap-2">
+                          <Button
+                            className="text-red-500 text-sm"
+                            onClick={() => handleDeleteComment(comment.id)}
+                          >
+                            Confirm Delete
+                          </Button>
+                          <Button
+                            className="text-gray-500 text-sm"
+                            onClick={() => setConfirmDelete(null)} // Cancel confirmation
+                          >
+                            Cancel
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          className="text-red-500 text-sm"
+                          onClick={() => setConfirmDelete(comment.id)} // Trigger confirmation state
+                        >
+                          Delete
+                        </Button>
+                      )}
+                    </div>
+                  )}
+                </div>
+  
                 {/* Replies */}
                 {comment.replies?.length > 0 && (
-                  <div className="ml-4 border-l pl-4">
+                  <div className="ml-4 mt-4">
                     {comment.replies.map((reply) => (
-                      <div key={reply.id} className="mt-2">
-                        <p className="text-gray-700">{reply.content}</p>
-                        <p className="text-gray-500 text-xs">
-                          - {reply.createdBy.name} ({new Date(reply.createdAt).toLocaleString()})
-                        </p>
+                      <div
+                        key={reply.id}
+                        className="mb-2 border border-gray-200 rounded-lg p-3 bg-gray-50"
+                      >
+                        {/* Reply Details in Flex Container */}
+                        <div className="flex justify-between items-center">
+                          <div>
+                            {/* Reply Content */}
+                            <p className="text-gray-700">{reply.content}</p>
+                            <p className="text-gray-500 text-xs">
+                              - {reply.createdBy.name} ({new Date(reply.createdAt).toLocaleString()})
+                            </p>
+                          </div>
+  
+                          {/* Delete Button for Replies */}
+                          {isAuthorizedToDelete(reply.createdBy.email) && (
+                            <div>
+                              {confirmDelete === reply.id ? (
+                                <div className="flex gap-2">
+                                  <Button
+                                    className="text-red-500 text-xs"
+                                    onClick={() => handleDeleteComment(reply.id)}
+                                  >
+                                    Confirm Delete
+                                  </Button>
+                                  <Button
+                                    className="text-gray-500 text-xs"
+                                    onClick={() => setConfirmDelete(null)} // Cancel confirmation
+                                  >
+                                    Cancel
+                                  </Button>
+                                </div>
+                              ) : (
+                                <Button
+                                  className="text-red-500 text-xs"
+                                  onClick={() => setConfirmDelete(reply.id)} // Trigger confirmation state
+                                >
+                                  Delete
+                                </Button>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </div>
                     ))}
                   </div>
                 )}
+  
                 {/* Reply Form */}
                 {isLoggedIn && replyingTo === comment.id && (
                   <div className="mt-2">
@@ -338,7 +474,7 @@ export default function EventDetailsPage() {
                 )}
               </div>
             ))}
-
+  
           {/* New Comment Form */}
           {isLoggedIn ? (
             <div className="mt-6">
@@ -361,4 +497,4 @@ export default function EventDetailsPage() {
       </Card>
     </div>
   );
-}
+}  

@@ -16,23 +16,17 @@ export default function CreateEventPage() {
         if (decodedToken) {
           setIsUser(true);
         } else {
-          setStatusMessage({ type: 'error', text: 'Unauthorized access. Please log in again.' });
-          setTimeout(() => {
-            window.location.href = './';
-          }, 3000);
-        }
+          window.location.href = '/Unauthorized';
+          }
       } catch (error) {
         console.error('Invalid token', error);
         setStatusMessage({ type: 'error', text: 'Invalid token. Please log in again.' });
         setTimeout(() => {
-          window.location.href = './';
-        }, 3000);
+          window.location.href = '/Unauthorized';
+                }, 3000);
       }
     } else {
-      setStatusMessage({ type: 'error', text: 'You need to log in to access the create page.' });
-      setTimeout(() => {
-        window.location.href = './';
-      }, 3000);
+      window.location.href = '/Unauthorized';
     }
 
     // Retrieve status message from localStorage

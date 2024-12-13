@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from 'react';
 import { Card, CardHeader, CardBody, CardFooter, Button, Checkbox, Textarea, Input, Divider } from '@nextui-org/react';
 
@@ -9,6 +9,8 @@ export default function AskPage() {
   const [name, setName] = useState('');
   const [contactEmail, setContactEmail] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [feedbackMessage, setFeedbackMessage] = useState<string | null>(null);
+  const [messageType, setMessageType] = useState<'success' | 'error' | null>(null);
 
   useEffect(() => {
     // Check if user is logged in by checking for a token
@@ -23,48 +25,26 @@ export default function AskPage() {
       // Handle non-logged-in user input validation
       if (!isLoggedIn) {
         if (isPrivate) {
-          // For private questions, both name and contact email are required
           if (!name || !contactEmail) {
-            alert('Please provide both your name and contact email for private questions.');
+            setFeedbackMessage('Please provide both your name and contact email for private questions.');
+            setMessageType('error');
             return;
           }
-          // Set question data for private questions
-          questionData = {
-            text,
-            isPrivate,
-            username: name,
-            contactEmail: contactEmail,
-          };
+          questionData = { text, isPrivate, username: name, contactEmail: contactEmail };
         } else {
-          // For public questions
           if (anonymous) {
-            // Set default values for anonymous posting
-            questionData = {
-              text,
-              isPrivate,
-              username: 'Anonymous',
-              contactEmail: 'placeholder@email.com',
-            };
+            questionData = { text, isPrivate, username: 'Anonymous', contactEmail: 'placeholder@email.com' };
           } else {
-            // If not posting anonymously, both name and email must be provided
             if (!name || !contactEmail) {
-              alert('Please provide your name and email for public questions, or select anonymous.');
+              setFeedbackMessage('Please provide your name and email for public questions, or select anonymous.');
+              setMessageType('error');
               return;
             }
-            questionData = {
-              text,
-              isPrivate,
-              username: name,
-              contactEmail: contactEmail,
-            };
+            questionData = { text, isPrivate, username: name, contactEmail: contactEmail };
           }
         }
       } else {
-        // For logged-in users, only require the text and privacy setting
-        questionData = {
-          text,
-          isPrivate,
-        };
+        questionData = { text, isPrivate };
       }
 
       const headers: Record<string, string> = {
@@ -84,25 +64,33 @@ export default function AskPage() {
 
       const result = await response.json();
       if (response.ok) {
-        alert('Question posted successfully');
-        // Optionally reset form fields here
+        setFeedbackMessage('Question posted successfully.');
+        setMessageType('success');
         setText('');
         setName('');
         setContactEmail('');
         setAnonymous(false);
         setIsPrivate(true);
       } else {
-        alert(`Failed to post question: ${result.message}`);
+        setFeedbackMessage(`Failed to post question: ${result.message}`);
+        setMessageType('error');
       }
     } catch (error) {
       console.error('Error posting question:', error);
-      alert('An error occurred while posting the question.');
+      setFeedbackMessage('An error occurred while posting the question.');
+      setMessageType('error');
     }
+
+    // Automatically hide the message after 3 seconds
+    setTimeout(() => {
+      setFeedbackMessage(null);
+      setMessageType(null);
+    }, 3000);
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen ">
-      <Card className="w-2/3 p-5 border border-orange-300 ">
+    <div className="flex justify-center items-center min-h-screen">
+      <Card className="w-2/3 p-5 border border-orange-300">
         <CardHeader>
           <div className="flex flex-col gap-3">
             <Checkbox
@@ -114,7 +102,7 @@ export default function AskPage() {
               color="primary"
             >
               Public
-              <p className='text-xs text-gray-500'>Posted to the community page</p>
+              <p className="text-xs text-gray-500">Posted to the community page</p>
             </Checkbox>
             <Divider style={{ backgroundColor: 'orange' }} />
             <Checkbox
@@ -197,6 +185,11 @@ export default function AskPage() {
             onChange={(e) => setText(e.target.value)}
           />
         </CardBody>
+        {feedbackMessage && (
+          <div className={`p-2 text-center ${messageType === 'success' ? 'text-green-500' : 'text-red-500'}`}>
+            {feedbackMessage}
+          </div>
+        )}
         <CardFooter className="flex flex-col gap-3">
           <Button
             className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-white w-full"
@@ -204,14 +197,13 @@ export default function AskPage() {
           >
             Post Question
           </Button>
-          
+
           <Button
             className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-white w-full"
             onClick={() => (window.location.href = '/Support/community')}
           >
             Back to Community Questions
           </Button>
-
         </CardFooter>
       </Card>
     </div>
