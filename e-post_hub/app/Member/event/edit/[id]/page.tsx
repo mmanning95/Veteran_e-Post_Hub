@@ -10,29 +10,85 @@ import {
   Textarea,
   TimeInput,
 } from "@nextui-org/react";
+import { useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import { Time } from "@internationalized/date";
 
 export default function EditEventPage() {
-  // States to store time values for start and end time
+  const router = useRouter();
+  const { id } = useParams(); // Get the event ID from the route
   const [startTime, setStartTime] = useState<Time | null>(null);
   const [endTime, setEndTime] = useState<Time | null>(null);
-
-  // State for displaying success or error messages
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
 
+  // Form state
+  const [eventTitle, setEventTitle] = useState("");
+  const [flyerUrl, setFlyerUrl] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [description, setDescription] = useState("");
+  const [website, setWebsite] = useState("");
+
   const handleSubmit = async () => {
-    // Logic for editing the event
-    setMessage({ type: "success", text: "Event updated successfully!" });
-    setTimeout(() => setMessage(null), 3000);
+    try {
+      const response = await fetch(`/api/Event/edit/${id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: eventTitle,
+          flyer: flyerUrl,
+          startDate,
+          endDate,
+          startTime: startTime?.toString(),
+          endTime: endTime?.toString(),
+          description,
+          website,
+        }),
+      });
+
+      if (response.ok) {
+        setMessage({ type: "success", text: "Event updated successfully!" });
+        setTimeout(() => {
+          setMessage(null);
+          router.push("/Member"); // Redirect to member page after success
+        }, 3000);
+      } else {
+        setMessage({ type: "error", text: "Failed to update the event." });
+      }
+    } catch (error) {
+      console.error("Error updating event:", error);
+      setMessage({
+        type: "error",
+        text: "An error occurred. Please try again.",
+      });
+    }
   };
 
   const handleDelete = async () => {
-    // Logic for deleting the event
-    setMessage({ type: "error", text: "Event deleted successfully!" });
-    setTimeout(() => setMessage(null), 3000);
+    try {
+      const response = await fetch(`/api/Event/edit/${id}`, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        setMessage({ type: "success", text: "Event deleted successfully!" });
+        setTimeout(() => {
+          setMessage(null);
+          router.push("/Member"); // Redirect to member page after success
+        }, 3000);
+      } else {
+        setMessage({ type: "error", text: "Failed to delete the event." });
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      setMessage({
+        type: "error",
+        text: "An error occurred. Please try again.",
+      });
+    }
   };
 
   return (
@@ -60,15 +116,31 @@ export default function EditEventPage() {
                 label="New Event Title"
                 variant="bordered"
                 placeholder="Enter New Event Title"
+                value={eventTitle}
+                onChange={(e) => setEventTitle(e.target.value)}
               />
               <Input
                 label="New Event Flyer (URL)"
                 variant="bordered"
                 placeholder="Enter Flyer URL"
+                value={flyerUrl}
+                onChange={(e) => setFlyerUrl(e.target.value)}
               />
               <div className="flex gap-4">
-                <Input type="date" label="New Start Date" variant="bordered" />
-                <Input type="date" label="New End Date" variant="bordered" />
+                <Input
+                  type="date"
+                  label="New Start Date"
+                  variant="bordered"
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.target.value)}
+                />
+                <Input
+                  type="date"
+                  label="New End Date"
+                  variant="bordered"
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.target.value)}
+                />
               </div>
               <div className="flex gap-4">
                 <TimeInput
@@ -88,11 +160,15 @@ export default function EditEventPage() {
                 label="New Event Description"
                 variant="bordered"
                 placeholder="Enter New Event Description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
               />
               <Input
                 label="New Event Website"
                 variant="bordered"
                 placeholder="For the use of external webpages"
+                value={website}
+                onChange={(e) => setWebsite(e.target.value)}
               />
               <div className="flex justify-between mt-4">
                 <Button
