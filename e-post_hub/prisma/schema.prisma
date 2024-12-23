@@ -120,5 +120,4 @@ model Comment {
   replies     Comment[] @relation("CommentReplies")
 }
 
-
 //dont forget npx prisma migrate dev --name ...
