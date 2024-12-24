@@ -120,4 +120,26 @@ model Comment {
   replies     Comment[] @relation("CommentReplies")
 }
 
+// Links for resources page
+model Link {
+  id          String     @id @default(cuid())
+  title       String
+  description String
+  url         String
+  location    String     // "Moscow" or "Pullman"
+  categoryId  String     // Foreign key to reference the Category
+  category    Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+// Categories for link on resource page.
+model Category {
+  id          String     @id @default(cuid())
+  name        String     @unique
+  links       Link[]     // One-to-many relationship with Link
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
 //dont forget npx prisma migrate dev --name ...
