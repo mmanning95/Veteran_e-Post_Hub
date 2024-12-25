@@ -127,8 +127,8 @@ model Link {
   description String
   url         String
   location    String     // "Moscow" or "Pullman"
-  categoryId  String     // Foreign key to reference the Category
-  category    Category   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  categoryId  String?     // Foreign key to reference the Category
+  category    Category?   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
