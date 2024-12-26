@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import {
   Button,
   Card,
@@ -12,33 +12,38 @@ import {
 import jwt from "jsonwebtoken";
 
 export default function AddExternalLinkPage() {
-  const [categories, setCategories] = useState<{ id: string; name: string }[]>(
-    []
-  );
+  // Hardcoded categories
+  const categories = [
+    { id: "1", name: "Volunteer" },
+    { id: "2", name: "Financial Assistance" },
+    { id: "3", name: "Healthcare" },
+    { id: "4", name: "Legal Advice" },
+  ];
+
   const [formData, setFormData] = useState({
     title: "",
     description: "",
     url: "",
     location: "Moscow", // Default location
-    categoryId: "", // Optional by default
+    category: "", // Updated to use category name instead of categoryId
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false); // Track submission state
+  const [error, setError] = useState<string | null>(null); // Store error messages
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
-  } | null>(null);
-  const [isAdmin, setIsAdmin] = useState(false);
+  } | null>(null); // Display success/error messages
+  const [isAdmin, setIsAdmin] = useState(false); // Verify admin status
 
   // Check if the user is an admin
-  useEffect(() => {
+  React.useEffect(() => {
     const token = localStorage.getItem("token");
 
     if (token) {
       try {
         const decodedToken = jwt.decode(token) as { role: string };
         if (decodedToken && decodedToken.role === "ADMIN") {
-          setIsAdmin(true);
+          setIsAdmin(true); // Set admin state if valid
         } else {
           window.location.href = "/Unauthorized"; // Redirect if not an admin
         }
@@ -51,21 +56,7 @@ export default function AddExternalLinkPage() {
     }
   }, []);
 
-  // Fetch categories from the backend
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const response = await fetch("/api/categories");
-        const data = await response.json();
-        setCategories(data);
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
+  // Handle form field changes
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -74,6 +65,7 @@ export default function AddExternalLinkPage() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  // Handle form submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -83,7 +75,7 @@ export default function AddExternalLinkPage() {
       const response = await fetch("/api/externalHub", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formData), // Send form data
       });
 
       if (!response.ok) {
@@ -91,16 +83,16 @@ export default function AddExternalLinkPage() {
         throw new Error(message || "Failed to submit the link.");
       }
 
-      setMessage({ type: "success", text: "Link added successfully!" });
+      setMessage({ type: "success", text: "Link added successfully!" }); // Show success message
       setFormData({
         title: "",
         description: "",
         url: "",
         location: "Moscow",
-        categoryId: "", // Reset categoryId
+        category: "", // Reset category
       });
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message); // Handle errors
       setMessage({ type: "error", text: err.message });
     } finally {
       setIsSubmitting(false);
@@ -176,14 +168,14 @@ export default function AddExternalLinkPage() {
               <div className="mb-4">
                 <label className="block font-semibold mb-2">Category</label>
                 <select
-                  name="categoryId"
-                  value={formData.categoryId}
+                  name="category"
+                  value={formData.category} // Updated to use `category`
                   onChange={handleChange}
                   className="border border-gray-300 rounded w-full p-2"
                 >
                   <option value="">Uncategorized</option>
                   {categories.map((category) => (
-                    <option key={category.id} value={category.id}>
+                    <option key={category.id} value={category.name}>
                       {category.name}
                     </option>
                   ))}

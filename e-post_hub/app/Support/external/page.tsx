@@ -9,18 +9,18 @@ type Link = {
   description: string;
   url: string;
   location: string;
-  category: { name: string };
+  category?: string;
 };
 
 export default function ResourcesPage() {
-  const [links, setLinks] = useState<Link[]>([]);
-  const [locationFilter, setLocationFilter] = useState<string>("All");
-  const [categoryFilter, setCategoryFilter] = useState<string>("All");
-  const [showLocationFilters, setShowLocationFilters] = useState(false);
-  const [showCategoryFilters, setShowCategoryFilters] = useState(false);
+  const [links, setLinks] = useState<Link[]>([]); // Store fetched links
+  const [locationFilter, setLocationFilter] = useState<string>("All"); // Filter for location
+  const [categoryFilter, setCategoryFilter] = useState<string>("All"); // Filter for category
+  const [showLocationFilters, setShowLocationFilters] = useState(false); // Toggle location filter visibility
+  const [showCategoryFilters, setShowCategoryFilters] = useState(false); // Toggle category filter visibility
 
   useEffect(() => {
-    // Fetch links with filters
+    // Fetch links with applied filters
     const fetchLinks = async () => {
       const query = new URLSearchParams();
       if (locationFilter !== "All") query.append("location", locationFilter);
@@ -30,7 +30,7 @@ export default function ResourcesPage() {
         const response = await fetch(`/api/externalHub?${query.toString()}`);
         if (response.ok) {
           const data = await response.json();
-          setLinks(data);
+          setLinks(data); // Set fetched links
         } else {
           console.error("Failed to fetch links");
           setLinks([]);
@@ -42,11 +42,11 @@ export default function ResourcesPage() {
     };
 
     fetchLinks();
-  }, [locationFilter, categoryFilter]);
+  }, [locationFilter, categoryFilter]); // Refetch on filter changes
 
   return (
     <div className="flex">
-      {/* Sidebar */}
+      {/* Sidebar for filters */}
       <div className="w-1/4 p-4 bg-gray-100">
         <h3 className="text-xl font-bold mb-4">Filters</h3>
 
@@ -105,8 +105,8 @@ export default function ResourcesPage() {
                 Volunteer Services
               </Checkbox>
               <Checkbox
-                isSelected={categoryFilter === "Financial"}
-                onChange={() => setCategoryFilter("Financial")}
+                isSelected={categoryFilter === "Financial Assistance"}
+                onChange={() => setCategoryFilter("Financial Assistance")}
               >
                 Financial Assistance
               </Checkbox>
@@ -117,8 +117,8 @@ export default function ResourcesPage() {
                 Healthcare
               </Checkbox>
               <Checkbox
-                isSelected={categoryFilter === "Legal"}
-                onChange={() => setCategoryFilter("Legal")}
+                isSelected={categoryFilter === "Legal Advice"}
+                onChange={() => setCategoryFilter("Legal Advice")}
               >
                 Legal Advice
               </Checkbox>
@@ -129,7 +129,6 @@ export default function ResourcesPage() {
 
       {/* Main Content */}
       <div className="w-3/4 p-4">
-        {/* Links */}
         <div className="grid grid-cols-1 gap-6">
           {links.length === 0 ? (
             <p>No links found for the selected filters.</p>
@@ -140,6 +139,7 @@ export default function ResourcesPage() {
                 className="p-6 bg-white border border-gray-200 rounded-lg shadow-lg"
               >
                 <h2 className="text-lg font-semibold mb-2 text-orange-600">
+                  {/* Link Title */}
                   <a
                     href={
                       link.url.startsWith("http")
@@ -159,7 +159,9 @@ export default function ResourcesPage() {
                     <strong>Location:</strong> {link.location}
                   </p>
                   <p>
-                    <strong>Category:</strong> {link.category.name}
+                    <strong>Category:</strong>{" "}
+                    {link.category || "Uncategorized"}{" "}
+                    {/* Handle missing category */}
                   </p>
                 </div>
               </div>

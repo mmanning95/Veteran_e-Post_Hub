@@ -7,7 +7,7 @@ const prisma = new PrismaClient();
 export async function POST(req: Request) {
   try {
     const body = await req.json(); // Parse JSON from the request body
-    const { title, description, url, location, categoryId } = body;
+    const { title, description, url, location, category } = body;
 
     // Validate required fields
     if (!title || !url || !location) {
@@ -24,7 +24,7 @@ export async function POST(req: Request) {
         description: description || "", // Default to an empty string if description is not provided
         url,
         location,
-        categoryId: categoryId || null, // Allow null for uncategorized links
+        category: category || "Uncategorized", // Default category if not provided
       },
     });
 
@@ -49,26 +49,11 @@ export async function GET(req: Request) {
     const links = await prisma.link.findMany({
       where: {
         ...(location && location !== "All" ? { location } : {}),
-        ...(category && category !== "All"
-          ? { category: { name: category } }
-          : {}),
-      },
-      include: {
-        category: true, // Include category details in the response
+        ...(category && category !== "All" ? { category } : {}),
       },
     });
 
-    // Transform the result
-    const transformedLinks = links.map((link) => ({
-      id: link.id,
-      title: link.title,
-      description: link.description,
-      url: link.url,
-      location: link.location,
-      category: { name: link.category?.name || "Uncategorized" },
-    }));
-
-    return NextResponse.json(transformedLinks, { status: 200 });
+    return NextResponse.json(links, { status: 200 });
   } catch (error) {
     console.error("Error fetching links:", error);
     return NextResponse.json(
@@ -77,4 +62,3 @@ export async function GET(req: Request) {
     );
   }
 }
-

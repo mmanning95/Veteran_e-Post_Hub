@@ -127,17 +127,7 @@ model Link {
   description String
   url         String
   location    String     // "Moscow" or "Pullman"
-  categoryId  String?     // Foreign key to reference the Category
-  category    Category?   @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
-}
-
-// Categories for link on resource page.
-model Category {
-  id          String     @id @default(cuid())
-  name        String     @unique
-  links       Link[]     // One-to-many relationship with Link
+  category    String?     // Category as a plain string (e.g., "Volunteer", "Financial Assistance")
   createdAt   DateTime   @default(now())
   updatedAt   DateTime   @updatedAt
 }
