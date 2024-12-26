@@ -129,29 +129,39 @@ export default function ResourcesPage() {
 
       {/* Main Content */}
       <div className="w-3/4 p-4">
-        <h1 className="text-2xl font-bold mb-6">Helpful Links</h1>
-
         {/* Links */}
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-6">
           {links.length === 0 ? (
             <p>No links found for the selected filters.</p>
           ) : (
             links.map((link) => (
-              <div key={link.id} className="p-4 border rounded shadow">
-                <h2 className="text-xl font-semibold mb-2">
+              <div
+                key={link.id}
+                className="p-6 bg-white border border-gray-200 rounded-lg shadow-lg"
+              >
+                <h2 className="text-lg font-semibold mb-2 text-orange-600">
                   <a
-                    href={link.url}
+                    href={
+                      link.url.startsWith("http")
+                        ? link.url
+                        : `https://${link.url}`
+                    }
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-blue-500 hover:underline"
+                    className="hover:underline"
                   >
                     {link.title}
                   </a>
                 </h2>
-                <p className="text-gray-700">{link.description}</p>
-                <p className="text-sm text-gray-500">
-                  Location: {link.location} | Category: {link.category.name}
-                </p>
+                <p className="text-gray-700 mb-4">{link.description}</p>
+                <div className="text-sm text-gray-500">
+                  <p>
+                    <strong>Location:</strong> {link.location}
+                  </p>
+                  <p>
+                    <strong>Category:</strong> {link.category.name}
+                  </p>
+                </div>
               </div>
             ))
           )}

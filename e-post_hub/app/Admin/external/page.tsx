@@ -8,10 +8,8 @@ import {
   CardHeader,
   Input,
   Textarea,
-  Dropdown,
-  DropdownItem,
-  DropdownMenu,
 } from "@nextui-org/react";
+import jwt from "jsonwebtoken";
 
 export default function AddExternalLinkPage() {
   const [categories, setCategories] = useState<{ id: string; name: string }[]>(
@@ -22,7 +20,7 @@ export default function AddExternalLinkPage() {
     description: "",
     url: "",
     location: "Moscow", // Default location
-    categoryId: "",
+    categoryId: "", // Optional by default
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -30,9 +28,31 @@ export default function AddExternalLinkPage() {
     type: "success" | "error";
     text: string;
   } | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
 
+  // Check if the user is an admin
   useEffect(() => {
-    // Fetch categories from the backend
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
+        const decodedToken = jwt.decode(token) as { role: string };
+        if (decodedToken && decodedToken.role === "ADMIN") {
+          setIsAdmin(true);
+        } else {
+          window.location.href = "/Unauthorized"; // Redirect if not an admin
+        }
+      } catch (error) {
+        console.error("Invalid token:", error);
+        window.location.href = "/Unauthorized"; // Redirect if token is invalid
+      }
+    } else {
+      window.location.href = "/Unauthorized"; // Redirect if no token is present
+    }
+  }, []);
+
+  // Fetch categories from the backend
+  useEffect(() => {
     const fetchCategories = async () => {
       try {
         const response = await fetch("/api/categories");
@@ -47,7 +67,9 @@ export default function AddExternalLinkPage() {
   }, []);
 
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
   ) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -75,7 +97,7 @@ export default function AddExternalLinkPage() {
         description: "",
         url: "",
         location: "Moscow",
-        categoryId: "",
+        categoryId: "", // Reset categoryId
       });
     } catch (err: any) {
       setError(err.message);
@@ -84,6 +106,11 @@ export default function AddExternalLinkPage() {
       setIsSubmitting(false);
     }
   };
+
+  // Render loading screen until admin status is verified
+  if (!isAdmin) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
@@ -139,9 +166,7 @@ export default function AddExternalLinkPage() {
                 <select
                   name="location"
                   value={formData.location}
-                  onChange={(e) =>
-                    setFormData({ ...formData, location: e.target.value })
-                  }
+                  onChange={handleChange}
                   className="border border-gray-300 rounded w-full p-2"
                 >
                   <option value="Moscow">Moscow</option>
@@ -153,15 +178,10 @@ export default function AddExternalLinkPage() {
                 <select
                   name="categoryId"
                   value={formData.categoryId}
-                  onChange={(e) =>
-                    setFormData({ ...formData, categoryId: e.target.value })
-                  }
+                  onChange={handleChange}
                   className="border border-gray-300 rounded w-full p-2"
-                  required
                 >
-                  <option value="" disabled>
-                    Select a category
-                  </option>
+                  <option value="">Uncategorized</option>
                   {categories.map((category) => (
                     <option key={category.id} value={category.id}>
                       {category.name}
