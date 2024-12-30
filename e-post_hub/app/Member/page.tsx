@@ -270,7 +270,7 @@ export default function Memberpage() {
                     </Link>
                     {/* Edit Event Button.  If user id matches createdById, display edit event button*/}
                     {userId === event.createdBy.id && (
-                      <Link href={`/events/edit/${event.id}`} passHref>
+                      <Link href={`/Member/event/edit/${event.id}`} passHref>
                         <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black mt-4">
                           Edit Event
                         </Button>

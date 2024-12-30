@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Button,
   Card,
@@ -32,12 +32,51 @@ export default function EditEventPage() {
   const [description, setDescription] = useState("");
   const [website, setWebsite] = useState("");
 
+  // Fetch event details
+  useEffect(() => {
+    const fetchEventDetails = async () => {
+      try {
+        const response = await fetch(`/api/Event/edit?id=${id}`); // Use the GET endpoint
+        if (response.ok) {
+          const data = await response.json();
+
+          // Populate form fields with event details
+          setEventTitle(data.title || "");
+          setFlyerUrl(data.flyer || "");
+          setStartDate(
+            data.startDate
+              ? new Date(data.startDate).toISOString().split("T")[0]
+              : ""
+          );
+          setEndDate(
+            data.endDate
+              ? new Date(data.endDate).toISOString().split("T")[0]
+              : ""
+          );
+          setDescription(data.description || "");
+          setWebsite(data.website || "");
+          setStartTime(data.startTime ? new Time(data.startTime) : null);
+          setEndTime(data.endTime ? new Time(data.endTime) : null);
+        } else {
+          console.error("Failed to fetch event details:", response.statusText);
+        }
+      } catch (error) {
+        console.error("Error fetching event details:", error);
+      }
+    };
+
+    if (id) {
+      fetchEventDetails(); // Fetch the event data when the component mounts
+    }
+  }, [id]);
+
   const handleSubmit = async () => {
     try {
-      const response = await fetch(`/api/Event/edit/${id}`, {
+      const response = await fetch(`/api/Event/edit`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          id, // Include id in the body
           title: eventTitle,
           flyer: flyerUrl,
           startDate,
@@ -67,30 +106,6 @@ export default function EditEventPage() {
     }
   };
 
-  const handleDelete = async () => {
-    try {
-      const response = await fetch(`/api/Event/edit/${id}`, {
-        method: "DELETE",
-      });
-
-      if (response.ok) {
-        setMessage({ type: "success", text: "Event deleted successfully!" });
-        setTimeout(() => {
-          setMessage(null);
-          router.push("/Member"); // Redirect to member page after success
-        }, 3000);
-      } else {
-        setMessage({ type: "error", text: "Failed to delete the event." });
-      }
-    } catch (error) {
-      console.error("Error deleting event:", error);
-      setMessage({
-        type: "error",
-        text: "An error occurred. Please try again.",
-      });
-    }
-  };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50">
       <Card className="w-2/5 mx-auto">
@@ -113,14 +128,14 @@ export default function EditEventPage() {
               <Input
                 isRequired
                 isClearable
-                label="New Event Title"
+                label="Event Title"
                 variant="bordered"
-                placeholder="Enter New Event Title"
+                placeholder="Enter Event Title"
                 value={eventTitle}
                 onChange={(e) => setEventTitle(e.target.value)}
               />
               <Input
-                label="New Event Flyer (URL)"
+                label="Event Flyer (URL)"
                 variant="bordered"
                 placeholder="Enter Flyer URL"
                 value={flyerUrl}
@@ -129,14 +144,14 @@ export default function EditEventPage() {
               <div className="flex gap-4">
                 <Input
                   type="date"
-                  label="New Start Date"
+                  label="Start Date"
                   variant="bordered"
                   value={startDate}
                   onChange={(e) => setStartDate(e.target.value)}
                 />
                 <Input
                   type="date"
-                  label="New End Date"
+                  label="End Date"
                   variant="bordered"
                   value={endDate}
                   onChange={(e) => setEndDate(e.target.value)}
@@ -144,29 +159,29 @@ export default function EditEventPage() {
               </div>
               <div className="flex gap-4">
                 <TimeInput
-                  label="New Event Start Time"
+                  label="Event Start Time"
                   value={startTime}
                   variant="bordered"
                   onChange={(newValue) => setStartTime(newValue)}
                 />
                 <TimeInput
-                  label="New Event End Time"
+                  label="Event End Time"
                   value={endTime}
                   variant="bordered"
                   onChange={(newValue) => setEndTime(newValue)}
                 />
               </div>
               <Textarea
-                label="New Event Description"
+                label="Event Description"
                 variant="bordered"
-                placeholder="Enter New Event Description"
+                placeholder="Enter Event Description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
               />
               <Input
-                label="New Event Website"
+                label="Event Website"
                 variant="bordered"
-                placeholder="For the use of external webpages"
+                placeholder="Enter Website URL"
                 value={website}
                 onChange={(e) => setWebsite(e.target.value)}
               />
@@ -177,13 +192,6 @@ export default function EditEventPage() {
                   onClick={handleSubmit}
                 >
                   Save Changes
-                </Button>
-                <Button
-                  fullWidth
-                  className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-black border border-black ml-4"
-                  onClick={handleDelete}
-                >
-                  Delete Event
                 </Button>
               </div>
             </div>
