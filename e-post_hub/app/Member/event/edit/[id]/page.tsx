@@ -10,15 +10,15 @@ import {
   Textarea,
   TimeInput,
 } from "@nextui-org/react";
+import { Time } from "@internationalized/date"; // For handling time
 import { useRouter } from "next/navigation";
 import { useParams } from "next/navigation";
-import { Time } from "@internationalized/date";
 
 export default function EditEventPage() {
   const router = useRouter();
   const { id } = useParams(); // Get the event ID from the route
-  const [startTime, setStartTime] = useState<Time | null>(null);
-  const [endTime, setEndTime] = useState<Time | null>(null);
+  const [startTime, setStartTime] = useState<Time | null>(null); // Use Time for consistency
+  const [endTime, setEndTime] = useState<Time | null>(null); // Use Time for consistency
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
@@ -55,8 +55,16 @@ export default function EditEventPage() {
           );
           setDescription(data.description || "");
           setWebsite(data.website || "");
-          setStartTime(data.startTime ? new Time(data.startTime) : null);
-          setEndTime(data.endTime ? new Time(data.endTime) : null);
+
+          // Parse startTime and endTime into Time objects
+          if (data.startTime) {
+            const [hour, minute] = parseTime(data.startTime);
+            setStartTime(new Time(hour, minute));
+          }
+          if (data.endTime) {
+            const [hour, minute] = parseTime(data.endTime);
+            setEndTime(new Time(hour, minute));
+          }
         } else {
           console.error("Failed to fetch event details:", response.statusText);
         }
@@ -70,8 +78,37 @@ export default function EditEventPage() {
     }
   }, [id]);
 
+  // Helper function to parse time strings (e.g., "2:00 PM") into hours and minutes
+  const parseTime = (time: string): [number, number] => {
+    const match = time.match(/^(\d+):(\d+)\s*(AM|PM)$/i);
+    if (!match) return [0, 0];
+
+    let hour = parseInt(match[1], 10);
+    const minute = parseInt(match[2], 10);
+    const period = match[3].toUpperCase();
+
+    if (period === "PM" && hour !== 12) {
+      hour += 12;
+    } else if (period === "AM" && hour === 12) {
+      hour = 0;
+    }
+    return [hour, minute];
+  };
+
+  // Helper function to format Time objects into "hh:mm AM/PM"
+  const formatTime = (time: Time | null): string | null => {
+    if (!time) return null;
+    const hour = time.hour % 12 || 12;
+    const minute = time.minute.toString().padStart(2, "0");
+    const period = time.hour >= 12 ? "PM" : "AM";
+    return `${hour}:${minute} ${period}`;
+  };
+
   const handleSubmit = async () => {
     try {
+      const formattedStartTime = formatTime(startTime);
+      const formattedEndTime = formatTime(endTime);
+
       const response = await fetch(`/api/Event/edit`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -81,8 +118,8 @@ export default function EditEventPage() {
           flyer: flyerUrl,
           startDate,
           endDate,
-          startTime: startTime?.toString(),
-          endTime: endTime?.toString(),
+          startTime: formattedStartTime, // Format startTime
+          endTime: formattedEndTime, // Format endTime
           description,
           website,
         }),
@@ -95,7 +132,11 @@ export default function EditEventPage() {
           router.push("/Member"); // Redirect to member page after success
         }, 3000);
       } else {
-        setMessage({ type: "error", text: "Failed to update the event." });
+        const errorData = await response.json();
+        setMessage({
+          type: "error",
+          text: errorData.error || "Failed to update the event.",
+        });
       }
     } catch (error) {
       console.error("Error updating event:", error);
