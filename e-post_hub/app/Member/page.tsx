@@ -11,6 +11,7 @@ type Event = {
   title: string;
   description?: string;
   createdBy: {
+    id: string;
     name: string;
     email: string;
   };
@@ -29,6 +30,7 @@ export default function Memberpage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [message, setMessage] = useState<string | null>(null);
+  const [userId, setUserId] = useState<string | null>(null); // Store the logged-in user's ID
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -44,6 +46,7 @@ export default function Memberpage() {
         if (decodedToken && decodedToken.role === "MEMBER") {
           setIsMember(true);
           setMemberName(decodedToken.name || "Member");
+          setUserId(decodedToken.userId); // Save the logged-in user's ID
           fetchApprovedEvents();
         } else {
           setMessage("Unauthorized access.");
@@ -85,8 +88,12 @@ export default function Memberpage() {
   const handleDateClick = (date: string) => {
     // Filter events based on the selected date
     const eventsForDate = events.filter((event) => {
-      const startDate = event.startDate ? new Date(event.startDate).toISOString().split("T")[0] : null;
-      const endDate = event.endDate ? new Date(event.endDate).toISOString().split("T")[0] : null;
+      const startDate = event.startDate
+        ? new Date(event.startDate).toISOString().split("T")[0]
+        : null;
+      const endDate = event.endDate
+        ? new Date(event.endDate).toISOString().split("T")[0]
+        : null;
       return startDate && endDate && date >= startDate && date < endDate;
     });
     setFilteredEvents(eventsForDate);
@@ -161,9 +168,15 @@ export default function Memberpage() {
       {/* Main Content */}
       <div className="content w-3/4 p-4">
         <div className="text-center mb-10">
-          <h3 className="text-3xl font-bold">Welcome, {memberName || "Member"}!</h3>
-          <p className="text-lg mt-4">Check out the upcoming events that you can join!</p>
-          {message && <div className="text-center mt-4 text-green-500">{message}</div>}
+          <h3 className="text-3xl font-bold">
+            Welcome, {memberName || "Member"}!
+          </h3>
+          <p className="text-lg mt-4">
+            Check out the upcoming events that you can join!
+          </p>
+          {message && (
+            <div className="text-center mt-4 text-green-500">{message}</div>
+          )}
         </div>
 
         {/* Button Container */}
@@ -189,27 +202,61 @@ export default function Memberpage() {
                     <h5 className="text-xl font-bold">{event.title}</h5>
                   </CardHeader>
                   <CardBody>
-                    {event.description && <p className="text-gray-600">{event.description}</p>}
-                    <p className="text-gray-600">Created By: {event.createdBy.name} ({event.createdBy.email})</p>
+                    {event.description && (
+                      <p className="text-gray-600">{event.description}</p>
+                    )}
+                    <p className="text-gray-600">
+                      Created By: {event.createdBy.name} (
+                      {event.createdBy.email})
+                    </p>
                     {event.startDate && (
-                      <p className="text-gray-600">Start Date: {new Date(event.startDate).toLocaleDateString()}</p>
+                      <p className="text-gray-600">
+                        Start Date:{" "}
+                        {new Date(event.startDate).toLocaleDateString()}
+                      </p>
                     )}
                     {event.endDate && (
-                      <p className="text-gray-600">End Date: {new Date(event.endDate).toLocaleDateString()}</p>
+                      <p className="text-gray-600">
+                        End Date: {new Date(event.endDate).toLocaleDateString()}
+                      </p>
                     )}
-                    {event.startTime && <p className="text-gray-600">Start Time: {event.startTime}</p>}
-                    {event.endTime && <p className="text-gray-600">End Time: {event.endTime}</p>}
+                    {event.startTime && (
+                      <p className="text-gray-600">
+                        Start Time: {event.startTime}
+                      </p>
+                    )}
+                    {event.endTime && (
+                      <p className="text-gray-600">End Time: {event.endTime}</p>
+                    )}
                     {event.website && (
                       <p className="text-gray-600">
-                        Website: <a href={event.website} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">{event.website}</a>
+                        Website:{" "}
+                        <a
+                          href={event.website}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 underline"
+                        >
+                          {event.website}
+                        </a>
                       </p>
                     )}
                     {event.flyer && (
                       <p className="text-gray-600">
-                        Flyer: <a href={event.flyer} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">View Flyer</a>
+                        Flyer:{" "}
+                        <a
+                          href={event.flyer}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-blue-500 underline"
+                        >
+                          View Flyer
+                        </a>
                       </p>
                     )}
-                    <p className="text-gray-600">Interested: {event.interested}</p>
+                    <p className="text-gray-600">
+                      Interested: {event.interested}
+                    </p>
                     <Button
                       className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black mt-4"
                       onClick={() => handleInterest(event.id)}
@@ -221,6 +268,14 @@ export default function Memberpage() {
                         View Details
                       </Button>
                     </Link>
+                    {/* Edit Event Button.  If user id matches createdById, display edit event button*/}
+                    {userId === event.createdBy.id && (
+                      <Link href={`/events/edit/${event.id}`} passHref>
+                        <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black mt-4">
+                          Edit Event
+                        </Button>
+                      </Link>
+                    )}
                   </CardBody>
                 </Card>
               ))}

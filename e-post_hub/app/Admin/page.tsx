@@ -195,7 +195,9 @@ export default function Adminpage() {
 
       <div className="content w-3/4 p-4">
         <div className="text-center mb-10">
-          <h3 className="text-3xl font-bold">Welcome, {adminName || "Admin"}!</h3>
+          <h3 className="text-3xl font-bold">
+            Welcome, {adminName || "Admin"}!
+          </h3>
           <p className="text-lg mt-4">
             Manage the events, edit them, or take other administrative actions.
           </p>
@@ -227,6 +229,13 @@ export default function Adminpage() {
           >
             Show All Events
           </Button>
+          <Button
+            as={Link}
+            href="/Admin/external"
+            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+          >
+            Add Resource
+          </Button>
         </div>
 
         <div className="mt-10">
@@ -245,7 +254,8 @@ export default function Adminpage() {
                       <p className="text-gray-600">{event.description}</p>
                     )}
                     <p className="text-gray-600">
-                      Created By: {event.createdBy.name} ({event.createdBy.email})
+                      Created By: {event.createdBy.name} (
+                      {event.createdBy.email})
                     </p>
                     {event.startDate && (
                       <p className="text-gray-600">
@@ -255,11 +265,12 @@ export default function Adminpage() {
                     )}
                     {event.endDate && (
                       <p className="text-gray-600">
-                        End Date:{" "}
-                        {new Date(event.endDate).toLocaleDateString()}
+                        End Date: {new Date(event.endDate).toLocaleDateString()}
                       </p>
                     )}
-                    <p className="text-gray-600">Interested: {event.interested}</p>
+                    <p className="text-gray-600">
+                      Interested: {event.interested}
+                    </p>
                     <Button
                       className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black mt-4"
                       onClick={() => handleInterest(event.id)}

@@ -11,6 +11,7 @@ export async function GET() {
       include: {
         createdBy: {
           select: {
+            id: true, // Include the creator's ID
             name: true,
             email: true,
           },
@@ -26,3 +27,4 @@ export async function GET() {
     await prisma.$disconnect();
   }
 }
+
