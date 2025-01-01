@@ -257,25 +257,30 @@ export default function Memberpage() {
                     <p className="text-gray-600">
                       Interested: {event.interested}
                     </p>
+
+                    {/* "I'm Interested" Button */}
                     <Button
                       className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black mt-4"
                       onClick={() => handleInterest(event.id)}
                     >
                       I'm Interested
                     </Button>
-                    <Link href={`/Event/${event.id}`} passHref>
-                      <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black mt-4">
-                        View Details
-                      </Button>
-                    </Link>
-                    {/* Edit Event Button.  If user id matches createdById, display edit event button*/}
-                    {userId === event.createdBy.id && (
-                      <Link href={`/events/edit/${event.id}`} passHref>
-                        <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black mt-4">
-                          Edit Event
+
+                    {/* "View Details" and "Edit Event" Buttons */}
+                    <div className="flex gap-x-4 mt-4">
+                      <Link href={`/Event/${event.id}`} passHref>
+                        <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black flex-grow">
+                          View Details
                         </Button>
                       </Link>
-                    )}
+                      {userId === event.createdBy.id && (
+                        <Link href={`/Member/event/edit/${event.id}`} passHref>
+                          <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black flex-grow">
+                            Edit Event
+                          </Button>
+                        </Link>
+                      )}
+                    </div>
                   </CardBody>
                 </Card>
               ))}
