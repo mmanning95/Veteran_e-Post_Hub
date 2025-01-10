@@ -17,6 +17,8 @@ import {
 } from "@nextui-org/react";
 import { Time } from "@internationalized/date";
 import React, { useState } from "react";
+import { useEdgeStore } from "@/lib/edgestore";
+import Link from "next/link";
 
 export default function EventForm() {
   const {
@@ -31,6 +33,12 @@ export default function EventForm() {
   // States to store the time values for start and end time
   const [startTime, setStartTime] = useState<Time | null>(null);
   const [endTime, setEndTime] = useState<Time | null>(null);
+  const [file, setFile] = useState<File>();
+  const [urls, setUrls] = useState<{
+    url: string;
+    thumbnailUrl: string | null;
+  }>();
+  const { edgestore } = useEdgeStore();
 
   // State for displaying success or error messages
   const [message, setMessage] = useState<{
@@ -116,12 +124,28 @@ export default function EventForm() {
               {...register("title")}
               errorMessage={errors.title?.message}
             />
+
             <Input
-              label="Event Flyer (URL)"
-              variant="bordered"
-              {...register("flyer")}
-              errorMessage={errors.flyer?.message}
+              type="file" onChange= {(e) => {
+                setFile(e.target.files?.[0]);
+              }}
             />
+            <button className="bg-white text-black rounded px-2 hover:opacity-80"
+            onClick={async () => {
+              if (file) {
+                const res = await edgestore.myPublicImages.upload({ file });
+                //save data here
+                setUrls({
+                  url: res.url,
+                  thumbnailUrl: res.thumbnailUrl,
+                });
+              }
+            }}>
+              Upload
+            </button>
+            {urls?.url && <Link href={urls.url} target="_blank">URL</Link>}
+            {urls?.thumbnailUrl && <Link href={urls.thumbnailUrl} target="_blank">THUMBNAIL</Link>}
+
             <div className="flex gap-4">
               <Input
                 type="date"
