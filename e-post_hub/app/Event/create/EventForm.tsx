@@ -164,12 +164,13 @@ export default function EventForm() {
               {/* Description */}
               <div className="flex-1">
                 <Textarea
+                  minRows={8}
                   label="Event Description"
                   variant="bordered"
                   {...register("description")}
                   errorMessage={errors.description?.message}
-                  style={{ height: "200px" }}
-                />
+                  style={{ height: "200px", resize: "none" }}
+              />
               </div>
               {/* Image Dropzone */}
               <div>
