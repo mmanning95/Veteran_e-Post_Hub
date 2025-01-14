@@ -109,7 +109,7 @@ export default function EventForm() {
         {message && (
           <div
             className={`mb-4 p-4 rounded ${
-              message.type === "success" ? " text-green-600" : " text-red-600"
+              message.type === "success" ? "text-green-600" : "text-red-600"
             }`}
           >
             {message.text}
@@ -125,37 +125,7 @@ export default function EventForm() {
               {...register("title")}
               errorMessage={errors.title?.message}
             />
-
-            {/* <Input
-              type="file" onChange= {(e) => {
-                setFile(e.target.files?.[0]);
-              }}
-            /> */}
-            <SingleImageDropzone
-              width={200}
-              height={200}
-              value={file}
-              onChange={(file) => {
-                setFile(file);
-              }}
-            />
-            <button className="bg-white text-black rounded px-2 hover:opacity-80"
-            onClick={async () => {
-              if (file) {
-                const res = await edgestore.myPublicImages.upload({ file });
-                //save data here
-                setUrls({
-                  url: res.url,
-                  thumbnailUrl: res.thumbnailUrl,
-                });
-              }
-            }}>
-              Upload
-            </button>
-           {/* These are the url and thumbnail links that show when uploaded 
-           {urls?.url && <Link href={urls.url} target="_blank">URL</Link>}
-          {urls?.thumbnailUrl && <Link href={urls.thumbnailUrl} target="_blank">THUMBNAIL</Link>} */}
-
+  
             <div className="flex gap-4">
               <Input
                 type="date"
@@ -172,6 +142,7 @@ export default function EventForm() {
                 errorMessage={errors.endDate?.message}
               />
             </div>
+  
             <div className="flex gap-4">
               <TimeInput
                 label="Event Start Time"
@@ -188,12 +159,53 @@ export default function EventForm() {
                 errorMessage={errors.endTime?.message}
               />
             </div>
-            <Textarea
-              label="Event Description"
-              variant="bordered"
-              {...register("description")}
-              errorMessage={errors.description?.message}
-            />
+  
+            <div className="flex flex-wrap gap-4">
+              {/* Description */}
+              <div className="flex-1">
+                <Textarea
+                  label="Event Description"
+                  variant="bordered"
+                  {...register("description")}
+                  errorMessage={errors.description?.message}
+                  style={{ height: "200px" }}
+                />
+              </div>
+              {/* Image Dropzone */}
+              <div>
+                <SingleImageDropzone
+                  width={200}
+                  height={200}
+                  value={file}
+                  dropzoneOptions={{
+                    maxSize: 1024 * 1024 * 2, //2mb
+                  }}
+                  onChange={(file) => {
+                    setFile(file);
+                  }}
+                />
+                <button
+                  className="bg-white text-black rounded px-2 mt-2 hover:opacity-80"
+                  onClick={async () => {
+                    if (file) {
+                      const res = await edgestore.myPublicImages.upload({ file });
+                      setUrls({
+                        url: res.url,
+                        thumbnailUrl: res.thumbnailUrl,
+                      });
+                    }
+                  }}
+                >
+                  Upload
+                </button>
+                {/* Uncomment to display URL and Thumbnail links */}
+                {/* {urls?.url && <Link href={urls.url} target="_blank">URL</Link>}
+                {urls?.thumbnailUrl && (
+                  <Link href={urls.thumbnailUrl} target="_blank">THUMBNAIL</Link>
+                )} */}
+              </div>
+            </div>
+  
             <Input
               label="Event Website"
               variant="bordered"
@@ -201,6 +213,7 @@ export default function EventForm() {
               errorMessage={errors.website?.message}
               placeholder="For the use of external webpages"
             />
+  
             <Button
               isDisabled={!isValid}
               fullWidth
@@ -219,4 +232,4 @@ export default function EventForm() {
       </CardBody>
     </Card>
   );
-}
+}  
