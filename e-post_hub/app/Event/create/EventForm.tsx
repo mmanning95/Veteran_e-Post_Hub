@@ -19,6 +19,7 @@ import { Time } from "@internationalized/date";
 import React, { useState } from "react";
 import { useEdgeStore } from "@/lib/edgestore";
 import Link from "next/link";
+import { SingleImageDropzone } from "@/app/Components/Dropzone/single-image-dropzone";
 
 export default function EventForm() {
   const {
@@ -99,7 +100,7 @@ export default function EventForm() {
   };
 
   return (
-    <Card className="w-2/5 mx-auto">
+    <Card className="w-2/5 mx-auto max-h-[80vh] overflow-y-auto">
       <CardHeader className="flex flex-col items-center justify-center">
         <h3 className="text-3xl font-semibold">Create New Event</h3>
       </CardHeader>
@@ -125,9 +126,17 @@ export default function EventForm() {
               errorMessage={errors.title?.message}
             />
 
-            <Input
+            {/* <Input
               type="file" onChange= {(e) => {
                 setFile(e.target.files?.[0]);
+              }}
+            /> */}
+            <SingleImageDropzone
+              width={200}
+              height={200}
+              value={file}
+              onChange={(file) => {
+                setFile(file);
               }}
             />
             <button className="bg-white text-black rounded px-2 hover:opacity-80"
@@ -143,8 +152,9 @@ export default function EventForm() {
             }}>
               Upload
             </button>
-            {urls?.url && <Link href={urls.url} target="_blank">URL</Link>}
-            {urls?.thumbnailUrl && <Link href={urls.thumbnailUrl} target="_blank">THUMBNAIL</Link>}
+           {/* These are the url and thumbnail links that show when uploaded 
+           {urls?.url && <Link href={urls.url} target="_blank">URL</Link>}
+          {urls?.thumbnailUrl && <Link href={urls.thumbnailUrl} target="_blank">THUMBNAIL</Link>} */}
 
             <div className="flex gap-4">
               <Input
