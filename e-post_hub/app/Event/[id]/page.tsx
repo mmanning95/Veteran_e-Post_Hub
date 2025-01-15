@@ -12,6 +12,7 @@ type Event = {
     name: string;
     email: string;
   };
+  interested: string;
   status: string;
   startDate?: string;
   endDate?: string;
@@ -365,6 +366,66 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
       <Card className="w-3/4 mb-10">
         <CardHeader className="flex flex-col items-center justify-center">
           <h1 className="text-3xl font-semibold">{event.title}</h1>
+          <a href={event.flyer} target="_blank" rel="noopener noreferrer">
+          <img
+            src={event.flyer}
+            alt={`${event.title} Flyer`}
+            className="w-full h-full object-cover rounded-md"
+            style={{
+              maxHeight: "400px",
+            }}
+          />
+          </a>
+          {event.description && (
+                          <p className="text-gray-700 mb-4">{event.description}</p>
+                        )}
+                        <p className="text-gray-600">
+                          <strong>Created By:</strong> {event.createdBy.name} (
+                          {event.createdBy.email})
+                        </p>
+                        {event.startDate && (
+                          <p className="text-gray-600">
+                            <strong>Start Date:</strong>{" "}
+                            {new Date(event.startDate).toLocaleDateString()}
+                          </p>
+                        )}
+                        {event.endDate && (
+                          <p className="text-gray-600">
+                            <strong>End Date:</strong>{" "}
+                            {new Date(event.endDate).toLocaleDateString()}
+                          </p>
+                        )}
+                        {event.startTime && (
+                          <p className="text-gray-600">
+                            <strong>Start Time:</strong> {event.startTime}
+                          </p>
+                        )}
+                        {event.endTime && (
+                          <p className="text-gray-600">
+                            <strong>End Time:</strong> {event.endTime}
+                          </p>
+                        )}
+                        {event.website && (
+                          <p className="text-gray-600">
+                            <strong>Website:</strong>{" "}
+                            <a
+                              href={
+                                event.website.startsWith("http://") || event.website.startsWith("https://")
+                                  ? event.website
+                                  : `https://${event.website}`
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 underline"
+                            >
+                              {event.website}
+                            </a>
+                          </p>
+                        )}
+                        <p className="text-gray-600">
+                          <strong>Interested:</strong> {event.interested}
+                        </p>
+
         </CardHeader>
         <CardBody>
           {/* Event details logic (same as before) */}

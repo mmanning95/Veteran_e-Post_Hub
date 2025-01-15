@@ -15,6 +15,7 @@ type Event = {
     name: string;
     email: string;
   };
+  status: string;
   startDate?: string;
   endDate?: string;
   startTime?: string;
@@ -31,6 +32,8 @@ export default function Memberpage() {
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null); // Store the logged-in user's ID
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -154,9 +157,39 @@ export default function Memberpage() {
     setTimeout(() => setMessage(null), 3000);
   };
 
-  if (!isMember) {
-    return <div>Loading...</div>;
-  }
+  const handleDelete = async () => {
+    if (!selectedEventId) return;
+
+    try {
+      const response = await fetch("/api/Event/delete", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ eventId: selectedEventId }),
+      });
+
+      if (response.ok) {
+        setEvents((prevEvents) =>
+          prevEvents.filter((event) => event.id !== selectedEventId)
+        );
+        setFilteredEvents((prevEvents) =>
+          prevEvents.filter((event) => event.id !== selectedEventId)
+        );
+        setMessage("Event deleted successfully.");
+      } else {
+        const errorData = await response.json();
+        setMessage("Failed to delete the event: " + errorData.error);
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      setMessage("An error occurred while deleting the event.");
+    } finally {
+      setModalOpen(false);
+      setSelectedEventId(null);
+    }
+  };
 
   return (
     <div className="flex">
@@ -179,17 +212,7 @@ export default function Memberpage() {
           )}
         </div>
 
-        {/* Button Container */}
-        <div className="text-center mb-10 flex justify-center gap-4">
-          <Button
-            onClick={resetFilter}
-            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-          >
-            Show All Events
-          </Button>
-        </div>
-
-        {/* Display the list of approved events */}
+        {/* Events List */}
         <div className="mt-10">
           <h4 className="text-2xl mb-4 text-center">Approved Events:</h4>
           {filteredEvents.length === 0 ? (
@@ -197,97 +220,170 @@ export default function Memberpage() {
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredEvents.map((event) => (
-                <Card key={event.id} className="mb-4">
-                  <CardHeader>
-                    <h5 className="text-xl font-bold">{event.title}</h5>
-                  </CardHeader>
-                  <CardBody>
-                    {event.description && (
-                      <p className="text-gray-600">{event.description}</p>
-                    )}
-                    <p className="text-gray-600">
-                      Created By: {event.createdBy.name} (
-                      {event.createdBy.email})
-                    </p>
-                    {event.startDate && (
+                <Card
+                  key={event.id}
+                  className="mb-4"
+                  style={{
+                    minHeight: "400px",
+                  }}
+                >
+                  {event.flyer ? (
+                    <>
+                      <CardHeader className="p-4 flex justify-between items-center">
+                        <h5 className="text-xl font-bold">{event.title}</h5>
+                        <p className="text-gray-600">
+                          Interested: {event.interested}
+                        </p>
+                      </CardHeader>
+                      <CardBody className="flex flex-col justify-between p-6">
+                      <a href={event.flyer} target="_blank" rel="noopener noreferrer">
+                      <img
+                        src={event.flyer}
+                        alt={`${event.title} Flyer`}
+                        className="w-full h-full object-cover rounded-md"
+                        style={{
+                          maxHeight: "400px",
+                        }}
+                      />
+                      </a>
+                        <div className="flex gap-2 mt-4 justify-center">
+                          <Button
+                            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                            onClick={() => handleInterest(event.id)}
+                          >
+                            I'm Interested
+                          </Button>
+                          {userId === event.createdBy.id && (
+                            <Button
+                              className="delete-button bg-red-500 text-white"
+                              onClick={() => {
+                                setSelectedEventId(event.id);
+                                setModalOpen(true);
+                              }}
+                            >
+                              Delete Event
+                            </Button>
+                          )}
+                          <Link href={`/Event/${event.id}`} passHref>
+                            <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
+                              View Details
+                            </Button>
+                          </Link>
+                        </div>
+                      </CardBody>
+                    </>
+                  ) : (
+                    <CardBody className="flex flex-col justify-between p-6">
+                    <div>
+                      <h5 className="text-xl font-bold mb-4">{event.title}</h5>
+                      {event.description && (
+                        <p className="text-gray-700 mb-4">{event.description}</p>
+                      )}
                       <p className="text-gray-600">
-                        Start Date:{" "}
-                        {new Date(event.startDate).toLocaleDateString()}
+                        <strong>Created By:</strong> {event.createdBy.name} (
+                        {event.createdBy.email})
                       </p>
-                    )}
-                    {event.endDate && (
-                      <p className="text-gray-600">
-                        End Date: {new Date(event.endDate).toLocaleDateString()}
-                      </p>
-                    )}
-                    {event.startTime && (
-                      <p className="text-gray-600">
-                        Start Time: {event.startTime}
-                      </p>
-                    )}
-                    {event.endTime && (
-                      <p className="text-gray-600">End Time: {event.endTime}</p>
-                    )}
-                    {event.website && (
-                      <p className="text-gray-600">
-                        Website:{" "}
-                        <a
-                          href={event.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 underline"
-                        >
-                          {event.website}
-                        </a>
-                      </p>
-                    )}
-                    {event.flyer && (
-                      <p className="text-gray-600">
-                        Flyer:{" "}
-                        <a
-                          href={event.flyer}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 underline"
-                        >
-                          View Flyer
-                        </a>
-                      </p>
-                    )}
-                    <p className="text-gray-600">
-                      Interested: {event.interested}
-                    </p>
+                      {event.startDate && (
+                        <p className="text-gray-600">
+                          <strong>Start Date:</strong>{" "}
+                          {new Date(event.startDate).toLocaleDateString()}
+                        </p>
+                      )}
+                      {event.endDate && (
+                        <p className="text-gray-600">
+                          <strong>End Date:</strong>{" "}
+                          {new Date(event.endDate).toLocaleDateString()}
+                        </p>
+                      )}
+                      {event.startTime && (
+                        <p className="text-gray-600">
+                          <strong>Start Time:</strong> {event.startTime}
+                        </p>
+                      )}
+                      {event.endTime && (
+                        <p className="text-gray-600">
+                          <strong>End Time:</strong> {event.endTime}
+                        </p>
+                      )}
+                      {event.website && (
+                        <p className="text-gray-600">
+                          <strong>Website:</strong>{" "}
+                          <a
+                            href={
+                              event.website.startsWith("http://") || event.website.startsWith("https://")
+                                ? event.website
+                                : `https://${event.website}`
+                            }
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-500 underline"
+                          >
+                            {event.website}
+                          </a>
+                        </p>
+                      )}
 
-                    {/* "I'm Interested" Button */}
-                    <Button
-                      className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black mt-4"
-                      onClick={() => handleInterest(event.id)}
-                    >
-                      I'm Interested
-                    </Button>
-
-                    {/* "View Details" and "Edit Event" Buttons */}
-                    <div className="flex gap-x-4 mt-4">
-                      <Link href={`/Event/${event.id}`} passHref>
-                        <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black flex-grow">
-                          View Details
+                      <p className="text-gray-600">
+                        <strong>Interested:</strong> {event.interested}
+                      </p>
+                    </div>
+                      <div className="flex gap-2 mt-4 justify-center">
+                        <Button
+                          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                          onClick={() => handleInterest(event.id)}
+                        >
+                          I'm Interested
                         </Button>
-                      </Link>
-                      {userId === event.createdBy.id && (
-                        <Link href={`/Member/event/edit/${event.id}`} passHref>
-                          <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black flex-grow">
-                            Edit Event
+                        {userId === event.createdBy.id && (
+                          <Button
+                            className="delete-button bg-red-500 text-white"
+                            onClick={() => {
+                              setSelectedEventId(event.id);
+                              setModalOpen(true);
+                            }}
+                          >
+                            Delete Event
+                          </Button>
+                        )}
+                        <Link href={`/Event/${event.id}`} passHref>
+                          <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
+                            View Details
                           </Button>
                         </Link>
-                      )}
-                    </div>
-                  </CardBody>
+                      </div>
+                    </CardBody>
+                  )}
                 </Card>
               ))}
             </div>
           )}
         </div>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {modalOpen && (
+        <div className="modal fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
+          <div className="modal-content bg-white p-6 rounded-lg shadow-lg">
+            <p className="text-lg font-semibold mb-4 text-center">
+              Are you sure you want to delete this event?
+            </p>
+            <div className="flex justify-center gap-4 mt-4">
+              <Button
+                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black px-4 py-2 rounded-md"
+                onClick={handleDelete}
+              >
+                Yes, Delete
+              </Button>
+              <Button
+                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black px-4 py-2 rounded-md"
+                onClick={() => setModalOpen(false)}
+              >
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

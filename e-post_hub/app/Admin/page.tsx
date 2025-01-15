@@ -189,140 +189,168 @@ export default function Adminpage() {
 
   return (
     <div className="flex">
+      {/* Calendar Sidebar */}
       <div className="calendar-sidebar w-1/4 p-4">
-        <EventCalendar events={events} onDateClick={handleDateClick} />
+        <EventCalendar events={events} onDateClick={() => {}} />
       </div>
 
+      {/* Main Content */}
       <div className="content w-3/4 p-4">
         <div className="text-center mb-10">
-          <h3 className="text-3xl font-bold">
-            Welcome, {adminName || "Admin"}!
-          </h3>
+          <h1 className="text-4xl font-bold">
+            Welcome to the Veteran e-Post Hub
+          </h1>
           <p className="text-lg mt-4">
-            Manage the events, edit them, or take other administrative actions.
+            Find and participate in events specifically tailored for veterans
+            and their families.
           </p>
-          {message && (
-            <div className="text-center mt-4 p-2 bg-blue-100 text-blue-800 border border-blue-300 rounded">
-              {message}
-            </div>
-          )}
         </div>
 
-        <div className="text-center mb-10 flex justify-center gap-4">
-          <Button
-            as={Link}
-            href="/Admin/creatorcode"
-            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-          >
-            Creator Code
-          </Button>
-          <Button
-            as={Link}
-            href="/Admin/editevent"
-            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-          >
-            Edit Event
-          </Button>
-          <Button
-            onClick={resetFilter}
-            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-          >
-            Show All Events
-          </Button>
-          <Button
-            as={Link}
-            href="/Admin/external"
-            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-          >
-            Add Resource
-          </Button>
-        </div>
-
+        {/* Display the list of approved events */}
         <div className="mt-10">
           <h4 className="text-2xl mb-4 text-center">Events:</h4>
           {filteredEvents.length === 0 ? (
-            <p className="text-center">No events available.</p>
+            <p className="text-center">No approved events at the moment.</p>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {filteredEvents.map((event) => (
-                <Card key={event.id} className="mb-4">
-                  <CardHeader>
-                    <h5 className="text-xl font-bold">{event.title}</h5>
-                  </CardHeader>
-                  <CardBody>
-                    {event.description && (
-                      <p className="text-gray-600">{event.description}</p>
-                    )}
-                    <p className="text-gray-600">
-                      Created By: {event.createdBy.name} (
-                      {event.createdBy.email})
-                    </p>
-                    {event.startDate && (
-                      <p className="text-gray-600">
-                        Start Date:{" "}
-                        {new Date(event.startDate).toLocaleDateString()}
-                      </p>
-                    )}
-                    {event.endDate && (
-                      <p className="text-gray-600">
-                        End Date: {new Date(event.endDate).toLocaleDateString()}
-                      </p>
-                    )}
-                    <p className="text-gray-600">
-                      Interested: {event.interested}
-                    </p>
-                    <Button
-                      className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black mt-4"
-                      onClick={() => handleInterest(event.id)}
-                    >
-                      I'm Interested
-                    </Button>
-                    <div className="flex gap-2 mt-4">
-                      <Button
-                        className="delete-button bg-red-500 text-white"
-                        onClick={() => {
-                          setSelectedEventId(event.id);
-                          setModalOpen(true);
-                        }}
-                      >
-                        Delete Event
-                      </Button>
-                      <Link href={`/Event/${event.id}`} passHref>
-                        <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
-                          View Details
-                        </Button>
-                      </Link>
-                    </div>
-                  </CardBody>
-                </Card>
-              ))}
+
+{filteredEvents.map((event) => (
+  <Card
+    key={event.id}
+    className="mb-4"
+    style={{
+      minHeight: "400px", // Taller cards
+    }}
+  >
+    {event.flyer ? (
+      // Display title, image, and buttons if the flyer exists
+      <>
+        <CardHeader className="p-4 flex justify-between items-center">
+          <h5 className="text-xl font-bold">{event.title}</h5>
+          <p className="text-gray-600">Interested: {event.interested}</p>
+        </CardHeader>
+        <CardBody className="flex flex-col justify-between p-6">
+        <a href={event.flyer} target="_blank" rel="noopener noreferrer">
+          <img
+            src={event.flyer}
+            alt={`${event.title} Flyer`}
+            className="w-full h-full object-cover rounded-md"
+            style={{
+              maxHeight: "400px",
+            }}
+          />
+        </a>
+          <div className="flex gap-2 mt-4 justify-center">
+            <Button
+              className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+              onClick={() => handleInterest(event.id)}
+            >
+              I'm Interested
+            </Button>
+            <Button
+              className="delete-button bg-red-500 text-white"
+              onClick={() => {
+                setSelectedEventId(event.id);
+                setModalOpen(true);
+              }}
+            >
+              Delete Event
+            </Button>
+            <Link href={`/Event/${event.id}`} passHref>
+              <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
+                View Details
+              </Button>
+            </Link>
+          </div>
+        </CardBody>
+      </>
+    ) : (
+      // Display all event information if no flyer exists
+      <CardBody className="flex flex-col justify-between p-6">
+        <div>
+          <h5 className="text-xl font-bold mb-4">{event.title}</h5>
+          {event.description && (
+            <p className="text-gray-700 mb-4">{event.description}</p>
+          )}
+          <p className="text-gray-600">
+            <strong>Created By:</strong> {event.createdBy.name} (
+            {event.createdBy.email})
+          </p>
+          {event.startDate && (
+            <p className="text-gray-600">
+              <strong>Start Date:</strong>{" "}
+              {new Date(event.startDate).toLocaleDateString()}
+            </p>
+          )}
+          {event.endDate && (
+            <p className="text-gray-600">
+              <strong>End Date:</strong>{" "}
+              {new Date(event.endDate).toLocaleDateString()}
+            </p>
+          )}
+          {event.startTime && (
+            <p className="text-gray-600">
+              <strong>Start Time:</strong> {event.startTime}
+            </p>
+          )}
+          {event.endTime && (
+            <p className="text-gray-600">
+              <strong>End Time:</strong> {event.endTime}
+            </p>
+          )}
+          {event.website && (
+            <p className="text-gray-600">
+              <strong>Website:</strong>{" "}
+              <a
+                href={
+                  event.website.startsWith("http://") || event.website.startsWith("https://")
+                    ? event.website
+                    : `https://${event.website}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline"
+              >
+                {event.website}
+              </a>
+            </p>
+          )}
+
+          <p className="text-gray-600">
+            <strong>Interested:</strong> {event.interested}
+          </p>
+        </div>
+        <div className="flex gap-2 mt-4">
+          <Button
+            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+            onClick={() => handleInterest(event.id)}
+          >
+            I'm Interested
+          </Button>
+          <Button
+            className="delete-button bg-red-500 text-white"
+            onClick={() => {
+              setSelectedEventId(event.id);
+              setModalOpen(true);
+            }}
+          >
+            Delete Event
+          </Button>
+          <Link href={`/Event/${event.id}`} passHref>
+            <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
+              View Details
+            </Button>
+          </Link>
+        </div>
+      </CardBody>
+    )}
+  </Card>
+))}
+
+
             </div>
           )}
         </div>
-
-        {modalOpen && (
-          <div className="modal fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50">
-            <div className="modal-content bg-white p-6 rounded-lg shadow-lg">
-              <p className="text-lg font-semibold mb-4 text-center">
-                Are you sure you want to delete this event?
-              </p>
-              <div className="flex justify-center gap-4 mt-4">
-                <Button
-                  className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black px-4 py-2 rounded-md"
-                  onClick={handleDelete}
-                >
-                  Yes, Delete
-                </Button>
-                <Button
-                  className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black px-4 py-2 rounded-md"
-                  onClick={() => setModalOpen(false)}
-                >
-                  Cancel
-                </Button>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </div>
   );
