@@ -49,6 +49,14 @@ export default function EventForm() {
 
   const onSubmit = async (data: CreateEventSchema) => {
     try {
+
+      // If there is an image file upload it to get its URL
+      let flyerUrl: string | null = null;
+      if (file) {
+        const uploadResponse = await edgestore.myPublicImages.upload({ file });
+        flyerUrl = uploadResponse.url; // Store uploaded image URL
+      }
+
       // Format startTime and endTime to include AM/PM information
       const formattedStartTime = startTime
         ? `${startTime.hour % 12 || 12}:${startTime.minute
@@ -66,6 +74,7 @@ export default function EventForm() {
         ...data,
         startTime: formattedStartTime,
         endTime: formattedEndTime,
+        flyer: flyerUrl,
       };
 
       const response = await fetch("/api/Event/create", {
@@ -179,27 +188,13 @@ export default function EventForm() {
                   height={200}
                   value={file}
                   dropzoneOptions={{
-                    maxSize: 1024 * 1024 * 2, //2mb
+                    maxSize: 1024 * 1024 * 2, //2mb max size
                   }}
-                  onChange={(file) => {
-                    setFile(file);
+                  onChange={(newfile) => {
+                    setFile(newfile);
                   }}
                 />
-                <button
-                  className="bg-white text-black rounded px-2 mt-2 hover:opacity-80"
-                  onClick={async () => {
-                    if (file) {
-                      const res = await edgestore.myPublicImages.upload({ file });
-                      setUrls({
-                        url: res.url,
-                        thumbnailUrl: res.thumbnailUrl,
-                      });
-                    }
-                  }}
-                >
-                  Upload
-                </button>
-                {/* Uncomment to display URL and Thumbnail links */}
+                {/* Uncomment to show URL and Thumbnail links */}
                 {/* {urls?.url && <Link href={urls.url} target="_blank">URL</Link>}
                 {urls?.thumbnailUrl && (
                   <Link href={urls.thumbnailUrl} target="_blank">THUMBNAIL</Link>
