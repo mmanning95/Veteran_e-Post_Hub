@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button, Card } from "@nextui-org/react";
 import Link from "next/link";
 import EventCalendar from "./Components/Calendar/EventCalendar";
+import jwt from "jsonwebtoken"
 
 type Event = {
   id: string;
@@ -29,6 +30,40 @@ export default function HomePage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
+        const decodedToken = jwt.decode(token) as { role: string };
+
+        if (decodedToken) {
+          if (decodedToken.role === "ADMIN") {
+            router.push("/Admin");
+            return;
+          } else if (decodedToken.role === "MEMBER") {
+            router.push("/Member");
+            return;
+          } else {
+            router.push("/Unauthorized");
+            return;
+          }
+        } else {
+          router.push("/Unauthorized");
+          return;
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        router.push("/Unauthorized");
+        return;
+      }
+    } else {
+      router.push("/Unauthorized");
+      return;
+    }
+  }, [router]);
+
 
   useEffect(() => {
     // Fetch approved events

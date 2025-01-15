@@ -49,20 +49,20 @@ export default function Adminpage() {
         } else {
           setMessage("Unauthorized access.");
           setTimeout(() => {
-            window.location.href = "./";
+            window.location.href = "/Unauthorized";
           }, 3000);
         }
       } catch (error) {
         console.error("Invalid token", error);
         setMessage("Invalid token. Please log in again.");
         setTimeout(() => {
-          window.location.href = "./";
+          window.location.href = "/Unauthorized";
         }, 3000);
       }
     } else {
       setMessage("You need to log in to access the admin page.");
       setTimeout(() => {
-        window.location.href = "./";
+        window.location.href = "/Unauthorized";
       }, 3000);
     }
 
