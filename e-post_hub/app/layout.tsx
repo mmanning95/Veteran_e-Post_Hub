@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Providers from "./Components/Providers";
 import TopNav from "./Components/Navbar/TopNav";
+import { EdgeStoreProvider } from "@/lib/edgestore";
 
 export const metadata: Metadata = {
   title: "Veteran e-Post Hub",
@@ -18,12 +19,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
+        <EdgeStoreProvider>
         <Providers>
           <TopNav />
           <main className="container mx-auto ">
             {children}
           </main>
         </Providers>
+        </EdgeStoreProvider>
       </body>
     </html> 
   );

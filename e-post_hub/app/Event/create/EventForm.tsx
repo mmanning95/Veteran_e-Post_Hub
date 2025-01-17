@@ -17,6 +17,9 @@ import {
 } from "@nextui-org/react";
 import { Time } from "@internationalized/date";
 import React, { useState } from "react";
+import { useEdgeStore } from "@/lib/edgestore";
+import Link from "next/link";
+import { SingleImageDropzone } from "@/app/Components/Dropzone/single-image-dropzone";
 
 export default function EventForm() {
   const {
@@ -31,6 +34,12 @@ export default function EventForm() {
   // States to store the time values for start and end time
   const [startTime, setStartTime] = useState<Time | null>(null);
   const [endTime, setEndTime] = useState<Time | null>(null);
+  const [file, setFile] = useState<File>();
+  const [urls, setUrls] = useState<{
+    url: string;
+    thumbnailUrl: string | null;
+  }>();
+  const { edgestore } = useEdgeStore();
 
   // State for displaying success or error messages
   const [message, setMessage] = useState<{
@@ -40,6 +49,14 @@ export default function EventForm() {
 
   const onSubmit = async (data: CreateEventSchema) => {
     try {
+
+      // If there is an image file upload it to get its URL
+      let flyerUrl: string | null = null;
+      if (file) {
+        const uploadResponse = await edgestore.myPublicImages.upload({ file });
+        flyerUrl = uploadResponse.url; // Store uploaded image URL
+      }
+
       // Format startTime and endTime to include AM/PM information
       const formattedStartTime = startTime
         ? `${startTime.hour % 12 || 12}:${startTime.minute
@@ -57,6 +74,7 @@ export default function EventForm() {
         ...data,
         startTime: formattedStartTime,
         endTime: formattedEndTime,
+        flyer: flyerUrl,
       };
 
       const response = await fetch("/api/Event/create", {
@@ -91,7 +109,7 @@ export default function EventForm() {
   };
 
   return (
-    <Card className="w-2/5 mx-auto">
+    <Card className="w-2/5 mx-auto max-h-[80vh] overflow-y-auto">
       <CardHeader className="flex flex-col items-center justify-center">
         <h3 className="text-3xl font-semibold">Create New Event</h3>
       </CardHeader>
@@ -100,7 +118,7 @@ export default function EventForm() {
         {message && (
           <div
             className={`mb-4 p-4 rounded ${
-              message.type === "success" ? " text-green-600" : " text-red-600"
+              message.type === "success" ? "text-green-600" : "text-red-600"
             }`}
           >
             {message.text}
@@ -116,12 +134,7 @@ export default function EventForm() {
               {...register("title")}
               errorMessage={errors.title?.message}
             />
-            <Input
-              label="Event Flyer (URL)"
-              variant="bordered"
-              {...register("flyer")}
-              errorMessage={errors.flyer?.message}
-            />
+  
             <div className="flex gap-4">
               <Input
                 type="date"
@@ -138,6 +151,7 @@ export default function EventForm() {
                 errorMessage={errors.endDate?.message}
               />
             </div>
+  
             <div className="flex gap-4">
               <TimeInput
                 label="Event Start Time"
@@ -154,12 +168,40 @@ export default function EventForm() {
                 errorMessage={errors.endTime?.message}
               />
             </div>
-            <Textarea
-              label="Event Description"
-              variant="bordered"
-              {...register("description")}
-              errorMessage={errors.description?.message}
-            />
+  
+            <div className="flex flex-wrap gap-4">
+              {/* Description */}
+              <div className="flex-1">
+                <Textarea
+                  minRows={8}
+                  label="Event Description"
+                  variant="bordered"
+                  {...register("description")}
+                  errorMessage={errors.description?.message}
+                  style={{ height: "200px", resize: "none" }}
+              />
+              </div>
+              {/* Image Dropzone */}
+              <div>
+                <SingleImageDropzone
+                  width={200}
+                  height={200}
+                  value={file}
+                  dropzoneOptions={{
+                    maxSize: 1024 * 1024 * 2, //2mb max size
+                  }}
+                  onChange={(newfile) => {
+                    setFile(newfile);
+                  }}
+                />
+                {/* Uncomment to show URL and Thumbnail links */}
+                {/* {urls?.url && <Link href={urls.url} target="_blank">URL</Link>}
+                {urls?.thumbnailUrl && (
+                  <Link href={urls.thumbnailUrl} target="_blank">THUMBNAIL</Link>
+                )} */}
+              </div>
+            </div>
+  
             <Input
               label="Event Website"
               variant="bordered"
@@ -167,6 +209,7 @@ export default function EventForm() {
               errorMessage={errors.website?.message}
               placeholder="For the use of external webpages"
             />
+  
             <Button
               isDisabled={!isValid}
               fullWidth
@@ -185,4 +228,4 @@ export default function EventForm() {
       </CardBody>
     </Card>
   );
-}
+}  

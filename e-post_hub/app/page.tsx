@@ -2,9 +2,10 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { Button, Card } from "@nextui-org/react";
+import { Button, Card, CardBody, CardHeader } from "@nextui-org/react";
 import Link from "next/link";
 import EventCalendar from "./Components/Calendar/EventCalendar";
+import jwt from "jsonwebtoken"
 
 type Event = {
   id: string;
@@ -29,6 +30,32 @@ export default function HomePage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [message, setMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (token) {
+      try {
+        const decodedToken = jwt.decode(token) as { role: string };
+
+        if (decodedToken) {
+          if (decodedToken.role === "ADMIN") {
+            router.push("/Admin");
+            return;
+          } else if (decodedToken.role === "MEMBER") {
+            router.push("/Member");
+            return;
+          } 
+        } 
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        return;
+      }
+    } else {
+      return;
+    }
+  }, [router]);
+
 
   useEffect(() => {
     // Fetch approved events
@@ -126,7 +153,7 @@ export default function HomePage() {
     <div className="flex">
       {/* Calendar Sidebar */}
       <div className="calendar-sidebar w-1/4 p-4">
-        <EventCalendar events={events} onDateClick={handleDateClick} />
+        <EventCalendar events={events} onDateClick={() => {}} />
       </div>
 
       {/* Main Content */}
@@ -141,20 +168,6 @@ export default function HomePage() {
           </p>
         </div>
 
-        {/* Button Container */}
-        <div className="text-center mb-10 flex justify-center gap-4">
-          <Button
-            onClick={resetFilter}
-            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-          >
-            Show All Events
-          </Button>
-        </div>
-
-        {message && (
-          <div className="text-center mb-4 text-green-500">{message}</div>
-        )}
-
         {/* Display the list of approved events */}
         <div className="mt-10">
           <h4 className="text-2xl mb-4 text-center">Events:</h4>
@@ -163,76 +176,118 @@ export default function HomePage() {
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredEvents.map((event) => (
-                <Card key={event.id} className="mb-4">
-                  <div className="p-4">
-                    <h5 className="text-xl font-bold">{event.title}</h5>
-                    {event.description && (
-                      <p className="text-gray-600">{event.description}</p>
-                    )}
-                    <p className="text-gray-600">
-                      Created By: {event.createdBy.name} (
-                      {event.createdBy.email})
-                    </p>
-                    {event.startDate && (
-                      <p className="text-gray-600">
-                        Start Date:{" "}
-                        {new Date(event.startDate).toLocaleDateString()}
-                      </p>
-                    )}
-                    {event.endDate && (
-                      <p className="text-gray-600">
-                        End Date: {new Date(event.endDate).toLocaleDateString()}
-                      </p>
-                    )}
-                    {event.startTime && (
-                      <p className="text-gray-600">
-                        Start Time: {event.startTime}
-                      </p>
-                    )}
-                    {event.endTime && (
-                      <p className="text-gray-600">End Time: {event.endTime}</p>
-                    )}
-                    {event.website && (
-                      <p className="text-gray-600">
-                        Website:{" "}
-                        <a
-                          href={event.website}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 underline"
+                <Card
+                  key={event.id}
+                  className="mb-4"
+                  style={{
+                    minHeight: "400px", // Taller cards
+                  }}
+                >
+                  {event.flyer ? (
+                    // Display title, image, and buttons if the flyer exists
+                    <>
+                      <CardHeader className="p-4 flex justify-between items-center">
+                        <h5 className="text-xl font-bold">{event.title}</h5>
+                        <p className="text-gray-600">
+                          <strong>Interested:</strong> {event.interested}
+                        </p>
+                      </CardHeader>
+                      <CardBody className="flex flex-col justify-between p-6">
+                      <a href={event.flyer} target="_blank" rel="noopener noreferrer">
+                      <img
+                        src={event.flyer}
+                        alt={`${event.title} Flyer`}
+                        className="w-full h-full object-cover rounded-md"
+                        style={{
+                          maxHeight: "400px",
+                        }}
+                      />
+                      </a>
+                        <div className="flex gap-2 mt-4 justify-center">
+                          <Button
+                            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                            onClick={() => handleInterest(event.id)}
+                          >
+                            I'm Interested
+                          </Button>
+                          <Link href={`/Event/${event.id}`} passHref>
+                            <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
+                              View Details
+                            </Button>
+                          </Link>
+                        </div>
+                      </CardBody>
+                    </>
+                  ) : (
+                    // Display all event information if no flyer exists
+                    <CardBody className="flex flex-col justify-between p-6">
+                      <div>
+                        <h5 className="text-xl font-bold mb-4">{event.title}</h5>
+                        {event.description && (
+                          <p className="text-gray-700 mb-4">{event.description}</p>
+                        )}
+                        <p className="text-gray-600">
+                          <strong>Created By:</strong> {event.createdBy.name} (
+                          {event.createdBy.email})
+                        </p>
+                        {event.startDate && (
+                          <p className="text-gray-600">
+                            <strong>Start Date:</strong>{" "}
+                            {new Date(event.startDate).toLocaleDateString()}
+                          </p>
+                        )}
+                        {event.endDate && (
+                          <p className="text-gray-600">
+                            <strong>End Date:</strong>{" "}
+                            {new Date(event.endDate).toLocaleDateString()}
+                          </p>
+                        )}
+                        {event.startTime && (
+                          <p className="text-gray-600">
+                            <strong>Start Time:</strong> {event.startTime}
+                          </p>
+                        )}
+                        {event.endTime && (
+                          <p className="text-gray-600">
+                            <strong>End Time:</strong> {event.endTime}
+                          </p>
+                        )}
+                        {event.website && (
+                          <p className="text-gray-600">
+                            <strong>Website:</strong>{" "}
+                            <a
+                              href={
+                                event.website.startsWith("http://") || event.website.startsWith("https://")
+                                  ? event.website
+                                  : `https://${event.website}`
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 underline"
+                            >
+                              {event.website}
+                            </a>
+                          </p>
+                        )}
+                        <p className="text-gray-600">
+                          <strong>Interested:</strong> {event.interested}
+                        </p>
+                      </div>
+                      <div className="flex gap-2 mt-4 justify-center">
+                        <Button
+                          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                          onClick={() => handleInterest(event.id)}
                         >
-                          {event.website}
-                        </a>
-                      </p>
-                    )}
-                    {event.flyer && (
-                      <p className="text-gray-600">
-                        Flyer:{" "}
-                        <a
-                          href={event.flyer}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-500 underline"
-                        >
-                          View Flyer
-                        </a>
-                      </p>
-                    )}
-                    <p className="text-gray-600">
-                      Interested: {event.interested}
-                    </p>
-                    <Button
-                      className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black mt-4"
-                      onClick={() => handleInterest(event.id)}
-                    >
-                      I'm Interested
-                    </Button>
-                    <Link href={`/Event/${event.id}`} passHref>
-                      <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black mt-4">
-                        View Details
-                      </Button>
-                    </Link>
-                  </div>
+                          I'm Interested
+                        </Button>
+                        <Link href={`/Event/${event.id}`} passHref>
+                          <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
+                            View Details
+                          </Button>
+                        </Link>
+                      </div>
+                    </CardBody>
+                  )}
                 </Card>
               ))}
             </div>
