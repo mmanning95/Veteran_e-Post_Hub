@@ -6,6 +6,7 @@ import { Button, Card, CardBody, CardHeader } from "@nextui-org/react";
 import Link from "next/link";
 import EventCalendar from "./Components/Calendar/EventCalendar";
 import jwt from "jsonwebtoken"
+import BottomBar from "./Components/BottomBar/BottomBar";
 
 type Event = {
   id: string;
@@ -153,7 +154,16 @@ export default function HomePage() {
     <div className="flex">
       {/* Calendar Sidebar */}
       <div className="calendar-sidebar w-1/4 p-4">
-        <EventCalendar events={events} onDateClick={() => {}} />
+        <EventCalendar events={events} onDateClick={handleDateClick} />
+
+        {filteredEvents.length !== events.length && (
+          <Button
+            onClick={resetFilter}
+            className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+          >
+            Reset Filter
+          </Button>
+        )}
       </div>
 
       {/* Main Content */}
@@ -172,15 +182,15 @@ export default function HomePage() {
         <div className="mt-10">
           <h4 className="text-2xl mb-4 text-center">Events:</h4>
           {filteredEvents.length === 0 ? (
-            <p className="text-center">No approved events at the moment.</p>
+            <p className="text-center">No events found for the selected date</p>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredEvents.map((event) => (
                 <Card
                   key={event.id}
-                  className="mb-4"
+                  className="mb-4 w-full md:w - [320-px] lg:w-[380-px]"
                   style={{
-                    minHeight: "400px", // Taller cards
+                    minHeight: "400px", 
                   }}
                 >
                   {event.flyer ? (
@@ -294,6 +304,7 @@ export default function HomePage() {
           )}
         </div>
       </div>
+      <BottomBar />
     </div>
   );
 }

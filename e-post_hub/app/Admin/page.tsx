@@ -191,7 +191,15 @@ export default function Adminpage() {
     <div className="flex">
       {/* Calendar Sidebar */}
       <div className="calendar-sidebar w-1/4 p-4">
-        <EventCalendar events={events} onDateClick={() => {}} />
+        <EventCalendar events={events} onDateClick={handleDateClick} />
+        {filteredEvents.length !== events.length && (
+          <Button
+            onClick={resetFilter}
+            className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+          >
+            Reset Filter
+          </Button>
+        )}
       </div>
 
       {/* Main Content */}
@@ -210,14 +218,14 @@ export default function Adminpage() {
         <div className="mt-10">
           <h4 className="text-2xl mb-4 text-center">Events:</h4>
           {filteredEvents.length === 0 ? (
-            <p className="text-center">No approved events at the moment.</p>
+            <p className="text-center">No events found for the selected date</p>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 
 {filteredEvents.map((event) => (
   <Card
     key={event.id}
-    className="mb-4"
+    className="mb-4 w-full "
     style={{
       minHeight: "400px", // Taller cards
     }}
@@ -240,28 +248,41 @@ export default function Adminpage() {
             }}
           />
         </a>
-          <div className="flex gap-2 mt-4 justify-center">
+        <div className="flex flex-col gap-2 mt-4 justify-center items-center">
+          {/* Top Row: Interested and Delete Event */}
+          <div className="flex gap-2">
             <Button
               className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
               onClick={() => handleInterest(event.id)}
             >
               I'm Interested
             </Button>
-            <Button
-              className="delete-button bg-red-500 text-white"
-              onClick={() => {
-                setSelectedEventId(event.id);
-                setModalOpen(true);
-              }}
-            >
-              Delete Event
-            </Button>
-            <Link href={`/Event/${event.id}`} passHref>
-              <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
-                View Details
+            {isAdmin && (
+              <Button
+                className="delete-button bg-red-500 text-white"
+                onClick={() => {
+                  setSelectedEventId(event.id);
+                  setModalOpen(true);
+                }}
+              >
+                Delete Event
               </Button>
-            </Link>
+            )}
           </div>
+
+          {/* Bottom Row: View Details */}
+          <Button
+            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+            style={{
+              width: isAdmin ? "220px" : "110px",
+            }}
+            as={Link}
+            href={`/Event/${event.id}`}
+            passHref
+          >
+            View Details
+          </Button>
+        </div>
         </CardBody>
       </>
     ) : (
@@ -320,34 +341,45 @@ export default function Adminpage() {
             <strong>Interested:</strong> {event.interested}
           </p>
         </div>
-        <div className="flex gap-2 mt-4">
+        <div className="flex flex-col gap-2 mt-4 justify-center items-center">
+        {/* Top Row: Interested and Delete Event */}
+        <div className="flex gap-2">
           <Button
             className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
             onClick={() => handleInterest(event.id)}
           >
             I'm Interested
           </Button>
-          <Button
-            className="delete-button bg-red-500 text-white"
-            onClick={() => {
-              setSelectedEventId(event.id);
-              setModalOpen(true);
-            }}
-          >
-            Delete Event
-          </Button>
-          <Link href={`/Event/${event.id}`} passHref>
-            <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
-              View Details
+          {isAdmin && (
+            <Button
+              className="delete-button bg-red-500 text-white"
+              onClick={() => {
+                setSelectedEventId(event.id);
+                setModalOpen(true);
+              }}
+            >
+              Delete Event
             </Button>
-          </Link>
+          )}
         </div>
+
+        {/* Bottom Row: View Details */}
+        <Button
+          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+          style={{
+            width: isAdmin ? "220px" : "110px", 
+          }}
+          as={Link}
+          href={`/Event/${event.id}`}
+          passHref
+        >
+          View Details
+        </Button>
+      </div>
       </CardBody>
     )}
   </Card>
 ))}
-
-
             </div>
           )}
         </div>
