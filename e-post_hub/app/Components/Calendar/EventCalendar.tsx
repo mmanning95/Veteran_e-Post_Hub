@@ -1,4 +1,3 @@
-// ../Components/Calendar/EventCalendar.tsx
 import React, { useState } from 'react';
 import Calendar, { CalendarProps } from 'react-calendar';
 import 'react-calendar/dist/Calendar.css';
@@ -7,8 +6,8 @@ type EventCalendarProps = {
   events: {
     id: string;
     title: string;
-    startDate?: string; // Allow startDate to be string or undefined
-    endDate?: string; // Allow endDate to be string or undefined
+    startDate?: string;
+    endDate?: string;
   }[];
   onDateClick: (date: string) => void;
 };
@@ -19,8 +18,7 @@ export default function EventCalendar({ events, onDateClick }: EventCalendarProp
   const handleDateChange: CalendarProps['onChange'] = (value) => {
     if (value instanceof Date) {
       setSelectedDate(value);
-      // Call the callback function to handle click
-      const formattedDate = value.toISOString().split('T')[0]; // Format date to YYYY-MM-DD
+      const formattedDate = value.toISOString().split('T')[0];
       onDateClick(formattedDate);
     }
   };
@@ -30,32 +28,40 @@ export default function EventCalendar({ events, onDateClick }: EventCalendarProp
   };
 
   return (
-    <div className="calendar-container">
+    <div className="calendar-container  rounded-lg shadow-md p-4">
       <Calendar
         onChange={handleDateChange}
         value={selectedDate}
+        locale="en-US" 
         tileContent={({ date }) => {
-          // Format the date for comparison
           const dateStr = date.toISOString().split('T')[0];
-
-          // Check if the date falls within the range of any event
           const eventsOnDate = events.filter((event) => {
             if (!event.startDate) return false;
-
             const startDate = new Date(event.startDate);
             const endDate = event.endDate ? new Date(event.endDate) : startDate;
-
-            // Check if the current calendar date is between the start and end date (inclusive)
             return isDateInRange(date, startDate, endDate);
           });
-
-          // If there's an event that falls on this date, return a dot
           if (eventsOnDate.length > 0) {
-            return <div className="event-dot" style={{ color: 'red' }}>•</div>;
+            return <div className="event-dot text-orange-500 font-bold">•</div>;
           }
-
           return null;
         }}
+        tileClassName={({ date }) => {
+          const dateStr = date.toISOString().split('T')[0];
+          const isEventDate = events.some((event) => {
+            if (!event.startDate) return false;
+            const startDate = new Date(event.startDate).toISOString().split('T')[0];
+            const endDate = event.endDate
+              ? new Date(event.endDate).toISOString().split('T')[0]
+              : startDate;
+            return dateStr >= startDate && dateStr <= endDate;
+          });
+
+          return isEventDate
+            ? 'bg-orange-500 text-black font-semibold hover:bg-orange-600 transition'
+            : 'hover:bg-white hover:text-black transition';
+        }}
+        className="border-none"
       />
     </div>
   );

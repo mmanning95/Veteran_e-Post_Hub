@@ -196,6 +196,14 @@ export default function Memberpage() {
       {/* Calendar Sidebar */}
       <div className="calendar-sidebar w-1/4 p-4">
         <EventCalendar events={events} onDateClick={handleDateClick} />
+        {filteredEvents.length !== events.length && (
+          <Button
+            onClick={resetFilter}
+            className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+          >
+            Reset Filter
+          </Button>
+        )}
       </div>
 
       {/* Main Content */}
@@ -216,13 +224,13 @@ export default function Memberpage() {
         <div className="mt-10">
           <h4 className="text-2xl mb-4 text-center">Approved Events:</h4>
           {filteredEvents.length === 0 ? (
-            <p className="text-center">No approved events at the moment.</p>
+            <p className="text-center">No events found for the selected date</p>
           ) : (
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
               {filteredEvents.map((event) => (
                 <Card
                   key={event.id}
-                  className="mb-4"
+                  className="mb-4 w-full md:w - [320-px] lg:w-[380-px]"
                   style={{
                     minHeight: "400px",
                   }}
@@ -246,14 +254,18 @@ export default function Memberpage() {
                         }}
                       />
                       </a>
-                        <div className="flex gap-2 mt-4 justify-center">
-                          <Button
-                            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-                            onClick={() => handleInterest(event.id)}
-                          >
-                            I'm Interested
-                          </Button>
-                          {userId === event.createdBy.id && (
+                      <div className="flex flex-col gap-2 mt-4 justify-center items-center">
+                      {userId === event.createdBy.id ? (
+                        // If the Delete Event button is present
+                        <>
+                          {/* Top Row: I'm Interested and Delete Event */}
+                          <div className="flex gap-2">
+                            <Button
+                              className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                              onClick={() => handleInterest(event.id)}
+                            >
+                              I'm Interested
+                            </Button>
                             <Button
                               className="delete-button bg-red-500 text-white"
                               onClick={() => {
@@ -263,13 +275,39 @@ export default function Memberpage() {
                             >
                               Delete Event
                             </Button>
-                          )}
-                          <Link href={`/Event/${event.id}`} passHref>
-                            <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
-                              View Details
-                            </Button>
-                          </Link>
+                          </div>
+                          {/* Bottom Row: View Details */}
+                          <Button
+                            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+                            style={{ width: "220px" }} // Matches the combined width of top-row buttons
+                            as={Link}
+                            href={`/Event/${event.id}`}
+                            passHref
+                          >
+                            View Details
+                          </Button>
+                        </>
+                      ) : (
+                        // If Delete Event button not present
+                        <div className="flex gap-2">
+                          {/* Side by Side: I'm Interested and View Details */}
+                          <Button
+                            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                            onClick={() => handleInterest(event.id)}
+                          >
+                            I'm Interested
+                          </Button>
+                          <Button
+                            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                            as={Link}
+                            href={`/Event/${event.id}`}
+                            passHref
+                          >
+                            View Details
+                          </Button>
                         </div>
+                      )}
+                    </div>
                       </CardBody>
                     </>
                   ) : (
@@ -327,31 +365,60 @@ export default function Memberpage() {
                         <strong>Interested:</strong> {event.interested}
                       </p>
                     </div>
-                      <div className="flex gap-2 mt-4 justify-center">
-                        <Button
-                          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-                          onClick={() => handleInterest(event.id)}
-                        >
-                          I'm Interested
-                        </Button>
-                        {userId === event.createdBy.id && (
+                    <div className="flex flex-col gap-2 mt-4 justify-center items-center">
+                      {userId === event.createdBy.id ? (
+                        // If the Delete Event button is present
+                        <>
+                          {/* Top Row: I'm Interested and Delete Event */}
+                          <div className="flex gap-2">
+                            <Button
+                              className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                              onClick={() => handleInterest(event.id)}
+                            >
+                              I'm Interested
+                            </Button>
+                            <Button
+                              className="delete-button bg-red-500 text-white"
+                              onClick={() => {
+                                setSelectedEventId(event.id);
+                                setModalOpen(true);
+                              }}
+                            >
+                              Delete Event
+                            </Button>
+                          </div>
+                          {/* Bottom Row: View Details */}
                           <Button
-                            className="delete-button bg-red-500 text-white"
-                            onClick={() => {
-                              setSelectedEventId(event.id);
-                              setModalOpen(true);
-                            }}
+                            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+                            style={{ width: "220px" }} // Matches the combined width of top-row buttons
+                            as={Link}
+                            href={`/Event/${event.id}`}
+                            passHref
                           >
-                            Delete Event
-                          </Button>
-                        )}
-                        <Link href={`/Event/${event.id}`} passHref>
-                          <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
                             View Details
                           </Button>
-                        </Link>
-                      </div>
-                    </CardBody>
+                        </>
+                      ) : (
+                        // If Delete Event button not present
+                        <div className="flex gap-2">
+                          {/* Side by Side: I'm Interested and View Details */}
+                          <Button
+                            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                            onClick={() => handleInterest(event.id)}
+                          >
+                            I'm Interested
+                          </Button>
+                          <Button
+                            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                            as={Link}
+                            href={`/Event/${event.id}`}
+                            passHref
+                          >
+                            View Details
+                          </Button>
+                        </div>
+                      )}
+                    </div>                    </CardBody>
                   )}
                 </Card>
               ))}

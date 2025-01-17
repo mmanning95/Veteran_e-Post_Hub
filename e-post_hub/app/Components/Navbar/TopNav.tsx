@@ -15,6 +15,7 @@ import { GoChevronDown } from "react-icons/go";
 import { GrHelpBook } from "react-icons/gr";
 import { LuUserPlus2 } from "react-icons/lu";
 import { MdOutlineCreate } from "react-icons/md";
+import { MdOutlineAdminPanelSettings } from "react-icons/md";
 
 export default function TopNav() {
     const [isAdmin, setIsAdmin] = useState(false);
@@ -57,7 +58,7 @@ export default function TopNav() {
     };
 
     return (
-        <Navbar maxWidth='xl' className='bg-gradient-to-r from-[#f7960d] to-[#f95d09]'
+        <Navbar maxWidth='xl' className='w-full bg-gradient-to-r from-[#f7960d] to-[#f95d09]'
             classNames={{
                 item: [
                     'text-xl',
@@ -73,128 +74,113 @@ export default function TopNav() {
                     <span className='text-gray-800'>Veteran e-Post Hub</span>
                 </div>
             </NavbarBrand>
-            <NavbarContent className="hidden sm:flex gap-4" justify="center">
-              
-            </NavbarContent>
-            <NavbarContent className="flex items-center justify-end gap-2 ml-auto" >
-                {!isUserLoggedIn ? (
-                    <Button as={Link} href='/Login' variant='bordered'
-                        className='w-[100px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300'>
-                        <span className="text-center text-black text-small font-normal font-['Inter'] leading-none">
-                            Login
-                        </span>
-                        <CiLogin className="text-black" size={20} />
-                    </Button>
-                ) : (
-                    <>
-                        <Button onClick={handleLogout} variant='bordered'
-                            className='w-[100px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300'>
-                            <span className="text-center text-black text-small font-normal font-['Inter'] leading-none">
-                                Logout
-                            </span>
-                            <CiLogout className="text-black" size={20} />
-                        </Button>
+            <NavbarContent justify="end" className="flex items-center gap-4 ml-auto">
+  {!isUserLoggedIn ? (
+    <Button
+      as={Link}
+      href="/Login"
+      variant="bordered"
+      className="w-[100px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300"
+    >
+      <span className="text-center text-black text-small font-normal font-['Inter'] leading-none">
+        Login
+      </span>
+      <CiLogin className="text-black" size={20} />
+    </Button>
+  ) : (
+    <>
+      <Button
+        onClick={handleLogout}
+        variant="bordered"
+        className="w-[100px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300"
+      >
+        <span className="text-center text-black text-small font-normal font-['Inter'] leading-none">
+          Logout
+        </span>
+        <CiLogout className="text-black" size={20} />
+      </Button>
 
-                        <Button as={Link} href='/Event/create' variant='bordered'
-                            className='w-[140px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300'>
-                            <span className="text-center text-black text-small font-normal font-['Inter'] leading-none">
-                                Create Event
-                            </span>
-                            <MdOutlineCreate className="text-black" size={20} />
-                        </Button>
-                    </>
-                )}
+      <Button
+        as={Link}
+        href="/Event/create"
+        variant="bordered"
+        className="w-[140px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300"
+      >
+        <span className="text-center text-black text-small font-normal font-['Inter'] leading-none">
+          Create Event
+        </span>
+        <MdOutlineCreate className="text-black" size={20} />
+      </Button>
+    </>
+  )}
 
-                <Dropdown backdrop='blur'>
-                    <NavbarItem>
-                        <DropdownTrigger>
-                            <Button
-                                className="w-[160px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black "
-                                radius="sm"
-                                variant="light"
-                            >
-                                Help & Support
-                                <GoChevronDown />
-                                <GrHelpBook />
-                            </Button>
-                        </DropdownTrigger>
-                    </NavbarItem>
-                    <DropdownMenu
-                        aria-label="e-Post Help"
-                        className="w-[200px]"
-                    >
-                        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
-                            <Link href="/Support/external" className='text-black no-underline'>
-                                External Resources
-                            </Link>
-                        </DropdownItem>
-                        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
-                            <Link href="/Support/community" className='text-black no-underline'>
-                                Community Questions
-                            </Link>
-                        </DropdownItem>
-                        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
-                            <Link href="/Support/issue" className='text-black no-underline'>
-                                Report a Problem
-                            </Link>
-                        </DropdownItem>
-                    </DropdownMenu>
-                </Dropdown>
+  {!isUserLoggedIn && (
+    <Dropdown backdrop="blur">
+      <NavbarItem>
+        <DropdownTrigger>
+          <Button
+            className="w-[120px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-gray-100"
+            radius="sm"
+            variant="light"
+          >
+            Register
+            <GoChevronDown />
+            <LuUserPlus2 size={20} />
+          </Button>
+        </DropdownTrigger>
+      </NavbarItem>
+      <DropdownMenu
+        aria-label="e-Post registration"
+        className="w-[200px]"
+        itemClasses={{
+          base: "gap-4",
+        }}
+      >
+        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
+          <Link href="/Registeradmin" className="text-black no-underline">
+            Admin Registration
+          </Link>
+        </DropdownItem>
+        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
+          <Link href="/Registermember" className="text-black no-underline">
+            Member Registration
+          </Link>
+        </DropdownItem>
+      </DropdownMenu>
+    </Dropdown>
+  )}
 
-                {!isUserLoggedIn && (
-                <Dropdown backdrop='blur'>
-                    <NavbarItem>
-                        <DropdownTrigger>
-                            <Button
-                                className="w-[120px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-gray-100"
-                                radius="sm"
-                                variant="light"
-                            >
-                                Register
-                                <GoChevronDown />
-                                <LuUserPlus2 size={20} />
-                            </Button>
-                        </DropdownTrigger>
-                    </NavbarItem>
-                    <DropdownMenu
-                        aria-label="e-Post registration"
-                        className="w-[200px]"
-                        itemClasses={{
-                            base: "gap-4",
-                        }}
-                    >
-                        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
-                            <Link href="/Registeradmin" className='text-black no-underline'>
-                                Admin Registration
-                            </Link>
-                        </DropdownItem>
-                        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
-                            <Link href="/Registermember" className='text-black no-underline'>
-                                Member Registration
-                            </Link>
-                        </DropdownItem>
-                    </DropdownMenu>
-                </Dropdown>
-                )}
+  {isAdmin && (
+    <div className="relative flex items-center gap-2">
+        <Link href={"/Admin/creatorcode"}>
+        <Button
+            className="w-full h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300"
+            variant="bordered"
+        >
+            <span className="text-center text-black text-small font-normal font-['Inter'] leading-none">
+            Admin Code
+            </span>
+            <MdOutlineAdminPanelSettings className="text-black" size={20} />
+        </Button>
+        </Link>
 
-                <div className='relative'>
-                    {isAdmin && (
-                        <Link href={'/Admin/event/management'}>
-                            <AiOutlineNotification size={30} color='#000000' />
-                            {pendingCount > 0 && (
-                                <div className='absolute -top-3 -right-3 w-5 h-5 flex items-center justify-center bg-purple-400 text-white rounded-full text-xs'>
-                                    {pendingCount}
-                                </div>
-                            )}
-                        </Link>
-                    )}
-                </div>
-                {isUserLoggedIn && (
-                    <Link href={isAdmin ? '/Admin/profile' : '/Member/profile'}>
-                        <CiUser size={30} color='#000000' />
-                    </Link>
-                )}
-            </NavbarContent>
+      <Link href={"/Admin/event/management"} className="relative">
+        <AiOutlineNotification size={30} color="#000000" />
+        {pendingCount > 0 && (
+          <div className="absolute -top-3 -right-3 w-5 h-5 flex items-center justify-center bg-purple-400 text-white rounded-full text-xs">
+            {pendingCount}
+          </div>
+        )}
+      </Link>
+    </div>
+  )}
+
+  {isUserLoggedIn && (
+    <Link href={isAdmin ? "/Admin/profile" : "/Member/profile"}>
+      <CiUser size={30} color="#000000" />
+    </Link>
+  )}
+</NavbarContent>
         </Navbar>
     );
 }
