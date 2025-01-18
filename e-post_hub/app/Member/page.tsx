@@ -5,6 +5,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import jwt from "jsonwebtoken";
 import EventCalendar from "../Components/Calendar/EventCalendar";
+import BottomBar from "../Components/BottomBar/BottomBar";
 
 type Event = {
   id: string;
@@ -192,7 +193,8 @@ export default function Memberpage() {
   };
 
   return (
-    <div className="flex">
+    <div className="min-h-screen flex flex-col">
+      <div className="flex flex-1">
       {/* Calendar Sidebar */}
       <div className="calendar-sidebar w-1/4 p-4">
         <EventCalendar events={events} onDateClick={handleDateClick} />
@@ -451,6 +453,8 @@ export default function Memberpage() {
           </div>
         </div>
       )}
+      </div>
+      <BottomBar />
     </div>
   );
 }

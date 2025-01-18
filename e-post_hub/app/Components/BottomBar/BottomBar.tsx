@@ -4,17 +4,17 @@ import WVAnobg from "../../Images/WVAnobg.png";
 export default function BottomBar() {
   return (
     <div
-      className="fixed bottom-0 left-0 w-full bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-black flex items-center justify-center h-[110px] shadow-md z-50"
+      className="relative w-full bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-black flex items-center justify-center h-[110px] shadow-md"
     >
-      <div className="flex flex-row items-center justify-between w-full max-w-6xl px-0">
+      <div className="flex flex-row items-center justify-between w-full px-6">
         {/* Contact Us Section with Image */}
         <div className="flex items-center">
           <Image
             src={WVAnobg}
             alt="WVA Logo"
-            width={200} 
-            height={200} 
-            className="mr-8" 
+            width={150}
+            height={150}
+            className="mr-8"
           />
 
           <div>

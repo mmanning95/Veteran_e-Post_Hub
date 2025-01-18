@@ -151,7 +151,8 @@ export default function HomePage() {
   };
 
   return (
-    <div className="flex">
+    <div className="min-h-screen flex flex-col">
+      <div className="flex-grow flex">
       {/* Calendar Sidebar */}
       <div className="calendar-sidebar w-1/4 p-4">
         <EventCalendar events={events} onDateClick={handleDateClick} />
@@ -303,6 +304,7 @@ export default function HomePage() {
             </div>
           )}
         </div>
+      </div>
       </div>
       <BottomBar />
     </div>

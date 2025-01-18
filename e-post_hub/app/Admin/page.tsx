@@ -4,6 +4,7 @@ import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import jwt from "jsonwebtoken";
 import EventCalendar from "../Components/Calendar/EventCalendar";
+import BottomBar from "../Components/BottomBar/BottomBar";
 
 type Event = {
   id: string;
@@ -188,8 +189,9 @@ export default function Adminpage() {
   }
 
   return (
-    <div className="flex">
+    <div className="min-h-screen flex flex-col">
       {/* Calendar Sidebar */}
+      <div className="flex flex-1">
       <div className="calendar-sidebar w-1/4 p-4">
         <EventCalendar events={events} onDateClick={handleDateClick} />
         {filteredEvents.length !== events.length && (
@@ -384,6 +386,8 @@ export default function Adminpage() {
           )}
         </div>
       </div>
+      </div>
+        <BottomBar />
     </div>
   );
 }
