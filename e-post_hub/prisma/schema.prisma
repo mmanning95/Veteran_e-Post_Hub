@@ -82,6 +82,7 @@ model Event {
 
   website      String?
   title        String
+  type         String?
   startDate    DateTime?
   endDate      DateTime? //optional since one day events do not need it
   description  String?

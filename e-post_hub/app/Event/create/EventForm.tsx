@@ -14,6 +14,10 @@ import {
   Input,
   Textarea,
   TimeInput,
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
 } from "@nextui-org/react";
 import { Time } from "@internationalized/date";
 import React, { useState } from "react";
@@ -35,6 +39,7 @@ export default function EventForm() {
   const [startTime, setStartTime] = useState<Time | null>(null);
   const [endTime, setEndTime] = useState<Time | null>(null);
   const [file, setFile] = useState<File>();
+  const [eventType, setEventType] = useState<string | null>(null);
   const [urls, setUrls] = useState<{
     url: string;
     thumbnailUrl: string | null;
@@ -49,7 +54,6 @@ export default function EventForm() {
 
   const onSubmit = async (data: CreateEventSchema) => {
     try {
-
       // If there is an image file upload it to get its URL
       let flyerUrl: string | null = null;
       if (file) {
@@ -75,6 +79,7 @@ export default function EventForm() {
         startTime: formattedStartTime,
         endTime: formattedEndTime,
         flyer: flyerUrl,
+        type: eventType, // Add selected event type
       };
 
       const response = await fetch("/api/Event/create", {
@@ -134,7 +139,7 @@ export default function EventForm() {
               {...register("title")}
               errorMessage={errors.title?.message}
             />
-  
+
             <div className="flex gap-4">
               <Input
                 type="date"
@@ -151,7 +156,7 @@ export default function EventForm() {
                 errorMessage={errors.endDate?.message}
               />
             </div>
-  
+
             <div className="flex gap-4">
               <TimeInput
                 label="Event Start Time"
@@ -168,7 +173,7 @@ export default function EventForm() {
                 errorMessage={errors.endTime?.message}
               />
             </div>
-  
+
             <div className="flex flex-wrap gap-4">
               {/* Description */}
               <div className="flex-1">
@@ -179,7 +184,7 @@ export default function EventForm() {
                   {...register("description")}
                   errorMessage={errors.description?.message}
                   style={{ height: "200px", resize: "none" }}
-              />
+                />
               </div>
               {/* Image Dropzone */}
               <div>
@@ -201,7 +206,33 @@ export default function EventForm() {
                 )} */}
               </div>
             </div>
-  
+
+            {/* Event Type Dropdown */}
+            <Dropdown>
+              <DropdownTrigger>
+                <Button
+                  variant="bordered"
+                  className="w-full border-2 border-gray-300 border-opacity-65 rounded-lg bg-white px-4 py-2 shadow-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  style={{
+                    justifyContent: "flex-start", // Force left alignment
+                    textAlign: "left", // Ensure text aligns left
+                  }}
+                >
+                  {eventType || "Select Event Type"}
+                </Button>
+              </DropdownTrigger>
+              <DropdownMenu
+                aria-label="Event Type Selection"
+                onAction={(key) => setEventType(key as string)}
+                className="w-full border border-gray-300 border-opacity-75 rounded-lg shadow-sm"
+              >
+                <DropdownItem key="Workshop">Workshop</DropdownItem>
+                <DropdownItem key="Seminar">Seminar</DropdownItem>
+                <DropdownItem key="Meeting">Meeting</DropdownItem>
+                <DropdownItem key="Fundraiser">Fundraiser</DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+
             <Input
               label="Event Website"
               variant="bordered"
@@ -209,7 +240,7 @@ export default function EventForm() {
               errorMessage={errors.website?.message}
               placeholder="For the use of external webpages"
             />
-  
+
             <Button
               isDisabled={!isValid}
               fullWidth
@@ -228,4 +259,4 @@ export default function EventForm() {
       </CardBody>
     </Card>
   );
-}  
+}

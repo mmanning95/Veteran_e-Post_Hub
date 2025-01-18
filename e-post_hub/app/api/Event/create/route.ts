@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Unauthorized: Insufficient privileges' }, { status: 403 });
     }
 
-    const { website, title, startDate, endDate, description, startTime, endTime, flyer } = await req.json();
+    const { website, title, startDate, endDate, description, startTime, endTime, flyer, type } = await req.json();
 
     // Validate title or flyer requirement
     if (!title && !flyer) {
@@ -58,6 +58,7 @@ export async function POST(req: NextRequest) {
         startTime,
         endTime,
         flyer,
+        type,
         status: eventStatus, // Automatically set status based on role
       },
     });
