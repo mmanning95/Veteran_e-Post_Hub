@@ -23,6 +23,7 @@ type Event = {
   endTime?: string;
   website?: string;
   flyer?: string;
+  type?: string;
   interested: number;
 };
 
