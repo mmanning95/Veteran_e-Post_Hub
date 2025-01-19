@@ -7,6 +7,12 @@ import Link from "next/link";
 import EventCalendar from "./Components/Calendar/EventCalendar";
 import jwt from "jsonwebtoken";
 import BottomBar from "./Components/BottomBar/BottomBar";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/react";
 
 type Event = {
   id: string;
@@ -32,6 +38,24 @@ export default function HomePage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [message, setMessage] = useState<string | null>(null);
+
+  {
+    /*for event filtering by type */
+  }
+  const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
+
+  const handleTypeFilter = (keys: Set<string>) => {
+    setSelectedTypes(keys);
+    const selectedArray = Array.from(keys);
+
+    if (selectedArray.length === 0) {
+      setFilteredEvents(events); // Show all events if no filter is selected
+    } else {
+      setFilteredEvents(
+        events.filter((event) => selectedArray.includes(event.type || ""))
+      );
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -184,10 +208,27 @@ export default function HomePage() {
             <h4 className="text-2xl mb-4 text-center">Events:</h4>
 
             {/* Navbar for filter buttons */}
-            <div className="max-w-[1140px] mx-auto bg-white p-4 rounded-lg shadow border border-gray-200 mb-6">
-              <Button className="border border-gray-300 bg-white text-black">
-                Filter by Type
-              </Button>
+            <div className="max-w-[1140px] mx-auto bg-white p-4 rounded-lg shadow border border-gray-200 mb-6 flex justify-between">
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button className="border border-gray-300 bg-white text-black">
+                    Event Type
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label="Filter by Event Type"
+                  selectionMode="multiple"
+                  selectedKeys={selectedTypes}
+                  onSelectionChange={(keys) =>
+                    handleTypeFilter(keys as Set<string>)
+                  }
+                >
+                  <DropdownItem key="Workshop">Workshop</DropdownItem>
+                  <DropdownItem key="Seminar">Seminar</DropdownItem>
+                  <DropdownItem key="Meeting">Meeting</DropdownItem>
+                  <DropdownItem key="Fundraiser">Fundraiser</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </div>
 
             {filteredEvents.length === 0 ? (
