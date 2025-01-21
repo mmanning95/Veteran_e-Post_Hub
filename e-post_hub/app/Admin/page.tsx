@@ -5,6 +5,12 @@ import React, { useEffect, useState } from "react";
 import jwt from "jsonwebtoken";
 import EventCalendar from "../Components/Calendar/EventCalendar";
 import BottomBar from "../Components/BottomBar/BottomBar";
+import {
+  Dropdown,
+  DropdownTrigger,
+  DropdownMenu,
+  DropdownItem,
+} from "@nextui-org/react";
 
 type Event = {
   id: string;
@@ -21,6 +27,7 @@ type Event = {
   endTime?: string;
   website?: string;
   flyer?: string;
+  type?: string;
   interested: number;
 };
 
@@ -32,6 +39,24 @@ export default function Adminpage() {
   const [message, setMessage] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
+
+  {
+    /*for event filtering by type */
+  }
+  const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
+
+  const handleTypeFilter = (keys: Set<string>) => {
+    setSelectedTypes(keys);
+    const selectedArray = Array.from(keys);
+
+    if (selectedArray.length === 0) {
+      setFilteredEvents(events); // Show all events if no filter is selected
+    } else {
+      setFilteredEvents(
+        events.filter((event) => selectedArray.includes(event.type || ""))
+      );
+    }
+  };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -192,202 +217,239 @@ export default function Adminpage() {
     <div className="min-h-screen flex flex-col">
       {/* Calendar Sidebar */}
       <div className="flex flex-1">
-      <div className="calendar-sidebar w-1/4 p-4">
-        <EventCalendar events={events} onDateClick={handleDateClick} />
-        {filteredEvents.length !== events.length && (
-          <Button
-            onClick={resetFilter}
-            className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
-          >
-            Reset Filter
-          </Button>
-        )}
-      </div>
-
-      {/* Main Content */}
-      <div className="content w-3/4 p-4">
-        <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold">
-            Welcome to the Veteran e-Post Hub
-          </h1>
-          <p className="text-lg mt-4">
-            Find and participate in events specifically tailored for veterans
-            and their families.
-          </p>
+        <div className="calendar-sidebar w-1/4 p-4">
+          <EventCalendar events={events} onDateClick={handleDateClick} />
+          {filteredEvents.length !== events.length && (
+            <Button
+              onClick={resetFilter}
+              className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+            >
+              Reset Filter
+            </Button>
+          )}
         </div>
 
-        {/* Display the list of approved events */}
-        <div className="mt-10">
-          <h4 className="text-2xl mb-4 text-center">Events:</h4>
-          {filteredEvents.length === 0 ? (
-            <p className="text-center">No events found for the selected date</p>
-          ) : (
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-
-{filteredEvents.map((event) => (
-  <Card
-    key={event.id}
-    className="mb-4 w-full "
-    style={{
-      minHeight: "400px", // Taller cards
-    }}
-  >
-    {event.flyer ? (
-      // Display title, image, and buttons if the flyer exists
-      <>
-        <CardHeader className="p-4 flex justify-between items-center">
-          <h5 className="text-xl font-bold">{event.title}</h5>
-          <p className="text-gray-600">Interested: {event.interested}</p>
-        </CardHeader>
-        <CardBody className="flex flex-col justify-between p-6">
-        <a href={event.flyer} target="_blank" rel="noopener noreferrer">
-          <img
-            src={event.flyer}
-            alt={`${event.title} Flyer`}
-            className="w-full h-full object-cover rounded-md"
-            style={{
-              maxHeight: "400px",
-            }}
-          />
-        </a>
-        <div className="flex flex-col gap-2 mt-4 justify-center items-center">
-          {/* Top Row: Interested and Delete Event */}
-          <div className="flex gap-2">
-            <Button
-              className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-              onClick={() => handleInterest(event.id)}
-            >
-              I'm Interested
-            </Button>
-            {isAdmin && (
-              <Button
-                className="delete-button bg-red-500 text-white"
-                onClick={() => {
-                  setSelectedEventId(event.id);
-                  setModalOpen(true);
-                }}
-              >
-                Delete Event
-              </Button>
-            )}
+        {/* Main Content */}
+        <div className="content w-3/4 p-4">
+          <div className="text-center mb-10">
+            <h1 className="text-4xl font-bold">
+              Welcome to the Veteran e-Post Hub
+            </h1>
+            <p className="text-lg mt-4">
+              Find and participate in events specifically tailored for veterans
+              and their families.
+            </p>
           </div>
 
-          {/* Bottom Row: View Details */}
-          <Button
-            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
-            style={{
-              width: isAdmin ? "220px" : "110px",
-            }}
-            as={Link}
-            href={`/Event/${event.id}`}
-            passHref
-          >
-            View Details
-          </Button>
-        </div>
-        </CardBody>
-      </>
-    ) : (
-      // Display all event information if no flyer exists
-      <CardBody className="flex flex-col justify-between p-6">
-        <div>
-          <h5 className="text-xl font-bold mb-4">{event.title}</h5>
-          {event.description && (
-            <p className="text-gray-700 mb-4">{event.description}</p>
-          )}
-          <p className="text-gray-600">
-            <strong>Created By:</strong> {event.createdBy.name} (
-            {event.createdBy.email})
-          </p>
-          {event.startDate && (
-            <p className="text-gray-600">
-              <strong>Start Date:</strong>{" "}
-              {new Date(event.startDate).toLocaleDateString()}
-            </p>
-          )}
-          {event.endDate && (
-            <p className="text-gray-600">
-              <strong>End Date:</strong>{" "}
-              {new Date(event.endDate).toLocaleDateString()}
-            </p>
-          )}
-          {event.startTime && (
-            <p className="text-gray-600">
-              <strong>Start Time:</strong> {event.startTime}
-            </p>
-          )}
-          {event.endTime && (
-            <p className="text-gray-600">
-              <strong>End Time:</strong> {event.endTime}
-            </p>
-          )}
-          {event.website && (
-            <p className="text-gray-600">
-              <strong>Website:</strong>{" "}
-              <a
-                href={
-                  event.website.startsWith("http://") || event.website.startsWith("https://")
-                    ? event.website
-                    : `https://${event.website}`
-                }
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline"
-              >
-                {event.website}
-              </a>
-            </p>
-          )}
+          {/* Display the list of approved events */}
+          <div className="mt-10">
+            <h4 className="text-2xl mb-4 text-center">Events:</h4>
 
-          <p className="text-gray-600">
-            <strong>Interested:</strong> {event.interested}
-          </p>
-        </div>
-        <div className="flex flex-col gap-2 mt-4 justify-center items-center">
-        {/* Top Row: Interested and Delete Event */}
-        <div className="flex gap-2">
-          <Button
-            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-            onClick={() => handleInterest(event.id)}
-          >
-            I'm Interested
-          </Button>
-          {isAdmin && (
-            <Button
-              className="delete-button bg-red-500 text-white"
-              onClick={() => {
-                setSelectedEventId(event.id);
-                setModalOpen(true);
-              }}
-            >
-              Delete Event
-            </Button>
-          )}
-        </div>
-
-        {/* Bottom Row: View Details */}
-        <Button
-          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
-          style={{
-            width: isAdmin ? "220px" : "110px", 
-          }}
-          as={Link}
-          href={`/Event/${event.id}`}
-          passHref
-        >
-          View Details
-        </Button>
-      </div>
-      </CardBody>
-    )}
-  </Card>
-))}
+            {/* Navbar for filter buttons */}
+            <div className="max-w-[1140px] mx-auto bg-white p-4 rounded-lg shadow border border-gray-200 mb-6 flex justify-between">
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button className="border border-gray-300 bg-white text-black">
+                    Event Type
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label="Filter by Event Type"
+                  selectionMode="multiple"
+                  selectedKeys={selectedTypes}
+                  onSelectionChange={(keys) =>
+                    handleTypeFilter(keys as Set<string>)
+                  }
+                >
+                  <DropdownItem key="Workshop">Workshop</DropdownItem>
+                  <DropdownItem key="Seminar">Seminar</DropdownItem>
+                  <DropdownItem key="Meeting">Meeting</DropdownItem>
+                  <DropdownItem key="Fundraiser">Fundraiser</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
             </div>
-          )}
+
+            {filteredEvents.length === 0 ? (
+              <p className="text-center">
+                No events found for the selected date
+              </p>
+            ) : (
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {filteredEvents.map((event) => (
+                  <Card
+                    key={event.id}
+                    className="mb-4 w-full "
+                    style={{
+                      minHeight: "400px", // Taller cards
+                    }}
+                  >
+                    {event.flyer ? (
+                      // Display title, image, and buttons if the flyer exists
+                      <>
+                        <CardHeader className="p-4 flex justify-between items-center">
+                          <h5 className="text-xl font-bold">{event.title}</h5>
+                          <p className="text-gray-600">
+                            Interested: {event.interested}
+                          </p>
+                        </CardHeader>
+                        <CardBody className="flex flex-col justify-between p-6">
+                          <a
+                            href={event.flyer}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <img
+                              src={event.flyer}
+                              alt={`${event.title} Flyer`}
+                              className="w-full h-full object-cover rounded-md"
+                              style={{
+                                maxHeight: "400px",
+                              }}
+                            />
+                          </a>
+                          <div className="flex flex-col gap-2 mt-4 justify-center items-center">
+                            {/* Top Row: Interested and Delete Event */}
+                            <div className="flex gap-2">
+                              <Button
+                                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                                onClick={() => handleInterest(event.id)}
+                              >
+                                I'm Interested
+                              </Button>
+                              {isAdmin && (
+                                <Button
+                                  className="delete-button bg-red-500 text-white"
+                                  onClick={() => {
+                                    setSelectedEventId(event.id);
+                                    setModalOpen(true);
+                                  }}
+                                >
+                                  Delete Event
+                                </Button>
+                              )}
+                            </div>
+
+                            {/* Bottom Row: View Details */}
+                            <Button
+                              className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+                              style={{
+                                width: isAdmin ? "220px" : "110px",
+                              }}
+                              as={Link}
+                              href={`/Event/${event.id}`}
+                              passHref
+                            >
+                              View Details
+                            </Button>
+                          </div>
+                        </CardBody>
+                      </>
+                    ) : (
+                      // Display all event information if no flyer exists
+                      <CardBody className="flex flex-col justify-between p-6">
+                        <div>
+                          <h5 className="text-xl font-bold mb-4">
+                            {event.title}
+                          </h5>
+                          {event.description && (
+                            <p className="text-gray-700 mb-4">
+                              {event.description}
+                            </p>
+                          )}
+                          <p className="text-gray-600">
+                            <strong>Created By:</strong> {event.createdBy.name}{" "}
+                            ({event.createdBy.email})
+                          </p>
+                          {event.startDate && (
+                            <p className="text-gray-600">
+                              <strong>Start Date:</strong>{" "}
+                              {new Date(event.startDate).toLocaleDateString()}
+                            </p>
+                          )}
+                          {event.endDate && (
+                            <p className="text-gray-600">
+                              <strong>End Date:</strong>{" "}
+                              {new Date(event.endDate).toLocaleDateString()}
+                            </p>
+                          )}
+                          {event.startTime && (
+                            <p className="text-gray-600">
+                              <strong>Start Time:</strong> {event.startTime}
+                            </p>
+                          )}
+                          {event.endTime && (
+                            <p className="text-gray-600">
+                              <strong>End Time:</strong> {event.endTime}
+                            </p>
+                          )}
+                          {event.website && (
+                            <p className="text-gray-600">
+                              <strong>Website:</strong>{" "}
+                              <a
+                                href={
+                                  event.website.startsWith("http://") ||
+                                  event.website.startsWith("https://")
+                                    ? event.website
+                                    : `https://${event.website}`
+                                }
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-500 underline"
+                              >
+                                {event.website}
+                              </a>
+                            </p>
+                          )}
+
+                          <p className="text-gray-600">
+                            <strong>Interested:</strong> {event.interested}
+                          </p>
+                        </div>
+                        <div className="flex flex-col gap-2 mt-4 justify-center items-center">
+                          {/* Top Row: Interested and Delete Event */}
+                          <div className="flex gap-2">
+                            <Button
+                              className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                              onClick={() => handleInterest(event.id)}
+                            >
+                              I'm Interested
+                            </Button>
+                            {isAdmin && (
+                              <Button
+                                className="delete-button bg-red-500 text-white"
+                                onClick={() => {
+                                  setSelectedEventId(event.id);
+                                  setModalOpen(true);
+                                }}
+                              >
+                                Delete Event
+                              </Button>
+                            )}
+                          </div>
+
+                          {/* Bottom Row: View Details */}
+                          <Button
+                            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+                            style={{
+                              width: isAdmin ? "220px" : "110px",
+                            }}
+                            as={Link}
+                            href={`/Event/${event.id}`}
+                            passHref
+                          >
+                            View Details
+                          </Button>
+                        </div>
+                      </CardBody>
+                    )}
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       </div>
-      </div>
-        <BottomBar />
+      <BottomBar />
     </div>
   );
 }
