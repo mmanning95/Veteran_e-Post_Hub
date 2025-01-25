@@ -22,7 +22,7 @@ export default function RootLayout({
         <EdgeStoreProvider>
         <Providers>
           <TopNav />
-          <main className="container mx-auto ">
+          <main className="w-full mx-auto ">
             {children}
           </main>
         </Providers>
