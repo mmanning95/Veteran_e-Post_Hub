@@ -89,6 +89,9 @@ model Event {
   startTime    String?
   endTime      String?
   flyer        String?  // Flyer file (URL or storage path)
+  address      String? // Address used for proximity filtering
+  longitude    Float? // longitude used for proximity filtering
+  latitude     Float? // latitude used for proxmity filtering
   status       String   @default("PENDING") // Status of event: APPROVED, DENIED, PENDING
   interested   Int     @default(0) // New field for storing interest count
   comments     Comment[]
