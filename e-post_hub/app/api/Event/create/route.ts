@@ -36,7 +36,38 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Unauthorized: Insufficient privileges' }, { status: 403 });
     }
 
-    const { website, title, startDate, endDate, description, startTime, endTime, flyer, type } = await req.json();
+    const { website, title, startDate, endDate, description, startTime, endTime, flyer, type, address, latitude, longitude } = await req.json();
+
+    // Fetch latitude and longitude from Google Maps API if an address is provided
+// Fetch latitude and longitude from Google Maps API if an address is provided
+let resolvedLatitude = latitude;
+let resolvedLongitude = longitude;
+
+if (address && (!latitude || !longitude)) {
+  try {
+    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+
+    // ✅ 1️⃣ Check if API key is missing
+    if (!apiKey) {
+      console.warn("Warning: GOOGLE_MAPS_API_KEY is missing. Proceeding without geolocation.");
+    } else {
+      const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(address)}&key=${apiKey}`;
+      const response = await fetch(geoUrl);
+      const geoData = await response.json();
+
+      if (geoData.status === "OK" && geoData.results.length > 0) {
+        resolvedLatitude = geoData.results[0].geometry.location.lat;
+        resolvedLongitude = geoData.results[0].geometry.location.lng;
+      } else {
+        console.warn("Warning: Geolocation lookup failed. Proceeding without coordinates.");
+      }
+    }
+  } catch (error) {
+    // ✅ 2️⃣ Log error but continue
+    console.error("Error fetching geolocation:", error);
+    console.warn("Proceeding without coordinates due to geolocation failure.");
+  }
+}
 
     // Validate title or flyer requirement
     if (!title && !flyer) {
@@ -59,6 +90,9 @@ export async function POST(req: NextRequest) {
         endTime,
         flyer,
         type,
+        address,
+        latitude: resolvedLatitude,
+        longitude: resolvedLongitude,
         status: eventStatus, // Automatically set status based on role
       },
     });
