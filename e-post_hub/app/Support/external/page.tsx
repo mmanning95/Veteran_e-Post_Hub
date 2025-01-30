@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { Checkbox } from "@nextui-org/react";
+import { Button, Checkbox } from "@nextui-org/react";
+import Link from "next/link";
 
 type Link = {
   id: string;
@@ -168,6 +169,11 @@ export default function ResourcesPage() {
             ))
           )}
         </div>
+          <Link href={`/Admin/external`} passHref>
+            <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
+              add resource
+            </Button>
+            </Link>
       </div>
     </div>
   );

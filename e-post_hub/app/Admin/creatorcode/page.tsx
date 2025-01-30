@@ -129,6 +129,9 @@ const NewCreatorCode = () => {
               </Button>
             </div>
           </form>
+          <div className="text-neutral-500">
+            Note: This code is used for creating new admin accounts and can be changed at anytime. 
+          </div>
         </CardBody>
       </Card>
     </div>
