@@ -42,11 +42,10 @@ export default function Memberpage() {
   const [userId, setUserId] = useState<string | null>(null); // Store the logged-in user's ID
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
-
-  {
-    /*for event filtering by type */
-  }
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
+  const [selectedProximity, setSelectedProximity] = useState<number | null>(
+    null
+  );
 
   const handleTypeFilter = (keys: Set<string>) => {
     setSelectedTypes(keys);
@@ -252,7 +251,7 @@ export default function Memberpage() {
             <h4 className="text-2xl mb-4 text-center">Approved Events:</h4>
 
             {/* Navbar for filter buttons */}
-            <div className="max-w-[1140px] mx-auto bg-white p-4 rounded-lg shadow border border-gray-200 mb-6 flex justify-between">
+            <div className="max-w-[1140px] mx-auto bg-white p-4 rounded-lg shadow border border-gray-200 mb-6 flex gap-4">
               <Dropdown>
                 <DropdownTrigger>
                   <Button className="border border-gray-300 bg-white text-black">
@@ -271,6 +270,30 @@ export default function Memberpage() {
                   <DropdownItem key="Seminar">Seminar</DropdownItem>
                   <DropdownItem key="Meeting">Meeting</DropdownItem>
                   <DropdownItem key="Fundraiser">Fundraiser</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+              {/* Proximity Filter */}
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button className="border border-gray-300 bg-white text-black">
+                    Distance
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label="Filter by Distance"
+                  selectionMode="single"
+                  selectedKeys={
+                    selectedProximity ? [String(selectedProximity)] : []
+                  }
+                  onSelectionChange={(keys) => {
+                    const selectedValue = Array.from(keys)[0] as string;
+                    setSelectedProximity(Number(selectedValue));
+                  }}
+                >
+                  <DropdownItem key="5">Within 5 miles</DropdownItem>
+                  <DropdownItem key="10">Within 10 miles</DropdownItem>
+                  <DropdownItem key="20">Within 20 miles</DropdownItem>
+                  <DropdownItem key="50">Within 50 miles</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             </div>
