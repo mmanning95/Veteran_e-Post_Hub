@@ -80,6 +80,7 @@ export default function EventForm() {
         endTime: formattedEndTime,
         flyer: flyerUrl,
         type: eventType, // Add selected event type
+        address: data.address,
       };
 
       const response = await fetch("/api/Event/create", {
@@ -232,6 +233,14 @@ export default function EventForm() {
                 <DropdownItem key="Fundraiser">Fundraiser</DropdownItem>
               </DropdownMenu>
             </Dropdown>
+
+            <Input
+              label="Event Address"
+              variant="bordered"
+              {...register("address")}
+              errorMessage={errors.address?.message}
+              placeholder="Enter the event location (e.g., 123 Main St, City, State)"
+            />
 
             <Input
               label="Event Website"

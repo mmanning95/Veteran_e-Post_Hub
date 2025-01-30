@@ -11,6 +11,7 @@ export const createEventSchema = z
     endTime: z.string(),
     description: z.string(),
     flyer: z.string(), //flyer is a URL or file path, may change later
+    address: z.string(),
   })
   .refine((data) => data.description || data.flyer, {
     message: "Either description or flyer must be provided.",
