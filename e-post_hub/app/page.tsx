@@ -7,6 +7,7 @@ import Link from "next/link";
 import EventCalendar from "./Components/Calendar/EventCalendar";
 import jwt from "jsonwebtoken";
 import BottomBar from "./Components/BottomBar/BottomBar";
+import MilitaryBranches from './Images/Military-Branches.jpg';
 import {
   Dropdown,
   DropdownTrigger,
@@ -176,6 +177,11 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+            <div
+        className="w-full h-[650px] bg-cover bg-center"
+        style={{ backgroundImage: `url(${MilitaryBranches.src})` }}
+      >
+      </div>
       <div className="flex-grow flex">
         {/* Calendar Sidebar */}
         <div className="calendar-sidebar w-1/4 p-4">

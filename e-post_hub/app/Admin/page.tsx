@@ -5,6 +5,7 @@ import React, { useEffect, useState } from "react";
 import jwt from "jsonwebtoken";
 import EventCalendar from "../Components/Calendar/EventCalendar";
 import BottomBar from "../Components/BottomBar/BottomBar";
+import MilitaryBranches from '../Images/Military-Branches.jpg';
 import {
   Dropdown,
   DropdownTrigger,
@@ -215,6 +216,11 @@ export default function Adminpage() {
 
   return (
     <div className="min-h-screen flex flex-col">
+      <div
+        className="w-full h-[650px] bg-cover bg-center"
+        style={{ backgroundImage: `url(${MilitaryBranches.src})` }}
+      >
+      </div>
       {/* Calendar Sidebar */}
       <div className="flex flex-1">
         <div className="calendar-sidebar w-1/4 p-4">
