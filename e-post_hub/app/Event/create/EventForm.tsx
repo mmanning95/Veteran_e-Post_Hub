@@ -18,6 +18,8 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  Autocomplete,
+  AutocompleteItem,
 } from "@nextui-org/react";
 import { Time } from "@internationalized/date";
 import React, { useState } from "react";
@@ -25,10 +27,13 @@ import { useEdgeStore } from "@/lib/edgestore";
 import Link from "next/link";
 import { SingleImageDropzone } from "@/app/Components/Dropzone/single-image-dropzone";
 
+const predefinedEventType = ["Workshop", "Seminar", "Meeting", "Fundraiser"];
+
 export default function EventForm() {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isValid },
   } = useForm<CreateEventSchema>({
     //resolver: zodResolver(createEventSchema),
@@ -39,12 +44,26 @@ export default function EventForm() {
   const [startTime, setStartTime] = useState<Time | null>(null);
   const [endTime, setEndTime] = useState<Time | null>(null);
   const [file, setFile] = useState<File>();
-  const [eventType, setEventType] = useState<string | null>(null);
+  const [eventType, setEventType] = useState(predefinedEventType);
+  const [selectedType, setSelectedType] = useState("");
   const [urls, setUrls] = useState<{
     url: string;
     thumbnailUrl: string | null;
   }>();
   const { edgestore } = useEdgeStore();
+  
+  const handleTypeChange = (type: string) => {
+    if (!type.trim()) return; // Prevent empty inputs
+    setSelectedType(type);
+    setValue("type", type, { shouldValidate: true });
+  
+    if (!eventType.includes(type.trim())) {
+      setEventType([...eventType, type.trim()]); // Trim to avoid whitespace issues
+    }
+  };
+  
+
+
 
   // State for displaying success or error messages
   const [message, setMessage] = useState<{
@@ -79,7 +98,7 @@ export default function EventForm() {
         startTime: formattedStartTime,
         endTime: formattedEndTime,
         flyer: flyerUrl,
-        type: eventType, // Add selected event type
+        type: selectedType, // Add selected event type
       };
 
       const response = await fetch("/api/Event/create", {
@@ -208,30 +227,34 @@ export default function EventForm() {
             </div>
 
             {/* Event Type Dropdown */}
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  variant="bordered"
-                  className="w-full border-2 border-gray-300 border-opacity-65 rounded-lg bg-white px-4 py-2 shadow-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  style={{
-                    justifyContent: "flex-start", // Force left alignment
-                    textAlign: "left", // Ensure text aligns left
-                  }}
-                >
-                  {eventType || "Select Event Type"}
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Event Type Selection"
-                onAction={(key) => setEventType(key as string)}
-                className="w-full border border-gray-300 border-opacity-75 rounded-lg shadow-sm"
-              >
-                <DropdownItem key="Workshop">Workshop</DropdownItem>
-                <DropdownItem key="Seminar">Seminar</DropdownItem>
-                <DropdownItem key="Meeting">Meeting</DropdownItem>
-                <DropdownItem key="Fundraiser">Fundraiser</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+            <Autocomplete
+              items={eventType.map((type) => ({ label: type, value: type }))} // Convert to objects
+              inputValue={selectedType}
+              onInputChange={(value) => {
+                if (value.trim()) {
+                  setSelectedType(value); // Update input field
+                }
+              }}
+              
+              onSelectionChange={(key) => {
+                if (key && !eventType.includes(key.toString())) {
+                  setEventType([...eventType, key.toString()]); // Add new type
+                }
+                setSelectedType(key?.toString() || ""); // Update selected type
+                setValue("type", key?.toString() || "", { shouldValidate: true });
+              }}
+              
+              className="w-full"
+              placeholder="Select or enter an event type"
+              variant="bordered"
+            >
+              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
+
+
+
+
+      {errors.type && <p className="text-red-500">{errors.type.message}</p>}
 
             <Input
               label="Event Website"
