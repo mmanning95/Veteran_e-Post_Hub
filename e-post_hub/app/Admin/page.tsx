@@ -346,14 +346,18 @@ export default function Adminpage() {
                               </Button>
                               {isAdmin && (
                                 <Button
-                                  className="delete-button bg-red-500 text-white"
-                                  onClick={() => {
-                                    setSelectedEventId(event.id);
-                                    setModalOpen(true);
-                                  }}
-                                >
-                                  Delete Event
-                                </Button>
+                                className="delete-button bg-red-500 text-white"
+                                onClick={() => {
+                                  setSelectedEventId((prev) => {
+                                    const newId = event.id;
+                                    return newId;
+                                  });
+                                  setModalOpen(true);
+                                }}
+                              >
+                                Delete Event
+                              </Button>
+                              
                               )}
                             </div>
 
@@ -477,6 +481,31 @@ export default function Adminpage() {
           </div>
         </div>
       </div>
+      {modalOpen && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+      <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
+      <p>Are you sure you want to delete this event? This action cannot be undone.</p>
+      <div className="mt-4 flex justify-end gap-4">
+        <Button 
+          className="bg-gray-500 text-white"
+          onClick={() => setModalOpen(false)}
+        >
+          Cancel
+        </Button>
+        <Button 
+          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+          onClick={() => {
+            handleDelete();
+          }}
+        >
+          Confirm Delete
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
+
       <BottomBar />
     </div>
   );
