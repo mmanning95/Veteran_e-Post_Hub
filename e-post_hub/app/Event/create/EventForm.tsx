@@ -29,18 +29,29 @@ import { SingleImageDropzone } from "@/app/Components/Dropzone/single-image-drop
 
 const predefinedEventType = ["Workshop", "Seminar", "Meeting", "Fundraiser"];
 
+interface CreateEventForm {
+  title: string;
+  startDate: string;
+  endDate: string;
+  startTime?: string;
+  endTime?: string;
+  description?: string;
+  type: string;
+  website?: string;
+}
+
 export default function EventForm() {
   const {
     register,
     handleSubmit,
+    watch,
     setValue,
     formState: { errors, isValid },
-  } = useForm<CreateEventSchema>({
-    //resolver: zodResolver(createEventSchema),
-    mode: "onTouched",
+  } = useForm<CreateEventForm>({
+    mode: "onChange",
   });
 
-  // States to store the time values for start and end time
+  // States
   const [startTime, setStartTime] = useState<Time | null>(null);
   const [endTime, setEndTime] = useState<Time | null>(null);
   const [file, setFile] = useState<File>();
@@ -51,6 +62,25 @@ export default function EventForm() {
     thumbnailUrl: string | null;
   }>();
   const { edgestore } = useEdgeStore();
+  const [message, setMessage] = useState<{
+    type: "success" | "error";
+    text: string;
+  } | null>(null);
+
+    // Watch form values
+    const watchTitle = watch("title");
+    const watchStartDate = watch("startDate");
+    const watchEndDate = watch("endDate");
+    const watchDescription = watch("description");
+    const watchType = watch("type");
+
+  // Check form validity: Title, Start/End Date, Type, and EITHER Description OR Flyer
+  const isFormValid =
+  watchTitle &&
+  watchStartDate &&
+  watchEndDate &&
+  watchType &&
+  (watchDescription || file);
   
   const handleTypeChange = (type: string) => {
     if (!type.trim()) return; // Prevent empty inputs
@@ -63,15 +93,7 @@ export default function EventForm() {
   };
   
 
-
-
-  // State for displaying success or error messages
-  const [message, setMessage] = useState<{
-    type: "success" | "error";
-    text: string;
-  } | null>(null);
-
-  const onSubmit = async (data: CreateEventSchema) => {
+  const onSubmit = async (data: CreateEventForm) => {
     try {
       // If there is an image file upload it to get its URL
       let flyerUrl: string | null = null;
@@ -148,6 +170,7 @@ export default function EventForm() {
             {message.text}
           </div>
         )}
+
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <Input
@@ -155,7 +178,7 @@ export default function EventForm() {
               isClearable
               label="Event Title"
               variant="bordered"
-              {...register("title")}
+              {...register("title", { required: "Title is required" })}
               errorMessage={errors.title?.message}
             />
 
@@ -164,14 +187,14 @@ export default function EventForm() {
                 type="date"
                 label="Start Date"
                 variant="bordered"
-                {...register("startDate")}
+                {...register("startDate", { required: "Start date is required" })}
                 errorMessage={errors.startDate?.message}
               />
               <Input
                 type="date"
                 label="End Date"
                 variant="bordered"
-                {...register("endDate")}
+                {...register("endDate", { required: "End date is required" })}
                 errorMessage={errors.endDate?.message}
               />
             </div>
@@ -247,14 +270,11 @@ export default function EventForm() {
               className="w-full"
               placeholder="Select or enter an event type"
               variant="bordered"
+              {...register("type", { required: "Type is required" })}
             >
               {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
             </Autocomplete>
-
-
-
-
-      {errors.type && <p className="text-red-500">{errors.type.message}</p>}
+            {errors.type && <p className="text-red-500">{errors.type.message}</p>}
 
             <Input
               label="Event Website"
@@ -265,7 +285,7 @@ export default function EventForm() {
             />
 
             <Button
-              isDisabled={!isValid}
+              isDisabled={!isFormValid}
               fullWidth
               type="submit"
               className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
