@@ -184,6 +184,7 @@ export default function EventForm() {
 
             <div className="flex gap-4">
               <Input
+              isRequired
                 type="date"
                 label="Start Date"
                 variant="bordered"
@@ -191,6 +192,7 @@ export default function EventForm() {
                 errorMessage={errors.startDate?.message}
               />
               <Input
+                isRequired
                 type="date"
                 label="End Date"
                 variant="bordered"
@@ -293,9 +295,8 @@ export default function EventForm() {
               Submit Event
             </Button>
             <div className="text-[#757575]" style={{ fontSize: "12px" }}>
-              Note: Either (title and description) or (title and flyer) is
-              required for flyer submissions. Additional information is
-              encouraged.
+            Note: Title, Start & End Dates, and Type are required, plus either
+            a Description or Flyer. Other fields are optional.
             </div>
           </div>
         </form>
