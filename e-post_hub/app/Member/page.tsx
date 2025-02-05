@@ -224,6 +224,7 @@ export default function Memberpage() {
 
   const resetFilter = () => {
     setFilteredEvents(events); // Reset to show all events
+    setSelectedProximity(null); // Clear the selected distance
   };
 
   const handleInterest = async (eventId: string) => {
@@ -370,7 +371,10 @@ export default function Memberpage() {
               {/* Proximity Filter */}
               <Dropdown>
                 <DropdownTrigger>
-                  <Button className="border border-gray-300 bg-white text-black">
+                  <Button
+                    className="border border-gray-300 bg-white text-black"
+                    onClick={getUserLocation} // Ensure location is fetched when clicking the dropdown
+                  >
                     Distance
                   </Button>
                 </DropdownTrigger>
