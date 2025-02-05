@@ -45,7 +45,7 @@ let resolvedLongitude = longitude;
 
 if (address && (!latitude || !longitude)) {
   try {
-    const apiKey = process.env.GOOGLE_MAPS_API_KEY;
+    const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
     // ✅ 1️⃣ Check if API key is missing
     if (!apiKey) {
