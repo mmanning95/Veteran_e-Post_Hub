@@ -207,7 +207,7 @@ export default function Memberpage() {
   };
 
   useEffect(() => {
-    getUserLocation(); // ✅ Calls function when component loads
+    getUserLocation();
   }, []);
 
   const handleDateClick = (date: string) => {

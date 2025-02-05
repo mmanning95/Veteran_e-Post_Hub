@@ -29,6 +29,9 @@ type Event = {
   flyer?: string;
   type?: string;
   interested: number;
+  latitude: number;
+  longitude: number;
+  distance: number;
 };
 
 export default function Adminpage() {
@@ -42,7 +45,10 @@ export default function Adminpage() {
   const [selectedProximity, setSelectedProximity] = useState<number | null>(
     null
   );
-
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
   {
     /*for event filtering by type */
   }
@@ -59,6 +65,92 @@ export default function Adminpage() {
         events.filter((event) => selectedArray.includes(event.type || ""))
       );
     }
+  };
+
+  const getUserLocation = () => {
+    if (!("geolocation" in navigator)) {
+      setMessage("Geolocation is not supported.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const newLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+
+        setUserLocation((prevLocation) =>
+          prevLocation &&
+          prevLocation.lat === newLocation.lat &&
+          prevLocation.lng === newLocation.lng
+            ? prevLocation
+            : newLocation
+        );
+      },
+      () =>
+        setMessage(
+          "Location access denied. Please enable location permissions."
+        ),
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      }
+    );
+  };
+
+  const fetchEventDistances = async (events: Event[]) => {
+    if (!userLocation) return events;
+
+    const validEvents = events.filter(
+      (event) => event.latitude !== null && event.longitude !== null
+    );
+
+    if (validEvents.length === 0) return events;
+
+    const destinations = validEvents
+      .map((event) => `${event.latitude},${event.longitude}`)
+      .join("|");
+
+    if (!destinations) return events;
+
+    const url = `/api/proximity?origins=${userLocation.lat},${userLocation.lng}&destinations=${destinations}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.status !== "OK" || !data.rows || data.rows.length === 0)
+        return events;
+
+      const distances = data.rows[0].elements;
+
+      return validEvents.map((event, index) =>
+        distances[index]?.status === "OK"
+          ? {
+              ...event,
+              distance: distances[index].distance.value / 1609.34,
+            }
+          : { ...event, distance: NaN }
+      );
+    } catch {
+      return events;
+    }
+  };
+
+  const handleProximityFilter = async (distance: number) => {
+    if (!userLocation) return;
+
+    setSelectedProximity(distance);
+
+    const updatedEvents = await fetchEventDistances(events);
+
+    setFilteredEvents(
+      updatedEvents.filter(
+        (event) => event.distance !== undefined && event.distance <= distance
+      )
+    );
   };
 
   useEffect(() => {
@@ -110,6 +202,10 @@ export default function Adminpage() {
         setMessage("An error occurred while fetching events.");
       }
     }
+  }, []);
+
+  useEffect(() => {
+    getUserLocation();
   }, []);
 
   const handleDateClick = (date: string) => {
@@ -284,8 +380,8 @@ export default function Adminpage() {
                     selectedProximity ? [String(selectedProximity)] : []
                   }
                   onSelectionChange={(keys) => {
-                    const selectedValue = Array.from(keys)[0] as string;
-                    setSelectedProximity(Number(selectedValue));
+                    const selectedValue = Number(Array.from(keys)[0] as string);
+                    handleProximityFilter(selectedValue);
                   }}
                 >
                   <DropdownItem key="5">Within 5 miles</DropdownItem>

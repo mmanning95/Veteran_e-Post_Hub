@@ -7,7 +7,6 @@ import Link from "next/link";
 import EventCalendar from "./Components/Calendar/EventCalendar";
 import jwt from "jsonwebtoken";
 import BottomBar from "./Components/BottomBar/BottomBar";
-import { useEventProximity } from "@/lib/hook/useEventProximity";
 import {
   Dropdown,
   DropdownTrigger,
@@ -199,7 +198,7 @@ export default function HomePage() {
   }, []);
 
   useEffect(() => {
-    getUserLocation(); // ✅ Calls function when component loads
+    getUserLocation();
   }, []);
 
   const handleInterest = async (eventId: string) => {
