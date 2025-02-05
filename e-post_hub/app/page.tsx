@@ -7,6 +7,7 @@ import Link from "next/link";
 import EventCalendar from "./Components/Calendar/EventCalendar";
 import jwt from "jsonwebtoken";
 import BottomBar from "./Components/BottomBar/BottomBar";
+import { useEventProximity } from "@/lib/hook/useEventProximity";
 import {
   Dropdown,
   DropdownTrigger,
