@@ -140,7 +140,9 @@ export default function Memberpage() {
   };
 
   const handleProximityFilter = async (distance: number) => {
-    if (!userLocation) return;
+    if (!userLocation) {
+      getUserLocation();
+    }
 
     setSelectedProximity(distance);
 
@@ -205,10 +207,6 @@ export default function Memberpage() {
       console.error("Error fetching approved events:", error);
     }
   };
-
-  useEffect(() => {
-    getUserLocation();
-  }, []);
 
   const handleDateClick = (date: string) => {
     // Filter events based on the selected date

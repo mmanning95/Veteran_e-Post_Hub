@@ -136,7 +136,30 @@ export default function HomePage() {
   };
 
   const handleProximityFilter = async (distance: number) => {
-    if (!userLocation) return;
+    if (!userLocation) {
+      await new Promise<void>((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setUserLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+            resolve();
+          },
+          () => {
+            console.warn(
+              "Location access denied. Please enable location permissions."
+            );
+            resolve();
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000,
+          }
+        );
+      });
+    }
 
     setSelectedProximity(distance);
 
@@ -195,10 +218,6 @@ export default function HomePage() {
     }
 
     fetchApprovedEvents();
-  }, []);
-
-  useEffect(() => {
-    getUserLocation();
   }, []);
 
   const handleInterest = async (eventId: string) => {

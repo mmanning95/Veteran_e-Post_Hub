@@ -140,7 +140,9 @@ export default function Adminpage() {
   };
 
   const handleProximityFilter = async (distance: number) => {
-    if (!userLocation) return;
+    if (!userLocation) {
+      getUserLocation();
+    }
 
     setSelectedProximity(distance);
 
@@ -202,10 +204,6 @@ export default function Adminpage() {
         setMessage("An error occurred while fetching events.");
       }
     }
-  }, []);
-
-  useEffect(() => {
-    getUserLocation();
   }, []);
 
   const handleDateClick = (date: string) => {
