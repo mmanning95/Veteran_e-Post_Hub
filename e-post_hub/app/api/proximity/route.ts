@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 
+{/* Fetches distance and travel time data between user and events using the Google Distance Matrix API. */}
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);

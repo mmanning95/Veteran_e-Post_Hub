@@ -63,6 +63,9 @@ export default function HomePage() {
     }
   };
 
+  {
+    /*  Retrieves the user's current location using the browser's Geolocation API. */
+  }
   const getUserLocation = () => {
     if (!("geolocation" in navigator)) {
       setMessage("Geolocation is not supported.");
@@ -96,6 +99,9 @@ export default function HomePage() {
     );
   };
 
+  {
+    /* Fetches the distance between the user's location and each event location using an API. */
+  }
   const fetchEventDistances = async (events: Event[]) => {
     if (!userLocation) return events;
 
@@ -135,6 +141,9 @@ export default function HomePage() {
     }
   };
 
+  {
+    /*  Filters events based on the selected proximity (distance in miles). */
+  }
   const handleProximityFilter = async (distance: number) => {
     if (!userLocation) {
       await new Promise<void>((resolve) => {
