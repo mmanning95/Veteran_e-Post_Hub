@@ -32,6 +32,9 @@ type Event = {
   flyer?: string;
   type?: string;
   interested: number;
+  latitude: number;
+  longitude: number;
+  distance: number;
 };
 
 export default function HomePage() {
@@ -39,11 +42,14 @@ export default function HomePage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [message, setMessage] = useState<string | null>(null);
-
-  {
-    /*for event filtering by type */
-  }
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
+  const [selectedProximity, setSelectedProximity] = useState<number | null>(
+    null
+  );
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   const handleTypeFilter = (keys: Set<string>) => {
     setSelectedTypes(keys);
@@ -56,6 +62,124 @@ export default function HomePage() {
         events.filter((event) => selectedArray.includes(event.type || ""))
       );
     }
+  };
+
+  {
+    /*  Retrieves the user's current location using the browser's Geolocation API. */
+  }
+  const getUserLocation = () => {
+    if (!("geolocation" in navigator)) {
+      setMessage("Geolocation is not supported.");
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const newLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+
+        setUserLocation((prevLocation) =>
+          prevLocation &&
+          prevLocation.lat === newLocation.lat &&
+          prevLocation.lng === newLocation.lng
+            ? prevLocation
+            : newLocation
+        );
+      },
+      () =>
+        setMessage(
+          "Location access denied. Please enable location permissions."
+        ),
+      {
+        enableHighAccuracy: true,
+        timeout: 10000,
+        maximumAge: 60000,
+      }
+    );
+  };
+
+  {
+    /* Fetches the distance between the user's location and each event location using an API. */
+  }
+  const fetchEventDistances = async (events: Event[]) => {
+    if (!userLocation) return events;
+
+    const validEvents = events.filter(
+      (event) => event.latitude !== null && event.longitude !== null
+    );
+
+    if (validEvents.length === 0) return events;
+
+    const destinations = validEvents
+      .map((event) => `${event.latitude},${event.longitude}`)
+      .join("|");
+
+    if (!destinations) return events;
+
+    const url = `/api/proximity?origins=${userLocation.lat},${userLocation.lng}&destinations=${destinations}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+
+      if (data.status !== "OK" || !data.rows || data.rows.length === 0)
+        return events;
+
+      const distances = data.rows[0].elements;
+
+      return validEvents.map((event, index) =>
+        distances[index]?.status === "OK"
+          ? {
+              ...event,
+              distance: distances[index].distance.value / 1609.34,
+            }
+          : { ...event, distance: NaN }
+      );
+    } catch {
+      return events;
+    }
+  };
+
+  {
+    /*  Filters events based on the selected proximity (distance in miles). */
+  }
+  const handleProximityFilter = async (distance: number) => {
+    if (!userLocation) {
+      await new Promise<void>((resolve) => {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            setUserLocation({
+              lat: position.coords.latitude,
+              lng: position.coords.longitude,
+            });
+            resolve();
+          },
+          () => {
+            console.warn(
+              "Location access denied. Please enable location permissions."
+            );
+            resolve();
+          },
+          {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 60000,
+          }
+        );
+      });
+    }
+
+    setSelectedProximity(distance);
+
+    const updatedEvents = await fetchEventDistances(events);
+
+    setFilteredEvents(
+      updatedEvents.filter(
+        (event) => event.distance !== undefined && event.distance <= distance
+      )
+    );
   };
 
   useEffect(() => {
@@ -173,6 +297,7 @@ export default function HomePage() {
 
   const resetFilter = () => {
     setFilteredEvents(events); // Reset to show all events
+    setSelectedProximity(null); // Clear the selected distance
   };
 
   return (
@@ -214,7 +339,7 @@ export default function HomePage() {
             <h4 className="text-2xl mb-4 text-center">Events:</h4>
 
             {/* Navbar for filter buttons */}
-            <div className="max-w-[1140px] mx-auto bg-white p-4 rounded-lg shadow border border-gray-200 mb-6 flex justify-between">
+            <div className="max-w-[1140px] mx-auto bg-white p-4 rounded-lg shadow border border-gray-200 mb-6 flex gap-4">
               <Dropdown>
                 <DropdownTrigger>
                   <Button className="border border-gray-300 bg-white text-black">
@@ -233,6 +358,33 @@ export default function HomePage() {
                   <DropdownItem key="Seminar">Seminar</DropdownItem>
                   <DropdownItem key="Meeting">Meeting</DropdownItem>
                   <DropdownItem key="Fundraiser">Fundraiser</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+              {/* Proximity Filter */}
+              <Dropdown>
+                <DropdownTrigger>
+                  <Button
+                    className="border border-gray-300 bg-white text-black"
+                    onClick={getUserLocation} // Ensure location is fetched when clicking the dropdown
+                  >
+                    Distance
+                  </Button>
+                </DropdownTrigger>
+                <DropdownMenu
+                  aria-label="Filter by Distance"
+                  selectionMode="single"
+                  selectedKeys={
+                    selectedProximity ? [String(selectedProximity)] : []
+                  }
+                  onSelectionChange={(keys) => {
+                    const selectedValue = Number(Array.from(keys)[0] as string);
+                    handleProximityFilter(selectedValue);
+                  }}
+                >
+                  <DropdownItem key="5">Within 5 miles</DropdownItem>
+                  <DropdownItem key="10">Within 10 miles</DropdownItem>
+                  <DropdownItem key="20">Within 20 miles</DropdownItem>
+                  <DropdownItem key="50">Within 50 miles</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
             </div>
