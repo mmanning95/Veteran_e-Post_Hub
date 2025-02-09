@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
-import sgMail from '@sendgrid/mail'; // ✅ ADD THIS LINE
+import sgMail from '@sendgrid/mail';
 
 const prisma = new PrismaClient();
 
@@ -20,7 +20,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { eventId: s
     // Check if the event exists
     const event = await prisma.event.findUnique({
       where: { id: eventId },
-      include: { createdBy: { select: { email: true, name: true } } }, // ✅ ADDED TO FETCH EMAIL
+      include: { createdBy: { select: { email: true, name: true } } },
     });
     if (!event) {
       console.error("Event not found");
@@ -38,7 +38,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { eventId: s
     if (event.createdBy?.email) {
       const msg = {
         to: event.createdBy.email,
-        from: process.env.EMAIL_FROM || "default@example.com", // ✅ Fallback email
+        from: process.env.EMAIL_FROM || "default@example.com", // Admin email
         subject: 'Your Event Has Been Approved!',
         text: `Hello ${event.createdBy.name},\n\nYour event "${event.title}" has been approved!\n\nThank you for submitting your event.\n\nBest,\nThe Veteran e-Post Hub Team`,
       };

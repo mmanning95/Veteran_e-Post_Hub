@@ -47,7 +47,7 @@ if (address && (!latitude || !longitude)) {
   try {
     const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
 
-    // ✅ 1️⃣ Check if API key is missing
+    // Check if API key is missing
     if (!apiKey) {
       console.warn("Warning: GOOGLE_MAPS_API_KEY is missing. Proceeding without geolocation.");
     } else {
@@ -63,7 +63,7 @@ if (address && (!latitude || !longitude)) {
       }
     }
   } catch (error) {
-    // ✅ 2️⃣ Log error but continue
+    // Log error but continue
     console.error("Error fetching geolocation:", error);
     console.warn("Proceeding without coordinates due to geolocation failure.");
   }

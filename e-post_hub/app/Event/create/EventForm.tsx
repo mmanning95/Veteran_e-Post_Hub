@@ -125,7 +125,7 @@ export default function EventForm() {
     onPlaceSelected: (place) => {
       const selectedAddress = place.formatted_address || "";
       setAddress(selectedAddress);
-      setValue("address", selectedAddress); // ✅ Ensure React Hook Form updates
+      setValue("address", selectedAddress); // Ensure React Hook Form updates
     },
     options: {
       types: ["geocode"],
@@ -256,7 +256,7 @@ export default function EventForm() {
             {/* Autocomplete Address Input */}
             <Input
               label="Event Address"
-              ref={ref as unknown as React.RefObject<HTMLInputElement>} // ✅ Fix TypeScript issue
+              ref={ref as unknown as React.RefObject<HTMLInputElement>}
               variant="bordered"
               placeholder="Enter event location"
               value={address}
