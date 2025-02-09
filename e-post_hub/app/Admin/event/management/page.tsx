@@ -1,8 +1,14 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { Button, Card, CardBody, CardHeader, Checkbox } from '@nextui-org/react';
-import jwt from 'jsonwebtoken';
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  Checkbox,
+} from "@nextui-org/react";
+import jwt from "jsonwebtoken";
 
 type Event = {
   id: string;
@@ -34,29 +40,36 @@ export default function EventManagement() {
   const [events, setEvents] = useState<Event[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [selectedActions, setSelectedActions] = useState<{ [key: string]: 'approve' | 'deny' | null }>({});
-  const [globalStatusMessage, setGlobalStatusMessage] = useState<string | null>(null);
+  const [selectedActions, setSelectedActions] = useState<{
+    [key: string]: "approve" | "deny" | null;
+  }>({});
+  const [globalStatusMessage, setGlobalStatusMessage] = useState<string | null>(
+    null
+  );
+  const [denyMessages, setDenyMessages] = useState<{ [key: string]: string }>(
+    {}
+  );
 
   useEffect(() => {
     // Check admin token
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       const decodedToken = jwt.decode(token) as { role?: string };
-      if (decodedToken?.role === 'ADMIN') {
+      if (decodedToken?.role === "ADMIN") {
         setIsAdmin(true);
       } else {
-          window.location.href = '/Unauthorized';
+        window.location.href = "/Unauthorized";
       }
     } else {
-        window.location.href = '/Unauthorized';
+      window.location.href = "/Unauthorized";
     }
 
     // Fetch pending events and private questions
     async function fetchPendingEventsAndQuestions() {
       try {
         const [eventsResponse, questionsResponse] = await Promise.all([
-          fetch('/api/Event/pending'),
-          fetch('/api/community/question/private'),
+          fetch("/api/Event/pending"),
+          fetch("/api/community/question/private"),
         ]);
 
         if (eventsResponse.ok) {
@@ -64,24 +77,25 @@ export default function EventManagement() {
           setEvents(eventsData.events);
 
           // Initialize selectedActions state for events
-          const initialActions: { [key: string]: 'approve' | 'deny' | null } = {};
+          const initialActions: { [key: string]: "approve" | "deny" | null } =
+            {};
           eventsData.events.forEach((event: Event) => {
             initialActions[event.id] = null;
           });
           setSelectedActions(initialActions);
         } else {
-          setGlobalStatusMessage('Failed to fetch pending events.');
+          setGlobalStatusMessage("Failed to fetch pending events.");
         }
 
         if (questionsResponse.ok) {
           const questionsData = await questionsResponse.json();
           setQuestions(questionsData.questions);
         } else {
-          setGlobalStatusMessage('Failed to fetch private questions.');
+          setGlobalStatusMessage("Failed to fetch private questions.");
         }
       } catch (error) {
-        console.error('Error fetching data:', error);
-        setGlobalStatusMessage('An error occurred while fetching data.');
+        console.error("Error fetching data:", error);
+        setGlobalStatusMessage("An error occurred while fetching data.");
       }
     }
 
@@ -91,73 +105,103 @@ export default function EventManagement() {
   }, [isAdmin]);
 
   // Define handleCheckboxChange function for events
-  const handleCheckboxChange = (itemId: string, action: 'approve' | 'deny') => {
+  const handleCheckboxChange = (itemId: string, action: "approve" | "deny") => {
     setSelectedActions((prev) => ({
       ...prev,
       [itemId]: prev[itemId] === action ? null : action,
     }));
+
+    // Initialize the deny message
+    if (action === "deny") {
+      setDenyMessages((prev) => ({
+        ...prev,
+        [itemId]: prev[itemId] || "", // Keep existing input
+      }));
+    } else {
+      setDenyMessages((prev) => {
+        const newMessages = { ...prev };
+        delete newMessages[itemId]; // Remove message when unchecking deny
+        return newMessages;
+      });
+    }
   };
 
   // Submit all actions for events
   const handleSubmitActions = async () => {
     let allSuccess = true;
     for (const [eventId, action] of Object.entries(selectedActions)) {
-      if (action === 'approve') {
+      if (action === "approve") {
         const success = await handleApproveEvent(eventId);
         if (!success) allSuccess = false;
-      } else if (action === 'deny') {
+      } else if (action === "deny") {
         const success = await handleDenyEvent(eventId);
         if (!success) allSuccess = false;
       }
     }
 
-    setGlobalStatusMessage(allSuccess ? 'All event actions completed successfully.' : 'Some actions failed.');
+    setGlobalStatusMessage(
+      allSuccess
+        ? "All event actions completed successfully."
+        : "Some actions failed."
+    );
   };
 
   // Approve event
   const handleApproveEvent = async (eventId: string) => {
     try {
       const response = await fetch(`/api/Event/approve/${eventId}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
       if (response.ok) {
-        setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
+        setEvents((prevEvents) =>
+          prevEvents.filter((event) => event.id !== eventId)
+        );
         return true;
       } else {
         const errorData = await response.json();
-        console.error('Error approving event:', errorData);
+        console.error("Error approving event:", errorData);
         return false;
       }
     } catch (error) {
-      console.error('Error approving event:', error);
+      console.error("Error approving event:", error);
       return false;
     }
   };
 
   // Deny event
   const handleDenyEvent = async (eventId: string) => {
+    const message = denyMessages[eventId]?.trim();
+    if (!message) {
+      setGlobalStatusMessage("Rejection message is required.");
+      return false;
+    }
+
     try {
       const response = await fetch(`/api/Event/deny/${eventId}`, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
+        body: JSON.stringify({ denyMessage: message }),
       });
 
       if (response.ok) {
-        setEvents((prevEvents) => prevEvents.filter((event) => event.id !== eventId));
+        setEvents((prevEvents) =>
+          prevEvents.filter((event) => event.id !== eventId)
+        );
         return true;
       } else {
         const errorData = await response.json();
-        console.error('Error denying event:', errorData);
+        console.error("Error denying event:", errorData);
         return false;
       }
     } catch (error) {
-      console.error('Error denying event:', error);
+      console.error("Error denying event:", error);
       return false;
     }
   };
@@ -166,23 +210,25 @@ export default function EventManagement() {
   const handleResolveQuestion = async (questionId: string) => {
     try {
       const response = await fetch(`/api/community/question/${questionId}`, {
-        method: 'DELETE',
+        method: "DELETE",
         headers: {
-          Authorization: `Bearer ${localStorage.getItem('token')}`,
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
       });
 
       if (response.ok) {
-        setQuestions((prevQuestions) => prevQuestions.filter((question) => question.id !== questionId));
-        setGlobalStatusMessage('Question resolved successfully.');
+        setQuestions((prevQuestions) =>
+          prevQuestions.filter((question) => question.id !== questionId)
+        );
+        setGlobalStatusMessage("Question resolved successfully.");
       } else {
         const errorData = await response.json();
-        console.error('Error resolving question:', errorData);
-        setGlobalStatusMessage('Failed to resolve question.');
+        console.error("Error resolving question:", errorData);
+        setGlobalStatusMessage("Failed to resolve question.");
       }
     } catch (error) {
-      console.error('Error resolving question:', error);
-      setGlobalStatusMessage('An error occurred while resolving the question.');
+      console.error("Error resolving question:", error);
+      setGlobalStatusMessage("An error occurred while resolving the question.");
     }
   };
 
@@ -191,56 +237,82 @@ export default function EventManagement() {
   }
 
   return (
-    <div className='w-4/5 mx-auto'>
+    <div className="w-4/5 mx-auto">
       {/* Global Status Message */}
       {globalStatusMessage && (
-        <div className='text-center mb-4 p-2 bg-blue-100 text-blue-800 border border-blue-300 rounded'>
+        <div className="text-center mb-4 p-2 bg-blue-100 text-blue-800 border border-blue-300 rounded">
           {globalStatusMessage}
         </div>
       )}
 
-      <div className='flex gap-8'>
+      <div className="flex gap-8">
         {/* Left side: Events */}
-        <div className='w-1/2'>
+        <div className="w-1/2">
           <Card>
-            <CardHeader className='flex flex-col items-center justify-center'>
-              <h3 className='text-2xl font-semibold'>Pending Events</h3>
+            <CardHeader className="flex flex-col items-center justify-center">
+              <h3 className="text-2xl font-semibold">Pending Events</h3>
             </CardHeader>
-            <CardBody className='max-h-[600px] overflow-y-auto'>
+            <CardBody className="max-h-[600px] overflow-y-auto">
               {events.length === 0 ? (
-                <p className='text-center'>No pending events at the moment.</p>
+                <p className="text-center">No pending events at the moment.</p>
               ) : (
                 events.map((event) => (
-                  <div key={event.id} className='mb-4 p-4 border-b'>
-                    <h4 className='text-xl font-bold'>{event.title}</h4>
-                    <p className='text-gray-600'>{event.description}</p>
-                    <p className='text-gray-600'>Created By: {event.createdBy.name} ({event.createdBy.email})</p>
+                  <div key={event.id} className="mb-4 p-4 border-b">
+                    <h4 className="text-xl font-bold">{event.title}</h4>
+                    <p className="text-gray-600">{event.description}</p>
+                    <p className="text-gray-600">
+                      Created By: {event.createdBy.name} (
+                      {event.createdBy.email})
+                    </p>
                     {event.startDate && (
-                      <p className='text-gray-600'>Start Date: {new Date(event.startDate).toLocaleDateString()}</p>
+                      <p className="text-gray-600">
+                        Start Date:{" "}
+                        {new Date(event.startDate).toLocaleDateString()}
+                      </p>
                     )}
-                    <div className='flex justify-between mt-2'>
+                    <div className="flex justify-between mt-2">
                       <Checkbox
-                        isSelected={selectedActions[event.id] === 'approve'}
-                        onChange={() => handleCheckboxChange(event.id, 'approve')}
-                        color='primary'
+                        isSelected={selectedActions[event.id] === "approve"}
+                        onChange={() =>
+                          handleCheckboxChange(event.id, "approve")
+                        }
+                        color="primary"
                       >
                         Approve
                       </Checkbox>
                       <Checkbox
-                        isSelected={selectedActions[event.id] === 'deny'}
-                        onChange={() => handleCheckboxChange(event.id, 'deny')}
-                        color='danger'
+                        isSelected={selectedActions[event.id] === "deny"}
+                        onChange={() => handleCheckboxChange(event.id, "deny")}
+                        color="danger"
                       >
                         Deny
                       </Checkbox>
                     </div>
+
+                    {/* Prompt user for rejection message */}
+                    {selectedActions[event.id] === "deny" && (
+                      <textarea
+                        value={denyMessages[event.id] || ""}
+                        onChange={(e) =>
+                          setDenyMessages((prev) => ({
+                            ...prev,
+                            [event.id]: e.target.value,
+                          }))
+                        }
+                        placeholder="Please enter a reason for rejection..."
+                        className="w-full p-2 border border-gray-300 rounded mt-2"
+                      />
+                    )}
                   </div>
                 ))
               )}
             </CardBody>
             {events.length > 0 && (
-              <div className='flex justify-center mt-8'>
-                <Button onClick={handleSubmitActions} className='bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-white'>
+              <div className="flex justify-center mt-8">
+                <Button
+                  onClick={handleSubmitActions}
+                  className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-white"
+                >
                   Submit Actions
                 </Button>
               </div>
@@ -249,29 +321,39 @@ export default function EventManagement() {
         </div>
 
         {/* Right side: Private Questions */}
-        <div className='w-1/2'>
+        <div className="w-1/2">
           <Card>
-            <CardHeader className='flex flex-col items-center justify-center'>
-              <h3 className='text-2xl font-semibold'>Private Questions</h3>
-              <div className="text-[#757575]" style={{ fontSize: '12px' }}>
-                Note: Once an email is sent to user, please resolve the question. Resolved questions cannot be retrived.
+            <CardHeader className="flex flex-col items-center justify-center">
+              <h3 className="text-2xl font-semibold">Private Questions</h3>
+              <div className="text-[#757575]" style={{ fontSize: "12px" }}>
+                Note: Once an email is sent to user, please resolve the
+                question. Resolved questions cannot be retrived.
               </div>
             </CardHeader>
-            <CardBody className='max-h-[600px] overflow-y-auto'>
+            <CardBody className="max-h-[600px] overflow-y-auto">
               {questions.length === 0 ? (
-                <p className='text-center'>No private questions at the moment.</p>
+                <p className="text-center">
+                  No private questions at the moment.
+                </p>
               ) : (
                 questions.map((question) => (
-                  <div key={question.id} className='mb-4 p-4 border-b'>
-                    <h4 className='text-xl font-bold'>Question from {question.username}</h4>
-                    <p className='text-gray-600'>{question.text}</p>
-                    <p className='text-gray-600'>User Email: {question.userEmail}</p>
-                    <p className='text-gray-600'>Posted on: {new Date(question.datePosted).toLocaleDateString()}</p>
-                    <div className='flex justify-end mt-4'>
+                  <div key={question.id} className="mb-4 p-4 border-b">
+                    <h4 className="text-xl font-bold">
+                      Question from {question.username}
+                    </h4>
+                    <p className="text-gray-600">{question.text}</p>
+                    <p className="text-gray-600">
+                      User Email: {question.userEmail}
+                    </p>
+                    <p className="text-gray-600">
+                      Posted on:{" "}
+                      {new Date(question.datePosted).toLocaleDateString()}
+                    </p>
+                    <div className="flex justify-end mt-4">
                       <Button
                         onClick={() => handleResolveQuestion(question.id)}
-                        color='success'
-                        className='bg-blue-500 text-white'
+                        color="success"
+                        className="bg-blue-500 text-white"
                       >
                         Resolved
                       </Button>
