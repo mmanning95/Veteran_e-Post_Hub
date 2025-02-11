@@ -40,6 +40,7 @@ interface CreateEventForm {
   description?: string;
   type: string;
   website?: string;
+  address?: string;
 }
 
 export default function EventForm() {
@@ -122,7 +123,7 @@ export default function EventForm() {
         startTime: formattedStartTime,
         endTime: formattedEndTime,
         flyer: flyerUrl,
-        type: eventType, // Add selected event type || may need to change to selected type merger issues
+        type: selectedType, // Add selected event type || may need to change to selected type merger issues
         address: data.address,
       };
 
