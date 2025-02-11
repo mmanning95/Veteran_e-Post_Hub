@@ -26,6 +26,8 @@ import React, { useState } from "react";
 import { useEdgeStore } from "@/lib/edgestore";
 import Link from "next/link";
 import { SingleImageDropzone } from "@/app/Components/Dropzone/single-image-dropzone";
+import { LoadScript } from "@react-google-maps/api";
+import { usePlacesWidget } from "react-google-autocomplete";
 
 const predefinedEventType = ["Workshop", "Seminar", "Meeting", "Fundraiser"];
 
@@ -120,7 +122,8 @@ export default function EventForm() {
         startTime: formattedStartTime,
         endTime: formattedEndTime,
         flyer: flyerUrl,
-        type: selectedType, // Add selected event type
+        type: eventType, // Add selected event type || may need to change to selected type merger issues
+        address: data.address,
       };
 
       const response = await fetch("/api/Event/create", {
@@ -153,6 +156,22 @@ export default function EventForm() {
       });
     }
   };
+
+  // Address State
+  const [address, setAddress] = useState("");
+
+  const { ref } = usePlacesWidget<HTMLInputElement>({
+    apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+    onPlaceSelected: (place) => {
+      const selectedAddress = place.formatted_address || "";
+      setAddress(selectedAddress);
+      setValue("address", selectedAddress); // Ensure React Hook Form updates
+    },
+    options: {
+      types: ["geocode"],
+      componentRestrictions: { country: "us" },
+    },
+  });
 
   return (
     <Card className="w-2/5 mx-auto max-h-[80vh] overflow-y-auto">
@@ -277,6 +296,17 @@ export default function EventForm() {
               {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
             </Autocomplete>
             {errors.type && <p className="text-red-500">{errors.type.message}</p>}
+
+            {/* Autocomplete Address Input */}
+            <Input
+              label="Event Address"
+              ref={ref as unknown as React.RefObject<HTMLInputElement>}
+              variant="bordered"
+              placeholder="Enter event location"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              errorMessage={errors.address?.message}
+            />
 
             <Input
               label="Event Website"
