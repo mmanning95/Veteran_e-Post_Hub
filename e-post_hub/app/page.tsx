@@ -39,24 +39,28 @@ export default function HomePage() {
   const [events, setEvents] = useState<Event[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [message, setMessage] = useState<string | null>(null);
-
-  {
-    /*for event filtering by type */
-  }
+  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
+  const [eventTypes, setEventTypes] = useState<string[]>([]);
+  
 
-  const handleTypeFilter = (keys: Set<string>) => {
-    setSelectedTypes(keys);
-    const selectedArray = Array.from(keys);
+  // {
+  //   /*for event filtering by type */
+  // }
+  // const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
 
-    if (selectedArray.length === 0) {
-      setFilteredEvents(events); // Show all events if no filter is selected
-    } else {
-      setFilteredEvents(
-        events.filter((event) => selectedArray.includes(event.type || ""))
-      );
-    }
-  };
+  // const handleTypeFilter = (keys: Set<string>) => {
+  //   setSelectedTypes(keys);
+  //   const selectedArray = Array.from(keys);
+
+  //   if (selectedArray.length === 0) {
+  //     setFilteredEvents(events); // Show all events if no filter is selected
+  //   } else {
+  //     setFilteredEvents(
+  //       events.filter((event) => selectedArray.includes(event.type || ""))
+  //     );
+  //   }
+  // };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -92,6 +96,13 @@ export default function HomePage() {
           const data = await response.json();
           setEvents(data.events);
           setFilteredEvents(data.events); // Initially, show all events
+
+          const uniqueTypes: string[] = Array.from(
+            new Set<string>(data.events.map((event: Event) => event.type as string).filter(Boolean))
+          );
+
+          setEventTypes(uniqueTypes);
+
         } else {
           console.error(
             "Failed to fetch approved events:",
@@ -105,6 +116,20 @@ export default function HomePage() {
 
     fetchApprovedEvents();
   }, []);
+
+  const handleTypeFilter = (keys: Set<string>) => {
+    setSelectedTypes(keys);
+    const selectedArray = Array.from(keys);
+
+    if (selectedArray.length === 0) {
+      setFilteredEvents(events);
+    } else {
+      setFilteredEvents(
+        events.filter((event) => selectedArray.includes(event.type || ""))
+      );
+    }
+  };
+
 
   const handleInterest = async (eventId: string) => {
     const interestedEvents = JSON.parse(
@@ -213,12 +238,12 @@ export default function HomePage() {
           <div className="mt-10">
             <h4 className="text-2xl mb-4 text-center">Events:</h4>
 
-            {/* Navbar for filter buttons */}
+            {/* Event Type Filter Dropdown */}
             <div className="max-w-[1140px] mx-auto bg-white p-4 rounded-lg shadow border border-gray-200 mb-6 flex justify-between">
               <Dropdown>
                 <DropdownTrigger>
                   <Button className="border border-gray-300 bg-white text-black">
-                    Event Type
+                    Filter by Event Type
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu
@@ -229,13 +254,13 @@ export default function HomePage() {
                     handleTypeFilter(keys as Set<string>)
                   }
                 >
-                  <DropdownItem key="Workshop">Workshop</DropdownItem>
-                  <DropdownItem key="Seminar">Seminar</DropdownItem>
-                  <DropdownItem key="Meeting">Meeting</DropdownItem>
-                  <DropdownItem key="Fundraiser">Fundraiser</DropdownItem>
+                  {eventTypes.map((type) => (
+                    <DropdownItem key={type}>{type}</DropdownItem>
+                  ))}
                 </DropdownMenu>
               </Dropdown>
             </div>
+
 
             {filteredEvents.length === 0 ? (
               <p className="text-center">

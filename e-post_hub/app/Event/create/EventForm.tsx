@@ -18,6 +18,8 @@ import {
   DropdownTrigger,
   DropdownMenu,
   DropdownItem,
+  Autocomplete,
+  AutocompleteItem,
 } from "@nextui-org/react";
 import { Time } from "@internationalized/date";
 import React, { useState } from "react";
@@ -25,34 +27,73 @@ import { useEdgeStore } from "@/lib/edgestore";
 import Link from "next/link";
 import { SingleImageDropzone } from "@/app/Components/Dropzone/single-image-dropzone";
 
+const predefinedEventType = ["Workshop", "Seminar", "Meeting", "Fundraiser"];
+
+interface CreateEventForm {
+  title: string;
+  startDate: string;
+  endDate: string;
+  startTime?: string;
+  endTime?: string;
+  description?: string;
+  type: string;
+  website?: string;
+}
+
 export default function EventForm() {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isValid },
-  } = useForm<CreateEventSchema>({
-    //resolver: zodResolver(createEventSchema),
-    mode: "onTouched",
+  } = useForm<CreateEventForm>({
+    mode: "onChange",
   });
 
-  // States to store the time values for start and end time
+  // States
   const [startTime, setStartTime] = useState<Time | null>(null);
   const [endTime, setEndTime] = useState<Time | null>(null);
   const [file, setFile] = useState<File>();
-  const [eventType, setEventType] = useState<string | null>(null);
+  const [eventType, setEventType] = useState(predefinedEventType);
+  const [selectedType, setSelectedType] = useState("");
   const [urls, setUrls] = useState<{
     url: string;
     thumbnailUrl: string | null;
   }>();
   const { edgestore } = useEdgeStore();
-
-  // State for displaying success or error messages
   const [message, setMessage] = useState<{
     type: "success" | "error";
     text: string;
   } | null>(null);
 
-  const onSubmit = async (data: CreateEventSchema) => {
+    // Watch form values
+    const watchTitle = watch("title");
+    const watchStartDate = watch("startDate");
+    const watchEndDate = watch("endDate");
+    const watchDescription = watch("description");
+    const watchType = watch("type");
+
+  // Check form validity: Title, Start/End Date, Type, and EITHER Description OR Flyer
+  const isFormValid =
+  watchTitle &&
+  watchStartDate &&
+  watchEndDate &&
+  watchType &&
+  (watchDescription || file);
+  
+  const handleTypeChange = (type: string) => {
+    if (!type.trim()) return; // Prevent empty inputs
+    setSelectedType(type);
+    setValue("type", type, { shouldValidate: true });
+  
+    if (!eventType.includes(type.trim())) {
+      setEventType([...eventType, type.trim()]); // Trim to avoid whitespace issues
+    }
+  };
+  
+
+  const onSubmit = async (data: CreateEventForm) => {
     try {
       // If there is an image file upload it to get its URL
       let flyerUrl: string | null = null;
@@ -79,7 +120,7 @@ export default function EventForm() {
         startTime: formattedStartTime,
         endTime: formattedEndTime,
         flyer: flyerUrl,
-        type: eventType, // Add selected event type
+        type: selectedType, // Add selected event type
       };
 
       const response = await fetch("/api/Event/create", {
@@ -129,6 +170,7 @@ export default function EventForm() {
             {message.text}
           </div>
         )}
+
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <Input
@@ -136,23 +178,25 @@ export default function EventForm() {
               isClearable
               label="Event Title"
               variant="bordered"
-              {...register("title")}
+              {...register("title", { required: "Title is required" })}
               errorMessage={errors.title?.message}
             />
 
             <div className="flex gap-4">
               <Input
+              isRequired
                 type="date"
                 label="Start Date"
                 variant="bordered"
-                {...register("startDate")}
+                {...register("startDate", { required: "Start date is required" })}
                 errorMessage={errors.startDate?.message}
               />
               <Input
+                isRequired
                 type="date"
                 label="End Date"
                 variant="bordered"
-                {...register("endDate")}
+                {...register("endDate", { required: "End date is required" })}
                 errorMessage={errors.endDate?.message}
               />
             </div>
@@ -208,30 +252,31 @@ export default function EventForm() {
             </div>
 
             {/* Event Type Dropdown */}
-            <Dropdown>
-              <DropdownTrigger>
-                <Button
-                  variant="bordered"
-                  className="w-full border-2 border-gray-300 border-opacity-65 rounded-lg bg-white px-4 py-2 shadow-sm text-gray-700 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  style={{
-                    justifyContent: "flex-start", // Force left alignment
-                    textAlign: "left", // Ensure text aligns left
-                  }}
-                >
-                  {eventType || "Select Event Type"}
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Event Type Selection"
-                onAction={(key) => setEventType(key as string)}
-                className="w-full border border-gray-300 border-opacity-75 rounded-lg shadow-sm"
-              >
-                <DropdownItem key="Workshop">Workshop</DropdownItem>
-                <DropdownItem key="Seminar">Seminar</DropdownItem>
-                <DropdownItem key="Meeting">Meeting</DropdownItem>
-                <DropdownItem key="Fundraiser">Fundraiser</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+            <Autocomplete
+              items={eventType.map((type) => ({ label: type, value: type }))} // Convert to objects
+              inputValue={selectedType}
+              onInputChange={(value) => {
+                if (value.trim()) {
+                  setSelectedType(value); // Update input field
+                }
+              }}
+              
+              onSelectionChange={(key) => {
+                if (key && !eventType.includes(key.toString())) {
+                  setEventType([...eventType, key.toString()]); // Add new type
+                }
+                setSelectedType(key?.toString() || ""); // Update selected type
+                setValue("type", key?.toString() || "", { shouldValidate: true });
+              }}
+              
+              className="w-full"
+              placeholder="Select or enter an event type"
+              variant="bordered"
+              {...register("type", { required: "Type is required" })}
+            >
+              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+            </Autocomplete>
+            {errors.type && <p className="text-red-500">{errors.type.message}</p>}
 
             <Input
               label="Event Website"
@@ -242,7 +287,7 @@ export default function EventForm() {
             />
 
             <Button
-              isDisabled={!isValid}
+              isDisabled={!isFormValid}
               fullWidth
               type="submit"
               className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
@@ -250,9 +295,8 @@ export default function EventForm() {
               Submit Event
             </Button>
             <div className="text-[#757575]" style={{ fontSize: "12px" }}>
-              Note: Either (title and description) or (title and flyer) is
-              required for flyer submissions. Additional information is
-              encouraged.
+            Note: Title, Start & End Dates, and Type are required, plus either
+            a Description or Flyer. Other fields are optional.
             </div>
           </div>
         </form>

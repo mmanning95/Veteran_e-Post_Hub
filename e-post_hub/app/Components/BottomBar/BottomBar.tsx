@@ -39,9 +39,9 @@ export default function BottomBar() {
             <a href="/Support/community" className="text-sm underline">
               Community Questions
             </a>
-            <a href="/Support/issue" className="text-sm underline">
+            {/* <a href="/Support/issue" className="text-sm underline">
               Report a Problem
-            </a>
+            </a> */}
           </div>
         </div>
 

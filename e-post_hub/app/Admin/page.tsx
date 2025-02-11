@@ -36,28 +36,31 @@ export default function Adminpage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminName, setAdminName] = useState<string | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
+  const [eventTypes, setEventTypes] = useState<string[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
-
-  {
-    /*for event filtering by type */
-  }
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
 
-  const handleTypeFilter = (keys: Set<string>) => {
-    setSelectedTypes(keys);
-    const selectedArray = Array.from(keys);
 
-    if (selectedArray.length === 0) {
-      setFilteredEvents(events); // Show all events if no filter is selected
-    } else {
-      setFilteredEvents(
-        events.filter((event) => selectedArray.includes(event.type || ""))
-      );
-    }
-  };
+  // {
+  //   /*for event filtering by type */
+  // }
+  // const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
+
+  // const handleTypeFilter = (keys: Set<string>) => {
+  //   setSelectedTypes(keys);
+  //   const selectedArray = Array.from(keys);
+
+  //   if (selectedArray.length === 0) {
+  //     setFilteredEvents(events); // Show all events if no filter is selected
+  //   } else {
+  //     setFilteredEvents(
+  //       events.filter((event) => selectedArray.includes(event.type || ""))
+  //     );
+  //   }
+  // };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -100,6 +103,13 @@ export default function Adminpage() {
           const data = await response.json();
           setEvents(data.events);
           setFilteredEvents(data.events);
+
+          const uniqueTypes: string[] = Array.from(
+            new Set<string>(data.events.map((event: Event) => event.type as string).filter(Boolean))
+          );
+          
+          
+          setEventTypes(uniqueTypes);
         } else {
           setMessage("Failed to fetch events.");
         }
@@ -121,6 +131,19 @@ export default function Adminpage() {
       return startDate && endDate && date >= startDate && date < endDate;
     });
     setFilteredEvents(eventsForDate);
+  };
+
+  const handleTypeFilter = (keys: Set<string>) => {
+    setSelectedTypes(keys);
+    const selectedArray = Array.from(keys);
+
+    if (selectedArray.length === 0) {
+      setFilteredEvents(events);
+    } else {
+      setFilteredEvents(
+        events.filter((event) => selectedArray.includes(event.type || ""))
+      );
+    }
   };
 
   const resetFilter = () => {
@@ -251,12 +274,12 @@ export default function Adminpage() {
           <div className="mt-10">
             <h4 className="text-2xl mb-4 text-center">Events:</h4>
 
-            {/* Navbar for filter buttons */}
+            {/* Event Type Filter Dropdown */}
             <div className="max-w-[1140px] mx-auto bg-white p-4 rounded-lg shadow border border-gray-200 mb-6 flex justify-between">
               <Dropdown>
                 <DropdownTrigger>
                   <Button className="border border-gray-300 bg-white text-black">
-                    Event Type
+                    Filter by Event Type
                   </Button>
                 </DropdownTrigger>
                 <DropdownMenu
@@ -267,10 +290,9 @@ export default function Adminpage() {
                     handleTypeFilter(keys as Set<string>)
                   }
                 >
-                  <DropdownItem key="Workshop">Workshop</DropdownItem>
-                  <DropdownItem key="Seminar">Seminar</DropdownItem>
-                  <DropdownItem key="Meeting">Meeting</DropdownItem>
-                  <DropdownItem key="Fundraiser">Fundraiser</DropdownItem>
+                  {eventTypes.map((type) => (
+                    <DropdownItem key={type}>{type}</DropdownItem>
+                  ))}
                 </DropdownMenu>
               </Dropdown>
             </div>
@@ -324,14 +346,18 @@ export default function Adminpage() {
                               </Button>
                               {isAdmin && (
                                 <Button
-                                  className="delete-button bg-red-500 text-white"
-                                  onClick={() => {
-                                    setSelectedEventId(event.id);
-                                    setModalOpen(true);
-                                  }}
-                                >
-                                  Delete Event
-                                </Button>
+                                className="delete-button bg-red-500 text-white"
+                                onClick={() => {
+                                  setSelectedEventId((prev) => {
+                                    const newId = event.id;
+                                    return newId;
+                                  });
+                                  setModalOpen(true);
+                                }}
+                              >
+                                Delete Event
+                              </Button>
+                              
                               )}
                             </div>
 
@@ -455,6 +481,31 @@ export default function Adminpage() {
           </div>
         </div>
       </div>
+      {modalOpen && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+      <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
+      <p>Are you sure you want to delete this event? This action cannot be undone.</p>
+      <div className="mt-4 flex justify-end gap-4">
+        <Button 
+          className="bg-gray-500 text-white"
+          onClick={() => setModalOpen(false)}
+        >
+          Cancel
+        </Button>
+        <Button 
+          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+          onClick={() => {
+            handleDelete();
+          }}
+        >
+          Confirm Delete
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
+
       <BottomBar />
     </div>
   );
