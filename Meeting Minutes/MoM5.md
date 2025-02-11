@@ -37,25 +37,34 @@ CLIENT'S REQUIREMENTS:
 
 
 1.) Complete UI changes.
+
 2.) Move navigation buttons to the bottom of the page.
+
 3.) Background images for the homepage are desired, the client thinks it should be placed directly behind the event cards.
 
 
 KEY DISCUSSION POINTS:
 
 1.) Is the client happy with the current progress made to the website?
+
 2.) What improvements can be made to ensure a user-friendly and visually appealing experience?
+
+3.) Are there any last-minute changes that need to be made?
 
 
 DECISIONS MADE:
 
 1.) A Pre-existing website used by Whitman County may replace the external resources page.
+
 2.) Monthly newsletter is no longer desired by the client. The decision was made to send an email with a hyperlink directly to the website as needed or new events are added.
+
+3.) Client is happy with the website in it's current state and expressed excitement for being able to use it.
 
 
 PROJECT MILESTONES DISCUSSED:
 
 1.) The website will be ready for client testing by mid-March.
+
 2.) Automatic email will be set up using the client's gmail account for billing purposes.
 
 
