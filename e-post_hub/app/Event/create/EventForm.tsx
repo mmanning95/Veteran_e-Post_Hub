@@ -123,7 +123,7 @@ export default function EventForm() {
         startTime: formattedStartTime,
         endTime: formattedEndTime,
         flyer: flyerUrl,
-        type: selectedType, // Add selected event type || may need to change to selected type merger issues
+        type: selectedType, // Add selected event type 
         address: data.address,
       };
 
