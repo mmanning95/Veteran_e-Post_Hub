@@ -102,21 +102,28 @@ export default function ProfilePage() {
         </div>
 
         <Button
-          className="bg-orange-400 text-white mt-4"
+          className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
           onClick={() => (window.location.href = '/Member')}
         >
           Back to Dashboard
         </Button>
 
         <Button
-          className="bg-orange-400 text-white mt-4"
+          className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
           onClick={() => (window.location.href = '/Member/profile/edit')}
         >
           Edit Profile
         </Button>
 
         <Button
-          className="bg-red-500 text-white mt-4"
+          className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+          onClick={() => (window.location.href = '/UpdatePassword')}
+        >
+          Update Password
+        </Button>
+
+        <Button
+          className="mt-4 bg-gradient-to-r from-[#f54949] to-[#f95d09] border border-black text-black w-full"
           onClick={handleDeleteAccount}
         >
           Delete Account
