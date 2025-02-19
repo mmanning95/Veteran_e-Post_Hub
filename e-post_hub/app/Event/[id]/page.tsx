@@ -30,8 +30,8 @@ type Comment = {
     name: string;
     email: string;
   };
-  parentId?: string | null; // To differentiate parent and child comments
-  replies: Comment[]; // Nested replies
+  parentId?: string | null; 
+  replies: Comment[];
 };
 
 export default function EventDetailsPage() {

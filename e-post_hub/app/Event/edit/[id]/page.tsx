@@ -26,7 +26,6 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
           const data = await response.json();
           setEvent(data.event);
 
-          // 🛠️ Fixing the date offset issue (subtract 1 day)
           setEditTitle(data.event.title || "");
           setEditDescription(data.event.description || "");
           setEditType(data.event.type || "");
@@ -46,7 +45,6 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
     fetchEventDetails();
   }, [eventId]);
 
-  // 🛠️ Adjust Date for Display (Subtract 1 day)
   const adjustDateForDisplay = (dateStr: string) => {
     if (!dateStr) return "";
     const d = new Date(dateStr);
@@ -54,7 +52,6 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
     return d.toISOString().split("T")[0];
   };
 
-  // 🛠️ Adjust Date for Saving (Add 1 day to fix DB issue)
   const adjustDateForSaving = (dateStr: string) => {
     if (!dateStr) return "";
     const d = new Date(dateStr);
@@ -62,7 +59,6 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
     return d.toISOString().split("T")[0];
   };
 
-  // 🛠️ Handle Save Event
   const handleSaveEvent = async () => {
     const updatedEvent = {
       title: editTitle,
