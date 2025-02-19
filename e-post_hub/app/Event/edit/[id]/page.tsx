@@ -2,6 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { Button, Textarea, Input } from "@nextui-org/react";
+import { usePlacesWidget } from "react-google-autocomplete";
 
 export default function EditEventPage({ params }: { params: { id: string } }) {
   const eventId = params.id;
@@ -45,6 +46,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
     fetchEventDetails();
   }, [eventId]);
 
+  // Adjust Date Offset (Fix the 1-day issue)
   const adjustDateForDisplay = (dateStr: string) => {
     if (!dateStr) return "";
     const d = new Date(dateStr);
@@ -58,6 +60,19 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
     d.setDate(d.getDate() + 1);
     return d.toISOString().split("T")[0];
   };
+
+  // 🛠️ Fixing Google Places Autocomplete
+  const { ref } = usePlacesWidget<HTMLInputElement>({
+    apiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!,
+    onPlaceSelected: (place) => {
+      const selectedAddress = place.formatted_address || "";
+      setEditAddress(selectedAddress);
+    },
+    options: {
+      types: ["geocode"],
+      componentRestrictions: { country: "us" },
+    },
+  });
 
   const handleSaveEvent = async () => {
     const updatedEvent = {
@@ -108,7 +123,14 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
         <Input value={editType} onChange={(e) => setEditType(e.target.value)} className="mb-2" />
 
         <label className="text-sm font-semibold">Event Address:</label>
-        <Input value={editAddress} onChange={(e) => setEditAddress(e.target.value)} className="mb-2" />
+        <Input
+          label="Event Address"
+          ref={ref as unknown as React.RefObject<HTMLInputElement>}
+          variant="bordered"
+          placeholder="Enter event location"
+          value={editAddress}
+          onChange={(e) => setEditAddress(e.target.value)}
+        />
 
         <label className="text-sm font-semibold">Start Date:</label>
         <Input type="date" value={editStartDate} onChange={(e) => setEditStartDate(e.target.value)} className="mb-2" />
