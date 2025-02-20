@@ -30,8 +30,8 @@ type Comment = {
     name: string;
     email: string;
   };
-  parentId?: string | null; // To differentiate parent and child comments
-  replies: Comment[]; // Nested replies
+  parentId?: string | null; 
+  replies: Comment[];
 };
 
 export default function EventDetailsPage() {
@@ -135,6 +135,13 @@ export default function EventDetailsPage() {
         });
     }
   };
+
+  const canEditEvent = () => {
+    if (!event) return false;
+    if (userRole === "ADMIN") return true; 
+    return event.createdBy.email === userId;
+  };
+
 
   const handleEditComment = async (commentId: string) => {
     // Ensure the content is not empty
@@ -425,6 +432,13 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                         <p className="text-gray-600">
                           <strong>Interested:</strong> {event.interested}
                         </p>
+                        {isLoggedIn && canEditEvent() && (
+                          <div className="mt-4 flex gap-2">
+                            <a href={`/Event/edit/${eventId}`}>
+                            <Button >Edit Event</Button>
+                            </a>
+                          </div>
+                        )}
 
         </CardHeader>
         <CardBody>
