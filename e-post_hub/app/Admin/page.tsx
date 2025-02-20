@@ -33,6 +33,7 @@ type Event = {
   latitude: number;
   longitude: number;
   distance: number;
+  address?: string;
 };
 
 export default function Adminpage() {
@@ -427,11 +428,11 @@ export default function Adminpage() {
                 No events found for the selected date
               </p>
             ) : (
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-y-6 md:grid-cols-2 lg:grid-cols-3 gap-x-4">
                 {filteredEvents.map((event) => (
                   <Card
                     key={event.id}
-                    className="mb-4 w-full "
+                    className="mb-4 w-full min-h-[500px] flex flex-col justify-between"
                     style={{
                       minHeight: "400px", // Taller cards
                     }}
@@ -464,14 +465,14 @@ export default function Adminpage() {
                             {/* Top Row: Interested and Delete Event */}
                             <div className="flex gap-2">
                               <Button
-                                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                                className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
                                 onClick={() => handleInterest(event.id)}
                               >
                                 I'm Interested
                               </Button>
                               {isAdmin && (
                                 <Button
-                                className="delete-button bg-red-500 text-white"
+                                className=" hover:scale-105 transition-transform duration-200 ease-in-out delete-button bg-red-500 text-white"
                                 onClick={() => {
                                   setSelectedEventId((prev) => {
                                     const newId = event.id;
@@ -488,7 +489,7 @@ export default function Adminpage() {
 
                             {/* Bottom Row: View Details */}
                             <Button
-                              className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+                              className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
                               style={{
                                 width: isAdmin ? "220px" : "110px",
                               }}
@@ -503,9 +504,9 @@ export default function Adminpage() {
                       </>
                     ) : (
                       // Display all event information if no flyer exists
-                      <CardBody className="flex flex-col justify-between p-6">
+                      <CardBody className="flex flex-col justify-between">
                         <div>
-                          <h5 className="text-xl font-bold mb-4">
+                          <h5 className="text-xl font-bold mb-2">
                             {event.title}
                           </h5>
                           {event.description && (
@@ -513,10 +514,6 @@ export default function Adminpage() {
                               {event.description}
                             </p>
                           )}
-                          <p className="text-gray-600">
-                            <strong>Created By:</strong> {event.createdBy.name}{" "}
-                            ({event.createdBy.email})
-                          </p>
                           {event.startDate && (
                             <p className="text-gray-600">
                               <strong>Start Date:</strong>{" "}
@@ -537,6 +534,11 @@ export default function Adminpage() {
                           {event.endTime && (
                             <p className="text-gray-600">
                               <strong>End Time:</strong> {event.endTime}
+                            </p>
+                          )}
+                          {event.address && (
+                            <p className="text-gray-600">
+                              <strong>Address:</strong> {event.address}
                             </p>
                           )}
                           {event.website && (
@@ -566,14 +568,14 @@ export default function Adminpage() {
                           {/* Top Row: Interested and Delete Event */}
                           <div className="flex gap-2">
                             <Button
-                              className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                              className=" hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
                               onClick={() => handleInterest(event.id)}
                             >
                               I'm Interested
                             </Button>
                             {isAdmin && (
                               <Button
-                                className="delete-button bg-red-500 text-white"
+                                className="hover:scale-105 transition-transform duration-200 ease-in-out delete-button bg-red-500 text-white"
                                 onClick={() => {
                                   setSelectedEventId(event.id);
                                   setModalOpen(true);
@@ -586,7 +588,7 @@ export default function Adminpage() {
 
                           {/* Bottom Row: View Details */}
                           <Button
-                            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+                            className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
                             style={{
                               width: isAdmin ? "220px" : "110px",
                             }}

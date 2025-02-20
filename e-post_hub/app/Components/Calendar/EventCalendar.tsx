@@ -34,19 +34,26 @@ export default function EventCalendar({ events, onDateClick }: EventCalendarProp
         value={selectedDate}
         locale="en-US" 
         tileContent={({ date }) => {
-          const dateStr = date.toISOString().split('T')[0];
+          const dateStr = date.toISOString().split("T")[0];
           const eventsOnDate = events.filter((event) => {
             if (!event.startDate) return false;
             const startDate = new Date(event.startDate);
             const endDate = event.endDate ? new Date(event.endDate) : startDate;
             return isDateInRange(date, startDate, endDate);
           });
+        
           if (eventsOnDate.length > 0) {
-            return <div className="event-dot text-orange-500 font-bold">•</div>;
+            return (
+              <div className="relative flex justify-center">
+                <span className="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-semibold px-[4px] py-[1px] rounded-full leading-none">
+                  {eventsOnDate.length}
+                </span>
+              </div>
+            );
           }
           return null;
         }}
-        tileClassName={({ date }) => {
+                tileClassName={({ date }) => {
           const dateStr = date.toISOString().split('T')[0];
           const isEventDate = events.some((event) => {
             if (!event.startDate) return false;

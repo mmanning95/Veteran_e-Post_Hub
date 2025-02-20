@@ -20,6 +20,7 @@ type Event = {
   endTime?: string;
   website?: string;
   flyer?: string;
+  address?: string;
 };
 
 type Comment = {
@@ -373,23 +374,23 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
       <Card className="w-3/4 mb-10">
         <CardHeader className="flex flex-col items-center justify-center">
           <h1 className="text-3xl font-semibold">{event.title}</h1>
-          <a href={event.flyer} target="_blank" rel="noopener noreferrer">
-          <img
-            src={event.flyer}
-            alt={`${event.title} Flyer`}
-            className="w-full h-full object-cover rounded-md"
-            style={{
-              maxHeight: "400px",
-            }}
-          />
-          </a>
+          {event.flyer ? (
+            <a href={event.flyer} target="_blank" rel="noopener noreferrer">
+              <img
+                src={event.flyer}
+                alt={`${event.title} Flyer`}
+                className="w-full h-full object-cover rounded-md"
+                style={{ maxHeight: "400px" }}
+              />
+            </a>
+          ) : (
+            <div className="w-full h-40 flex items-center justify-center bg-gray-200 rounded-md">
+              <span className="text-gray-500">No Image Available</span>
+            </div>
+          )}
           {event.description && (
                           <p className="text-gray-700 mb-4">{event.description}</p>
                         )}
-                        <p className="text-gray-600">
-                          <strong>Created By:</strong> {event.createdBy.name} (
-                          {event.createdBy.email})
-                        </p>
                         {event.startDate && (
                           <p className="text-gray-600">
                             <strong>Start Date:</strong>{" "}
@@ -410,6 +411,11 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                         {event.endTime && (
                           <p className="text-gray-600">
                             <strong>End Time:</strong> {event.endTime}
+                          </p>
+                        )}
+                        {event.address && (
+                          <p className="text-gray-600">
+                            <strong>Address:</strong> {event.address}
                           </p>
                         )}
                         {event.website && (
@@ -435,7 +441,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                         {isLoggedIn && canEditEvent() && (
                           <div className="mt-4 flex gap-2">
                             <a href={`/Event/edit/${eventId}`}>
-                            <Button >Edit Event</Button>
+                            <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black">Edit Event</Button>
                             </a>
                           </div>
                         )}
@@ -483,7 +489,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                       {editingCommentId === comment.id ? (
                         <div className="flex gap-2">
                           <Button
-                            className="text-blue-500 text-sm"
+                            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
                             onClick={() => handleEditComment(comment.id)} // Save the edited comment
                           >
                             Save
@@ -497,7 +503,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                         </div>
                       ) : (
                         <Button
-                          className="text-blue-500 text-sm"
+                          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
                           onClick={() => {
                             setEditingCommentId(comment.id); // Enter edit mode
                             setEditContent(comment.content); // Populate the textarea with existing content
@@ -509,7 +515,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                       {confirmDelete === comment.id ? (
                         <div className="flex gap-2">
                           <Button
-                            className="text-red-500 text-sm"
+                            className="bg-gradient-to-r from-[#f7110d] to-[#f95d09] border border-black"
                             onClick={() => handleDeleteComment(comment.id)} // Delete comment
                           >
                             Confirm Delete
@@ -523,7 +529,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                         </div>
                       ) : (
                         <Button
-                          className="text-red-500 text-sm"
+                          className="bg-[#f7110d] border border-black"
                           onClick={() => setConfirmDelete(comment.id)} // Trigger delete confirmation
                         >
                           Delete
@@ -564,7 +570,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                               {editingCommentId === reply.id ? (
                                 <div className="flex gap-2">
                                   <Button
-                                    className="text-blue-500 text-xs"
+                                    className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
                                     onClick={() => handleEditComment(reply.id)} // Save the edited reply
                                   >
                                     Save
@@ -578,8 +584,8 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                                 </div>
                               ) : (
                                 <Button
-                                  className="text-blue-500 text-xs"
-                                  onClick={() => {
+                                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
+                                onClick={() => {
                                     setEditingCommentId(reply.id); // Enter edit mode for reply
                                     setEditContent(reply.content); // Populate textarea with reply content
                                   }}
@@ -590,8 +596,8 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                               {confirmDelete === reply.id ? (
                                 <div className="flex gap-2">
                                   <Button
-                                    className="text-red-500 text-xs"
-                                    onClick={() => handleDeleteComment(reply.id)} // Delete reply
+                            className="bg-gradient-to-r from-[#f7110d] to-[#f95d09] border border-black"
+                            onClick={() => handleDeleteComment(reply.id)} // Delete reply
                                   >
                                     Confirm Delete
                                   </Button>
@@ -604,7 +610,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                                 </div>
                               ) : (
                                 <Button
-                                  className="text-red-500 text-xs"
+                                  className="bg-[#f7110d] border border-black"
                                   onClick={() => setConfirmDelete(reply.id)} // Trigger delete confirmation
                                 >
                                   Delete
@@ -630,7 +636,9 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                   </div>
                 )}
                 {isLoggedIn && replyingTo !== comment.id && (
-                  <Button onClick={() => setReplyingTo(comment.id)}>Reply</Button>
+                  <Button 
+                    className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
+                    onClick={() => setReplyingTo(comment.id)}>Reply</Button>
                 )}
               </div>
             ))}
@@ -643,7 +651,9 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
               />
-              <Button onClick={handleCommentSubmit}>Add Comment</Button>
+              <Button 
+                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
+                onClick={handleCommentSubmit}>Add Comment</Button>
             </div>
           ) : (
             <div className="text-center mt-6">

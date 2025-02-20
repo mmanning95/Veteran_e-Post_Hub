@@ -35,6 +35,7 @@ type Event = {
   latitude: number;
   longitude: number;
   distance: number;
+  address?: string;
 };
 
 export default function HomePage() {
@@ -446,13 +447,13 @@ export default function HomePage() {
                           </a>
                           <div className="flex gap-2 mt-4 justify-center">
                             <Button
-                              className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                              className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
                               onClick={() => handleInterest(event.id)}
                             >
                               I'm Interested
                             </Button>
                             <Link href={`/Event/${event.id}`} passHref>
-                              <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
+                              <Button className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
                                 View Details
                               </Button>
                             </Link>
@@ -471,10 +472,6 @@ export default function HomePage() {
                               {event.description}
                             </p>
                           )}
-                          <p className="text-gray-600">
-                            <strong>Created By:</strong> {event.createdBy.name}{" "}
-                            ({event.createdBy.email})
-                          </p>
                           {event.startDate && (
                             <p className="text-gray-600">
                               <strong>Start Date:</strong>{" "}
@@ -497,6 +494,12 @@ export default function HomePage() {
                               <strong>End Time:</strong> {event.endTime}
                             </p>
                           )}
+                          {event.address && (
+                            <p className="text-gray-600">
+                              <strong>Address:</strong> {event.address}
+                            </p>
+                          )}
+
                           {event.website && (
                             <p className="text-gray-600">
                               <strong>Website:</strong>{" "}
@@ -521,13 +524,13 @@ export default function HomePage() {
                         </div>
                         <div className="flex gap-2 mt-4 justify-center">
                           <Button
-                            className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                            className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
                             onClick={() => handleInterest(event.id)}
                           >
                             I'm Interested
                           </Button>
                           <Link href={`/Event/${event.id}`} passHref>
-                            <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
+                            <Button className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
                               View Details
                             </Button>
                           </Link>
