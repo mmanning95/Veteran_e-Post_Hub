@@ -102,28 +102,28 @@ export default function ProfilePage() {
         </div>
 
         <Button
-          className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+          className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
           onClick={() => (window.location.href = '/Member')}
         >
           Back to Dashboard
         </Button>
 
         <Button
-          className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+          className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
           onClick={() => (window.location.href = '/Member/profile/edit')}
         >
           Edit Profile
         </Button>
 
         <Button
-          className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+          className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
           onClick={() => (window.location.href = '/UpdatePassword')}
         >
           Update Password
         </Button>
 
         <Button
-          className="mt-4 bg-gradient-to-r from-[#f54949] to-[#f95d09] border border-black text-black w-full"
+          className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#f54949] to-[#f95d09] border border-black text-black w-full"
           onClick={handleDeleteAccount}
         >
           Delete Account
