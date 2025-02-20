@@ -35,6 +35,7 @@ type Event = {
   latitude: number;
   longitude: number;
   distance: number;
+  address?: string;
 };
 
 export default function Memberpage() {
@@ -480,13 +481,13 @@ export default function Memberpage() {
                                 {/* Top Row: I'm Interested and Delete Event */}
                                 <div className="flex gap-2">
                                   <Button
-                                    className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                                    className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
                                     onClick={() => handleInterest(event.id)}
                                   >
                                     I'm Interested
                                   </Button>
                                   <Button
-                                    className="delete-button bg-red-500 text-white"
+                                    className="hover:scale-105 transition-transform duration-200 ease-in-out delete-button bg-red-500 text-white"
                                     onClick={() => {
                                       setSelectedEventId(event.id);
                                       setModalOpen(true);
@@ -497,7 +498,7 @@ export default function Memberpage() {
                                 </div>
                                 {/* Bottom Row: View Details */}
                                 <Button
-                                  className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+                                  className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
                                   style={{ width: "220px" }} // Matches the combined width of top-row buttons
                                   as={Link}
                                   href={`/Event/${event.id}`}
@@ -511,13 +512,13 @@ export default function Memberpage() {
                               <div className="flex gap-2">
                                 {/* Side by Side: I'm Interested and View Details */}
                                 <Button
-                                  className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                                  className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
                                   onClick={() => handleInterest(event.id)}
                                 >
                                   I'm Interested
                                 </Button>
                                 <Button
-                                  className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                                  className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
                                   as={Link}
                                   href={`/Event/${event.id}`}
                                   passHref
@@ -540,10 +541,6 @@ export default function Memberpage() {
                               {event.description}
                             </p>
                           )}
-                          <p className="text-gray-600">
-                            <strong>Created By:</strong> {event.createdBy.name}{" "}
-                            ({event.createdBy.email})
-                          </p>
                           {event.startDate && (
                             <p className="text-gray-600">
                               <strong>Start Date:</strong>{" "}
@@ -566,6 +563,12 @@ export default function Memberpage() {
                               <strong>End Time:</strong> {event.endTime}
                             </p>
                           )}
+                          {event.address && (
+                            <p className="text-gray-600">
+                              <strong>Address:</strong> {event.address}
+                            </p>
+                          )}
+
                           {event.website && (
                             <p className="text-gray-600">
                               <strong>Website:</strong>{" "}
@@ -596,13 +599,13 @@ export default function Memberpage() {
                               {/* Top Row: I'm Interested and Delete Event */}
                               <div className="flex gap-2">
                                 <Button
-                                  className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                                  className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
                                   onClick={() => handleInterest(event.id)}
                                 >
                                   I'm Interested
                                 </Button>
                                 <Button
-                                  className="delete-button bg-red-500 text-white"
+                                  className="hover:scale-105 transition-transform duration-200 ease-in-out delete-button bg-red-500 text-white"
                                   onClick={() => {
                                     setSelectedEventId(event.id);
                                     setModalOpen(true);
@@ -613,7 +616,7 @@ export default function Memberpage() {
                               </div>
                               {/* Bottom Row: View Details */}
                               <Button
-                                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+                                className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
                                 style={{ width: "220px" }} // Matches the combined width of top-row buttons
                                 as={Link}
                                 href={`/Event/${event.id}`}
@@ -627,13 +630,13 @@ export default function Memberpage() {
                             <div className="flex gap-2">
                               {/* Side by Side: I'm Interested and View Details */}
                               <Button
-                                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                                className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
                                 onClick={() => handleInterest(event.id)}
                               >
                                 I'm Interested
                               </Button>
                               <Button
-                                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                                className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
                                 as={Link}
                                 href={`/Event/${event.id}`}
                                 passHref
