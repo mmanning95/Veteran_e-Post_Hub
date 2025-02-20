@@ -31,6 +31,8 @@ During this sprint, we focused on implementing UI updates and user quality of li
  ## Incomplete Issues/User Stories
 - N/A
 
+## Sprint Video
+* [Presentations](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Presentations/Sprint%20Presentations.md)
 
 ## Code Files for Review
 - N/A
