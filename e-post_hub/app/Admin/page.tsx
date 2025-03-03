@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import jwt from "jsonwebtoken";
 import EventCalendar from "../Components/Calendar/EventCalendar";
 import BottomBar from "../Components/BottomBar/BottomBar";
-import MilitaryBranches from '../Images/Military-Branches.jpg';
+import MilitaryBranches from "../Images/Military-Branches.jpg";
 import {
   Dropdown,
   DropdownTrigger,
@@ -56,7 +56,6 @@ export default function Adminpage() {
     /*for event filtering by type */
   }
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
-
 
   // {
   //   /*for event filtering by type */
@@ -203,10 +202,13 @@ export default function Adminpage() {
           setFilteredEvents(data.events);
 
           const uniqueTypes: string[] = Array.from(
-            new Set<string>(data.events.map((event: Event) => event.type as string).filter(Boolean))
+            new Set<string>(
+              data.events
+                .map((event: Event) => event.type as string)
+                .filter(Boolean)
+            )
           );
-          
-          
+
           setEventTypes(uniqueTypes);
         } else {
           setMessage("Failed to fetch events.");
@@ -341,61 +343,78 @@ export default function Adminpage() {
       <div
         className="w-full h-[650px] bg-cover bg-center"
         style={{ backgroundImage: `url(${MilitaryBranches.src})` }}
-      >
-      </div>
-      
+      ></div>
+
       {/* Sidebar */}
       {/* Calendar */}
       <div className="flex flex-1">
         <div className="calendar-sidebar w-1/4 p-4">
           <EventCalendar events={events} onDateClick={handleDateClick} />
 
-           {/* Event type Filter */}
-           <Dropdown>
-              <DropdownTrigger>
-                <Button className="w-full border border-gray-300 bg-white text-black">
-                  Filter by Event Type
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Filter by Event Type"
-                selectionMode="multiple"
-                selectedKeys={selectedTypes}
-                onSelectionChange={(keys) => handleTypeFilter(keys as Set<string>)}
-              >
-                {eventTypes.map((type) => (
-                  <DropdownItem key={type}>{type}</DropdownItem>
-                ))}
-              </DropdownMenu>
-            </Dropdown>
+          {/* Event type Filter */}
+          <Dropdown>
+            <DropdownTrigger>
+              <Button className="w-full border border-gray-300 bg-white text-black">
+                Filter by Event Type
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Filter by Event Type"
+              selectionMode="multiple"
+              selectedKeys={selectedTypes}
+              onSelectionChange={(keys) =>
+                handleTypeFilter(keys as Set<string>)
+              }
+            >
+              {eventTypes.map((type) => (
+                <DropdownItem key={type}>{type}</DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
 
-            {/* Proximity filter*/}
-            <Dropdown className="mt-2">
-              <DropdownTrigger>
-                <Button
-                  className="w-full border border-gray-300 bg-white text-black"
-                  onClick={getUserLocation}
-                >
-                  Distance
-                </Button>
-              </DropdownTrigger>
-              <DropdownMenu
-                aria-label="Filter by Distance"
-                selectionMode="single"
-                selectedKeys={
-                  selectedProximity ? [String(selectedProximity)] : []
-                }
-                onSelectionChange={(keys) => {
-                  const selectedValue = Number(Array.from(keys)[0] as string);
-                  handleProximityFilter(selectedValue);
-                }}
+          {/* Proximity filter*/}
+          <Dropdown className="mt-2">
+            <DropdownTrigger>
+              <Button
+                className="w-full border border-gray-300 bg-white text-black"
+                onClick={getUserLocation}
               >
-                <DropdownItem key="5">Within 5 miles</DropdownItem>
-                <DropdownItem key="10">Within 10 miles</DropdownItem>
-                <DropdownItem key="20">Within 20 miles</DropdownItem>
-                <DropdownItem key="50">Within 50 miles</DropdownItem>
-              </DropdownMenu>
-            </Dropdown>
+                Distance
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Filter by Distance"
+              selectionMode="single"
+              selectedKeys={
+                selectedProximity ? [String(selectedProximity)] : []
+              }
+              onSelectionChange={(keys) => {
+                const selectedValue = Number(Array.from(keys)[0] as string);
+                handleProximityFilter(selectedValue);
+              }}
+            >
+              <DropdownItem key="5">Within 5 miles</DropdownItem>
+              <DropdownItem key="10">Within 10 miles</DropdownItem>
+              <DropdownItem key="20">Within 20 miles</DropdownItem>
+              <DropdownItem key="50">Within 50 miles</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
+          {/* Print Events Button */}
+          <Button
+            className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+            onClick={() => {
+              const filters = {
+                types: Array.from(selectedTypes),
+                proximity: selectedProximity,
+              };
+              const queryParams = new URLSearchParams({
+                filters: JSON.stringify(filters),
+              }).toString();
+              window.open(`/print-events?${queryParams}`, "_blank");
+            }}
+          >
+            Print Events
+          </Button>
 
           {filteredEvents.length !== events.length && (
             <Button
@@ -472,18 +491,17 @@ export default function Adminpage() {
                               </Button>
                               {isAdmin && (
                                 <Button
-                                className=" hover:scale-105 transition-transform duration-200 ease-in-out delete-button bg-red-500 text-white"
-                                onClick={() => {
-                                  setSelectedEventId((prev) => {
-                                    const newId = event.id;
-                                    return newId;
-                                  });
-                                  setModalOpen(true);
-                                }}
-                              >
-                                Delete Event
-                              </Button>
-                              
+                                  className=" hover:scale-105 transition-transform duration-200 ease-in-out delete-button bg-red-500 text-white"
+                                  onClick={() => {
+                                    setSelectedEventId((prev) => {
+                                      const newId = event.id;
+                                      return newId;
+                                    });
+                                    setModalOpen(true);
+                                  }}
+                                >
+                                  Delete Event
+                                </Button>
                               )}
                             </div>
 
@@ -609,29 +627,32 @@ export default function Adminpage() {
         </div>
       </div>
       {modalOpen && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-      <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
-      <p>Are you sure you want to delete this event? This action cannot be undone.</p>
-      <div className="mt-4 flex justify-end gap-4">
-        <Button 
-          className="bg-gray-500 text-white"
-          onClick={() => setModalOpen(false)}
-        >
-          Cancel
-        </Button>
-        <Button 
-          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-          onClick={() => {
-            handleDelete();
-          }}
-        >
-          Confirm Delete
-        </Button>
-      </div>
-    </div>
-  </div>
-)}
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+            <h3 className="text-xl font-bold mb-4">Confirm Deletion</h3>
+            <p>
+              Are you sure you want to delete this event? This action cannot be
+              undone.
+            </p>
+            <div className="mt-4 flex justify-end gap-4">
+              <Button
+                className="bg-gray-500 text-white"
+                onClick={() => setModalOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                onClick={() => {
+                  handleDelete();
+                }}
+              >
+                Confirm Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <BottomBar />
     </div>
