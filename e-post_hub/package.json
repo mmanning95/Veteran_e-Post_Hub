@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
+    "postinstall": "prisma generate",
     "start": "next start",
     "lint": "next lint",
     "test": "vitest",
@@ -51,6 +52,7 @@
     "@types/node": "^20.17.10",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "eslint": "^9.21.0",
     "jsdom": "^25.0.1",
     "postcss": "^8",
     "prisma": "^6.3.1",
