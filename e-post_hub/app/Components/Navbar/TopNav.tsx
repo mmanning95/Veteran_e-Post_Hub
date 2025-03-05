@@ -13,7 +13,7 @@ import NavLink from './NavLink'
 import { CiLogin, CiLogout, CiUser } from "react-icons/ci";
 import { GoChevronDown } from "react-icons/go";
 import { GrHelpBook } from "react-icons/gr";
-import { LuUserPlus2 } from "react-icons/lu";
+import { LuUserPlus } from "react-icons/lu";
 import { MdOutlineCreate } from "react-icons/md";
 import { MdOutlineAdminPanelSettings } from "react-icons/md";
 
@@ -125,7 +125,7 @@ export default function TopNav() {
           >
             Register
             <GoChevronDown />
-            <LuUserPlus2 size={20} />
+            <LuUserPlus size={20} />
           </Button>
         </DropdownTrigger>
       </NavbarItem>
@@ -136,12 +136,12 @@ export default function TopNav() {
           base: "gap-4",
         }}
       >
-        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
+        <DropdownItem key="admin" className="!bg-orange-500 hover:!bg-orange-300 text-white">
           <Link href="/Registeradmin" className="text-black no-underline">
             Admin Registration
           </Link>
         </DropdownItem>
-        <DropdownItem className="!bg-orange-500 hover:!bg-orange-300 text-white">
+        <DropdownItem key="member" className="!bg-orange-500 hover:!bg-orange-300 text-white">
           <Link href="/Registermember" className="text-black no-underline">
             Member Registration
           </Link>
