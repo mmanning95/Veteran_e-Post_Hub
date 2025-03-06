@@ -337,7 +337,7 @@ export default function Adminpage() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-blue-100 flex flex-col">
+    <div className=" bg-blue-100 w-full">
       <div
         className="w-full h-[650px] bg-cover bg-center"
         style={{ backgroundImage: `url(${MilitaryBranches.src})` }}
@@ -346,8 +346,8 @@ export default function Adminpage() {
       
       {/* Sidebar */}
       {/* Calendar */}
-      <div className="flex flex-1">
-        <div className="calendar-sidebar w-1/4 p-4">
+      <div className="flex flex-col md:flex-row w-full">
+        <div className="calendar-sidebar w-full md:w-2/5 p-4 lg:w-1/4">
           <EventCalendar events={events} onDateClick={handleDateClick} />
 
            {/* Event type Filter */}
@@ -408,7 +408,7 @@ export default function Adminpage() {
         </div>
 
         {/* Main Content */}
-        <div className="content w-3/4 p-4">
+        <div className="content w-full md:w-3/5 p-4 overflow-x-hidden">
           <div className="text-center mb-10">
             <h1 className="text-4xl font-bold">
               Welcome to the Veteran e-Post Hub
@@ -633,7 +633,7 @@ export default function Adminpage() {
   </div>
 )}
 
-      <BottomBar />
+      <BottomBar /> 
     </div>
   );
 }

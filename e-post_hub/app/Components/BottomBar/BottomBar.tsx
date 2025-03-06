@@ -1,12 +1,15 @@
 import Image from "next/image";
 import WVAnobg from "../../Images/WVAnobg.png";
+import hero from "../../Images/hero.jpg"
 
 export default function BottomBar() {
   return (
-    <div
-      className="relative w-full bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-black flex items-center justify-center h-[110px] shadow-md"
-    >
-      <div className="flex flex-row items-center justify-between w-full px-6">
+<div className="w-full overflow-auto">
+<div 
+className="relative w-full bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-black flex flex-col md:flex-row items-center 
+justify-between gap-4 md:gap-0 h-auto p-4 md:h-[110px] shadow-md">
+
+<div className="flex flex-col md:flex-row items-center justify-between gap-4 w-full px-6 overflow-auto">
         {/* Contact Us Section with Image */}
         <div className="flex items-center">
           <Image
@@ -46,10 +49,19 @@ export default function BottomBar() {
         </div>
 
         {/* Branding */}
-        <div className="text-right">
-          <p className="text-lg font-bold">Veteran e-Post Hub © 2025</p>
-        </div>
+        <div className="text-right flex items-center gap-2 "> 
+      <p className="text-lg font-bold">By: Hero's Hub</p>
+
+  <Image
+    src={hero}
+    alt="Hero Logo"
+    width={40}
+    height={40}
+    className="rounded-md"
+  />
+</div>
       </div>
+    </div>
     </div>
   );
 }

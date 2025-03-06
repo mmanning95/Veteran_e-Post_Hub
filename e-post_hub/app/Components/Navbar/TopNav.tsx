@@ -58,7 +58,7 @@ export default function TopNav() {
     };
 
     return (
-        <Navbar maxWidth='xl' className='w-full bg-gradient-to-r from-[#f7960d] to-[#f95d09]'
+        <Navbar maxWidth='xl' className='w-full bg-gradient-to-r from-[#f7960d] to-[#f95d09] overflow-auto'
             classNames={{
                 item: [
                     'text-xl',
@@ -68,10 +68,10 @@ export default function TopNav() {
                 ]
             }}
         >
-            <NavbarBrand as={Link} href={"/"}>
+            <NavbarBrand as={Link} href={"/"} className='flex items-center'>
                 <Image src={whitman_img} alt="" width={40} height={40} />
-                <div className='font-bold text-3lg flex'>
-                    <span className='text-gray-800'>Veteran e-Post Hub</span>
+                <div className='font-bold text-3lg flex overflow-hidden'>
+                    <span className='font-bold text-xl text-gray-800 truncate hidden md:block ml-2'>E-Post Hub</span>
                 </div>
             </NavbarBrand>
             <NavbarContent justify="end" className="flex items-center gap-4 ml-auto">
