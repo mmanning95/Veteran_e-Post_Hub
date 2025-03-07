@@ -89,8 +89,8 @@ export default function AskPage() {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <Card className="w-2/3 p-5 border border-orange-300">
+    <div className="flex flex-col md:flex-row">
+      <Card className="w-full md:w-3/5 lg:w-3/5 mx-auto lg:mt-5 md:mt-5">
         <CardHeader>
           <div className="flex flex-col gap-3">
             <Checkbox

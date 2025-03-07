@@ -47,7 +47,7 @@ export default function CommunityPage() {
         {questions.length === 0 ? (
           <p>No public questions available.</p>
         ) : (
-          <div className="grid grid-cols-1 gap-4">
+          <div className="grid grid-cols-1 gap-4 w-3/4">
             {questions.map((question) => (
               <Card key={question.id} className="p-4 border border-gray-300">
                 <h3 className="text-xl font-semibold">{question.username}</h3>
