@@ -6,7 +6,7 @@ import React, { useEffect, useState } from "react";
 import jwt from "jsonwebtoken";
 import EventCalendar from "../Components/Calendar/EventCalendar";
 import BottomBar from "../Components/BottomBar/BottomBar";
-import MilitaryBranches from '../Images/Military-Branches.jpg';
+import MilitaryBranches from "../Images/Military-Branches.jpg";
 import {
   Dropdown,
   DropdownTrigger,
@@ -49,7 +49,7 @@ export default function Memberpage() {
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
   const [eventTypes, setEventTypes] = useState<string[]>([]);
-  
+
   const [selectedProximity, setSelectedProximity] = useState<number | null>(
     null
   );
@@ -233,11 +233,14 @@ export default function Memberpage() {
         setFilteredEvents(data.events); // Initially, show all events
 
         const uniqueTypes: string[] = Array.from(
-          new Set<string>(data.events.map((event: Event) => event.type as string).filter(Boolean))
+          new Set<string>(
+            data.events
+              .map((event: Event) => event.type as string)
+              .filter(Boolean)
+          )
         );
 
         setEventTypes(uniqueTypes);
-
       } else {
         console.error("Failed to fetch approved events:", response.statusText);
       }
@@ -351,63 +354,65 @@ export default function Memberpage() {
   };
 
   return (
-    <div className="min-h-screen w-full bg-blue-100 flex flex-col">
+    <div className=" bg-blue-100 w-full">
       <div
         className="w-full h-[650px] bg-cover bg-center"
         style={{ backgroundImage: `url(${MilitaryBranches.src})` }}
-      >
-      </div>
-      <div className="flex flex-1">
-        {/*  Sidebar */}
-        <div className="calendar-sidebar w-1/4 p-4">
+      ></div>
+
+      {/* Calendar */}
+      <div className="flex flex-col md:flex-row w-full">
+        <div className="calendar-sidebar w-full md:w-2/5 p-4 lg:w-1/4">
           <EventCalendar events={events} onDateClick={handleDateClick} />
 
-                     {/* Event type Filter */}
-                     <Dropdown>
-                        <DropdownTrigger>
-                          <Button className="w-full border border-gray-300 bg-white text-black">
-                            Filter by Event Type
-                          </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                          aria-label="Filter by Event Type"
-                          selectionMode="multiple"
-                          selectedKeys={selectedTypes}
-                          onSelectionChange={(keys) => handleTypeFilter(keys as Set<string>)}
-                        >
-                          {eventTypes.map((type) => (
-                            <DropdownItem key={type}>{type}</DropdownItem>
-                          ))}
-                        </DropdownMenu>
-                      </Dropdown>
-          
-                      {/* Proximity filter*/}
-                      <Dropdown className="mt-2">
-                        <DropdownTrigger>
-                          <Button
-                            className="w-full border border-gray-300 bg-white text-black"
-                            onClick={getUserLocation}
-                          >
-                            Distance
-                          </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu
-                          aria-label="Filter by Distance"
-                          selectionMode="single"
-                          selectedKeys={
-                            selectedProximity ? [String(selectedProximity)] : []
-                          }
-                          onSelectionChange={(keys) => {
-                            const selectedValue = Number(Array.from(keys)[0] as string);
-                            handleProximityFilter(selectedValue);
-                          }}
-                        >
-                          <DropdownItem key="5">Within 5 miles</DropdownItem>
-                          <DropdownItem key="10">Within 10 miles</DropdownItem>
-                          <DropdownItem key="20">Within 20 miles</DropdownItem>
-                          <DropdownItem key="50">Within 50 miles</DropdownItem>
-                        </DropdownMenu>
-                      </Dropdown>
+          {/* Event type Filter */}
+          <Dropdown>
+            <DropdownTrigger>
+              <Button className="w-full border border-gray-300 bg-white text-black">
+                Filter by Event Type
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Filter by Event Type"
+              selectionMode="multiple"
+              selectedKeys={selectedTypes}
+              onSelectionChange={(keys) =>
+                handleTypeFilter(keys as Set<string>)
+              }
+            >
+              {eventTypes.map((type) => (
+                <DropdownItem key={type}>{type}</DropdownItem>
+              ))}
+            </DropdownMenu>
+          </Dropdown>
+
+          {/* Proximity filter*/}
+          <Dropdown className="mt-2">
+            <DropdownTrigger>
+              <Button
+                className="w-full border border-gray-300 bg-white text-black"
+                onClick={getUserLocation}
+              >
+                Distance
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Filter by Distance"
+              selectionMode="single"
+              selectedKeys={
+                selectedProximity ? [String(selectedProximity)] : []
+              }
+              onSelectionChange={(keys) => {
+                const selectedValue = Number(Array.from(keys)[0] as string);
+                handleProximityFilter(selectedValue);
+              }}
+            >
+              <DropdownItem key="5">Within 5 miles</DropdownItem>
+              <DropdownItem key="10">Within 10 miles</DropdownItem>
+              <DropdownItem key="20">Within 20 miles</DropdownItem>
+              <DropdownItem key="50">Within 50 miles</DropdownItem>
+            </DropdownMenu>
+          </Dropdown>
 
           {filteredEvents.length !== events.length && (
             <Button
@@ -420,7 +425,7 @@ export default function Memberpage() {
         </div>
 
         {/* Main Content */}
-        <div className="content w-3/4 p-4">
+        <div className="content w-full md:w-3/5 p-4 overflow-x-hidden">
           <div className="text-center mb-10">
             <h3 className="text-3xl font-bold">
               Welcome, {memberName || "Member"}!
