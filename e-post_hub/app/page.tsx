@@ -328,9 +328,9 @@ export default function HomePage() {
         style={{ backgroundImage: `url(${MilitaryBranches.src})` }}
       >
       </div>
-      <div className="flex-grow flex">
+      <div className="flex flex-col md:flex-row w-full">
         {/* Sidebar */}
-        <div className="calendar-sidebar w-1/4 p-4">
+        <div className="calendar-sidebar w-full md:w-2/5 p-4 lg:w-1/4">
           <EventCalendar events={events} onDateClick={handleDateClick} />
 
                      {/* Event type Filter */}
@@ -412,11 +412,11 @@ export default function HomePage() {
                 No events found for the selected date
               </p>
             ) : (
-              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-3">
                 {filteredEvents.map((event) => (
                   <Card
                     key={event.id}
-                    className="mb-4 w-full md:w - [320-px] lg:w-[380-px]"
+                    className="mb-4 w-fit md:w-[320-px] lg:w-[380-px]"
                     style={{
                       minHeight: "400px",
                     }}
