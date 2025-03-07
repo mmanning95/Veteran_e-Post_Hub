@@ -393,7 +393,7 @@ export default function HomePage() {
               const queryParams = new URLSearchParams({
                 filters: JSON.stringify(filters),
               }).toString();
-              window.open(`/print-events?${queryParams}`, "_blank");
+              window.open(`/print?${queryParams}`, "_blank");
             }}
           >
             Print Events
