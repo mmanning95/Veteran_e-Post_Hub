@@ -154,7 +154,7 @@ export default function TopNav() {
                 key="admin"
                 as={Link}
                 href="/Registeradmin"
-                className="!bg-orange-500 hover:!bg-orange-300 text-white no-underline"
+                className="!bg-orange-500 hover:!bg-orange-300 text-black no-underline px-4 py-2 rounded-md"
               >
                 Admin Registration
               </DropdownItem>
@@ -163,7 +163,7 @@ export default function TopNav() {
                 key="member"
                 as={Link}
                 href="/Registermember"
-                className="!bg-orange-500 hover:!bg-orange-300 text-white no-underline"
+                className="!bg-orange-500 hover:!bg-orange-300 text-black no-underline px-4 py-2 rounded-md"
               >
                 Member Registration
               </DropdownItem>
