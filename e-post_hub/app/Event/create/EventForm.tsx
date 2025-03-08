@@ -70,31 +70,30 @@ export default function EventForm() {
     text: string;
   } | null>(null);
 
-    // Watch form values
-    const watchTitle = watch("title");
-    const watchStartDate = watch("startDate");
-    const watchEndDate = watch("endDate");
-    const watchDescription = watch("description");
-    const watchType = watch("type");
+  // Watch form values
+  const watchTitle = watch("title");
+  const watchStartDate = watch("startDate");
+  const watchEndDate = watch("endDate");
+  const watchDescription = watch("description");
+  const watchType = watch("type");
 
   // Check form validity: Title, Start/End Date, Type, and EITHER Description OR Flyer
   const isFormValid =
-  watchTitle &&
-  watchStartDate &&
-  watchEndDate &&
-  watchType &&
-  (watchDescription || file);
-  
+    watchTitle &&
+    watchStartDate &&
+    watchEndDate &&
+    watchType &&
+    (watchDescription || file);
+
   const handleTypeChange = (type: string) => {
     if (!type.trim()) return; // Prevent empty inputs
     setSelectedType(type);
     setValue("type", type, { shouldValidate: true });
-  
+
     if (!eventType.includes(type.trim())) {
       setEventType([...eventType, type.trim()]); // Trim to avoid whitespace issues
     }
   };
-  
 
   const onSubmit = async (data: CreateEventForm) => {
     try {
@@ -123,7 +122,7 @@ export default function EventForm() {
         startTime: formattedStartTime,
         endTime: formattedEndTime,
         flyer: flyerUrl,
-        type: selectedType, // Add selected event type 
+        type: selectedType, // Add selected event type
         address: data.address,
       };
 
@@ -175,7 +174,7 @@ export default function EventForm() {
   });
 
   return (
-    <Card className="w-2/5 mx-auto max-h-[80vh] overflow-y-auto">
+    <Card className="w-full max-w-md mx-auto">
       <CardHeader className="flex flex-col items-center justify-center">
         <h3 className="text-3xl font-semibold">Create New Event</h3>
       </CardHeader>
@@ -204,11 +203,13 @@ export default function EventForm() {
 
             <div className="flex gap-4">
               <Input
-              isRequired
+                isRequired
                 type="date"
                 label="Start Date"
                 variant="bordered"
-                {...register("startDate", { required: "Start date is required" })}
+                {...register("startDate", {
+                  required: "Start date is required",
+                })}
                 errorMessage={errors.startDate?.message}
               />
               <Input
@@ -280,23 +281,29 @@ export default function EventForm() {
                   setSelectedType(value); // Update input field
                 }
               }}
-              
               onSelectionChange={(key) => {
                 if (key && !eventType.includes(key.toString())) {
                   setEventType([...eventType, key.toString()]); // Add new type
                 }
                 setSelectedType(key?.toString() || ""); // Update selected type
-                setValue("type", key?.toString() || "", { shouldValidate: true });
+                setValue("type", key?.toString() || "", {
+                  shouldValidate: true,
+                });
               }}
-              
               className="w-full"
               placeholder="Select or enter an event type"
               variant="bordered"
               {...register("type", { required: "Type is required" })}
             >
-              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
+              {(item) => (
+                <AutocompleteItem key={item.value}>
+                  {item.label}
+                </AutocompleteItem>
+              )}
             </Autocomplete>
-            {errors.type && <p className="text-red-500">{errors.type.message}</p>}
+            {errors.type && (
+              <p className="text-red-500">{errors.type.message}</p>
+            )}
 
             {/* Autocomplete Address Input */}
             <Input
@@ -326,8 +333,8 @@ export default function EventForm() {
               Submit Event
             </Button>
             <div className="text-[#757575]" style={{ fontSize: "12px" }}>
-            Note: Title, Start & End Dates, and Type are required, plus either
-            a Description or Flyer. Other fields are optional.
+              Note: Title, Start & End Dates, and Type are required, plus either
+              a Description or Flyer. Other fields are optional.
             </div>
           </div>
         </form>
