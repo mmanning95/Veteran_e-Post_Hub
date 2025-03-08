@@ -447,19 +447,19 @@ export default function Adminpage() {
                 No events found for the selected date
               </p>
             ) : (
-              <div className="grid grid-cols-1 gap-y-6 md:grid-cols-2 lg:grid-cols-3 gap-x-4">
+              <div className="grid grid-cols-1 gap-y-6 md:grid-cols-1 lg:grid-cols-3 gap-x-4">
                 {filteredEvents.map((event) => (
                   <Card
                     key={event.id}
-                    className="mb-4 w-full min-h-[500px] flex flex-col justify-between"
+                    className="mb-4 md:w-[320-px] lg:w-[380-px]"
                     style={{
-                      minHeight: "400px", // Taller cards
+                      minHeight: "400px", minWidth: "280px",
                     }}
                   >
                     {event.flyer ? (
                       // Display title, image, and buttons if the flyer exists
                       <>
-                        <CardHeader className="p-4 flex justify-between items-center">
+                        <CardHeader className="p-4 flex justify-between items-center text-center">
                           <h5 className="text-xl font-bold">{event.title}</h5>
                           <p className="text-gray-600">
                             Interested: {event.interested}

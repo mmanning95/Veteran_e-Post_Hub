@@ -105,8 +105,8 @@ export default function AddExternalLinkPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50">
-      <Card className="w-2/5 mx-auto">
+    <div className="flex flex-col md:flex-row">
+      <Card className="w-full md:w-3/5 lg:w-3/5 mx-auto md:mt-5 lg:mt-5">
         <CardHeader className="flex flex-col items-center justify-center">
           <h3 className="text-3xl font-semibold text-black">
             Add External Link
