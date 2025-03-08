@@ -416,9 +416,9 @@ export default function HomePage() {
                 {filteredEvents.map((event) => (
                   <Card
                     key={event.id}
-                    className="mb-4 w-fit md:w-[320-px] lg:w-[380-px]"
+                    className="mb-4 md:w-[320-px] lg:w-[380-px]"
                     style={{
-                      minHeight: "400px",
+                      minHeight: "400px",minWidth: "280px",
                     }}
                   >
                     {event.flyer ? (

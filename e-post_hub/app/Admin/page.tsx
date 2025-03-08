@@ -432,15 +432,15 @@ export default function Adminpage() {
                 {filteredEvents.map((event) => (
                   <Card
                     key={event.id}
-                    className="mb-4 w-fit md:w-[320-px] lg:w-[380-px]"
+                    className="mb-4 md:w-[320-px] lg:w-[380-px]"
                     style={{
-                      minHeight: "400px", // Taller cards
+                      minHeight: "400px", minWidth: "280px",
                     }}
                   >
                     {event.flyer ? (
                       // Display title, image, and buttons if the flyer exists
                       <>
-                        <CardHeader className="p-4 flex justify-between items-center">
+                        <CardHeader className="p-4 flex justify-between items-center text-center">
                           <h5 className="text-xl font-bold">{event.title}</h5>
                           <p className="text-gray-600">
                             Interested: {event.interested}
