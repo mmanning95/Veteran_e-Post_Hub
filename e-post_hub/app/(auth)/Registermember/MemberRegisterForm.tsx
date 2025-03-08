@@ -46,7 +46,7 @@ export default function MemberRegisterForm() {
   };
 
   return (
-    <Card className="w-2/5 mx-auto">
+    <Card className="w-full max-w-md mx-auto">
       <CardHeader className="flex flex-col items-center justify-center">
         <div className="flex flex-col gap-2 items-center text-orange-500">
           <div className="flex flex-row items-center gap-3">
@@ -60,7 +60,7 @@ export default function MemberRegisterForm() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="space-y-4">
             <Input
-              isRequired  
+              isRequired
               defaultValue=""
               label="Name"
               variant="bordered"
