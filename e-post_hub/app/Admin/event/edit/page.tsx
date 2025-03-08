@@ -98,14 +98,14 @@ export default function EditEventPage() {
                 <Button
                   fullWidth
                   className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-black border border-black"
-                  onClick={handleSubmit}
+                  onPress={handleSubmit}
                 >
                   Save Changes
                 </Button>
                 <Button
                   fullWidth
                   className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-black border border-black ml-4"
-                  onClick={handleDelete}
+                  onPress={handleDelete}
                 >
                   Delete Event
                 </Button>

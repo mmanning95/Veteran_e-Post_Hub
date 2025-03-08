@@ -185,7 +185,7 @@ export default function EditProfilePage() {
         
         <Button
           className="bg-orange-400 text-white mt-4"
-          onClick={handleSave}
+          onPress={handleSave}
           isDisabled={isSaving}
         >
           {isSaving ? 'Saving...' : 'Save Changes'}
@@ -193,7 +193,7 @@ export default function EditProfilePage() {
 
         <Button
           className="bg-orange-400 text-white mt-4"
-          onClick={() => (window.location.href = '/Admin')}
+          onPress={() => (window.location.href = '/Admin')}
         >
           Back to Admin Dashboard
         </Button>

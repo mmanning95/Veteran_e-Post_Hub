@@ -158,7 +158,7 @@ const SingleImageDropzone = React.forwardRef<HTMLInputElement, InputProps>(
           {imageUrl && !disabled && (
             <div
               className="group absolute right-0 top-0 -translate-y-1/4 translate-x-1/4 transform"
-              onClick={(e) => {
+              onPress={(e) => {
                 e.stopPropagation();
                 void onChange?.(undefined);
               }}

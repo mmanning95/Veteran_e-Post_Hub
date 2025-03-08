@@ -310,7 +310,7 @@ export default function EventManagement() {
             {events.length > 0 && (
               <div className="flex justify-center mt-8">
                 <Button
-                  onClick={handleSubmitActions}
+                  onPress={handleSubmitActions}
                   className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-white"
                 >
                   Submit Actions
@@ -351,7 +351,7 @@ export default function EventManagement() {
                     </p>
                     <div className="flex justify-end mt-4">
                       <Button
-                        onClick={() => handleResolveQuestion(question.id)}
+                        onPress={() => handleResolveQuestion(question.id)}
                         color="success"
                         className="bg-blue-500 text-white"
                       >

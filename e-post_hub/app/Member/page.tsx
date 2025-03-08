@@ -386,7 +386,7 @@ export default function Memberpage() {
                         <DropdownTrigger>
                           <Button
                             className="w-full border border-gray-300 bg-white text-black"
-                            onClick={getUserLocation}
+                            onPress={getUserLocation}
                           >
                             Distance
                           </Button>
@@ -411,7 +411,7 @@ export default function Memberpage() {
 
           {filteredEvents.length !== events.length && (
             <Button
-              onClick={resetFilter}
+              onPress={resetFilter}
               className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
             >
               Reset Filter
@@ -446,9 +446,9 @@ export default function Memberpage() {
                 {filteredEvents.map((event) => (
                   <Card
                     key={event.id}
-                    className="mb-4 w-fit md:w-[320-px] lg:w-[380-px]"
+                    className="mb-4 md:w-[320-px] lg:w-[380-px]"
                     style={{
-                      minHeight: "400px",
+                      minHeight: "400px",minWidth: "280px",
                     }}
                   >
                     {event.flyer ? (
@@ -482,13 +482,13 @@ export default function Memberpage() {
                                 <div className="flex gap-2">
                                   <Button
                                     className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-                                    onClick={() => handleInterest(event.id)}
+                                    onPress={() => handleInterest(event.id)}
                                   >
                                     I'm Interested
                                   </Button>
                                   <Button
                                     className="hover:scale-105 transition-transform duration-200 ease-in-out delete-button bg-red-500 text-white"
-                                    onClick={() => {
+                                    onPress={() => {
                                       setSelectedEventId(event.id);
                                       setModalOpen(true);
                                     }}
@@ -513,7 +513,7 @@ export default function Memberpage() {
                                 {/* Side by Side: I'm Interested and View Details */}
                                 <Button
                                   className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-                                  onClick={() => handleInterest(event.id)}
+                                  onPress={() => handleInterest(event.id)}
                                 >
                                   I'm Interested
                                 </Button>
@@ -600,13 +600,13 @@ export default function Memberpage() {
                               <div className="flex gap-2">
                                 <Button
                                   className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-                                  onClick={() => handleInterest(event.id)}
+                                  onPress={() => handleInterest(event.id)}
                                 >
                                   I'm Interested
                                 </Button>
                                 <Button
                                   className="hover:scale-105 transition-transform duration-200 ease-in-out delete-button bg-red-500 text-white"
-                                  onClick={() => {
+                                  onPress={() => {
                                     setSelectedEventId(event.id);
                                     setModalOpen(true);
                                   }}
@@ -631,7 +631,7 @@ export default function Memberpage() {
                               {/* Side by Side: I'm Interested and View Details */}
                               <Button
                                 className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-                                onClick={() => handleInterest(event.id)}
+                                onPress={() => handleInterest(event.id)}
                               >
                                 I'm Interested
                               </Button>
@@ -665,13 +665,13 @@ export default function Memberpage() {
               <div className="flex justify-center gap-4 mt-4">
                 <Button
                   className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black px-4 py-2 rounded-md"
-                  onClick={handleDelete}
+                  onPress={handleDelete}
                 >
                   Yes, Delete
                 </Button>
                 <Button
                   className="bg-gray-500 text-white px-4 py-2 rounded-md"
-                  onClick={() => setModalOpen(false)}
+                  onPress={() => setModalOpen(false)}
                 >
                   Cancel
                 </Button>

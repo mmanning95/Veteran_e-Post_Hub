@@ -280,7 +280,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
 
             <div className="flex gap-4">
               <Button
-                onClick={handleSaveEvent}
+                onPress={handleSaveEvent}
                 className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
               >
                 Save

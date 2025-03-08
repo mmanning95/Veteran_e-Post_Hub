@@ -71,7 +71,7 @@ export default function TopNav() {
             <NavbarBrand as={Link} href={"/"} className='flex items-center'>
                 <Image src={whitman_img} alt="" width={40} height={40} />
                 <div className='font-bold text-3lg flex overflow-hidden'>
-                    <span className='font-bold text-xl text-gray-800 truncate hidden md:block ml-2'>Veteran e-Post Hub</span>
+                    <span className='font-bold text-xl text-gray-800 truncate  ml-2'>Veteran e-Post Hub</span>
                 </div>
             </NavbarBrand>
             <NavbarContent justify="end" className="flex items-center gap-4 ml-auto">
@@ -90,7 +90,7 @@ export default function TopNav() {
   ) : (
     <>
       <Button
-        onClick={handleLogout}
+        onPress={handleLogout}
         variant="bordered"
         className="w-[100px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300"
       >

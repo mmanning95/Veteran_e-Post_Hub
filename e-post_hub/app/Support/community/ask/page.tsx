@@ -193,14 +193,14 @@ export default function AskPage() {
         <CardFooter className="flex flex-col gap-3">
           <Button
             className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-white w-full"
-            onClick={handlePostQuestion}
+            onPress={handlePostQuestion}
           >
             Post Question
           </Button>
 
           <Button
             className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-white w-full"
-            onClick={() => (window.location.href = '/Support/community')}
+            onPress={() => (window.location.href = '/Support/community')}
           >
             Back to Community Questions
           </Button>

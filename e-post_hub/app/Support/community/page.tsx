@@ -115,7 +115,7 @@ export default function CommunityPage() {
             <Button
               className="mt-2 hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r 
         from-[#f7960d] to-[#f95d09] border border-black text-black"
-              onClick={() => fetchComments(question.id)}
+              onPress={() => fetchComments(question.id)}
             >
               {showComments[question.id] ? 'Hide Comments' : 'Show Comments'}
               {` (${commentsCount[question.id] || 0})`}
