@@ -146,7 +146,7 @@ export default function EditProfilePage() {
         
         <Button
           className="bg-orange-400 text-white mt-4"
-          onPress={handleSave}
+          onClick={handleSave}
           isDisabled={isSaving}
         >
           {isSaving ? 'Saving...' : 'Save Changes'}
@@ -154,7 +154,7 @@ export default function EditProfilePage() {
 
         <Button
           className="bg-orange-400 text-white mt-4"
-          onPress={() => (window.location.href = '/Member')}
+          onClick={() => (window.location.href = '/Member')}
         >
           Back to Member Dashboard
         </Button>

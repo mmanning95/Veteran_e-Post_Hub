@@ -209,7 +209,7 @@ export default function UpdatePasswordPage() {
             color="secondary"
             variant="solid"
             className="mt-4 bg-gradient-to-r from-[#eb4843] to-[#f95d09] border border-black text-black w-full"
-            onPress={() => router.push('/Admin/profile')}
+            onClick={() => router.push('/Admin/profile')}
           >
             Cancel
           </Button>

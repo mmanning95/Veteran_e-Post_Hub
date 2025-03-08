@@ -123,28 +123,28 @@ export default function ProfilePage() {
 
         <Button
           className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
-          onPress={() => (window.location.href = '/Admin')}
+          onClick={() => (window.location.href = '/Admin')}
         >
           Back to Dashboard
         </Button>
 
         <Button
           className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
-          onPress={() => (window.location.href = '/UpdatePassword')}
+          onClick={() => (window.location.href = '/UpdatePassword')}
         >
           Update Password
         </Button>
 
         <Button
           className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
-          onPress={() => (window.location.href = '/Admin/profile/edit')}
+          onClick={() => (window.location.href = '/Admin/profile/edit')}
         >
           Edit Profile
         </Button>
 
         <Button
           className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#e74949] to-[#f95d09] border border-black text-black w-full"
-          onPress={handleDeleteAccount}
+          onClick={handleDeleteAccount}
         >
           Delete Account
         </Button>

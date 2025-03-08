@@ -97,7 +97,7 @@ export default function CommunityPage() {
     <div className="p-6 min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       <h1 className="text-4xl font-bold text-center text-gray-800 mb-8">Community Questions</h1>
       <div className='flex justify-center items-center'>
-      <Button onPress={() => (window.location.href = '/Support/community/ask')}
+      <Button onClick={() => (window.location.href = '/Support/community/ask')}
         className="mt-2 hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r 
         from-[#f7960d] to-[#f95d09] border border-black text-black">
         Ask a Question
@@ -115,7 +115,7 @@ export default function CommunityPage() {
             <Button
               className="mt-2 hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r 
         from-[#f7960d] to-[#f95d09] border border-black text-black"
-              onPress={() => fetchComments(question.id)}
+              onClick={() => fetchComments(question.id)}
             >
               {showComments[question.id] ? 'Hide Comments' : 'Show Comments'}
               {` (${commentsCount[question.id] || 0})`}
@@ -146,7 +146,7 @@ export default function CommunityPage() {
                   <Button
                     className="mt-2 hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r 
         from-[#f7960d] to-[#f95d09] border border-black text-black"
-                    onPress={() => handleCommentSubmit(question.id)}
+                    onClick={() => handleCommentSubmit(question.id)}
                   >
                     Submit Comment
                   </Button>

@@ -90,7 +90,7 @@ export default function TopNav() {
   ) : (
     <>
       <Button
-        onPress={handleLogout}
+        onClick={handleLogout}
         variant="bordered"
         className="w-[100px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300"
       >

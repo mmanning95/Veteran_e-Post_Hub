@@ -374,7 +374,7 @@ export default function Adminpage() {
               <DropdownTrigger>
                 <Button
                   className="w-full border border-gray-300 bg-white text-black"
-                  onPress={getUserLocation}
+                  onClick={getUserLocation}
                 >
                   Distance
                 </Button>
@@ -399,7 +399,7 @@ export default function Adminpage() {
 
           {filteredEvents.length !== events.length && (
             <Button
-              onPress={resetFilter}
+              onClick={resetFilter}
               className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
             >
               Reset Filter
@@ -466,14 +466,14 @@ export default function Adminpage() {
                             <div className="flex gap-2">
                               <Button
                                 className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-                                onPress={() => handleInterest(event.id)}
+                                onClick={() => handleInterest(event.id)}
                               >
                                 I'm Interested
                               </Button>
                               {isAdmin && (
                                 <Button
                                 className=" hover:scale-105 transition-transform duration-200 ease-in-out delete-button bg-red-500 text-white"
-                                onPress={() => {
+                                onClick={() => {
                                   setSelectedEventId((prev) => {
                                     const newId = event.id;
                                     return newId;
@@ -569,14 +569,14 @@ export default function Adminpage() {
                           <div className="flex gap-2">
                             <Button
                               className=" hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-                              onPress={() => handleInterest(event.id)}
+                              onClick={() => handleInterest(event.id)}
                             >
                               I'm Interested
                             </Button>
                             {isAdmin && (
                               <Button
                                 className="hover:scale-105 transition-transform duration-200 ease-in-out delete-button bg-red-500 text-white"
-                                onPress={() => {
+                                onClick={() => {
                                   setSelectedEventId(event.id);
                                   setModalOpen(true);
                                 }}
@@ -616,13 +616,13 @@ export default function Adminpage() {
       <div className="mt-4 flex justify-end gap-4">
         <Button 
           className="bg-gray-500 text-white"
-          onPress={() => setModalOpen(false)}
+          onClick={() => setModalOpen(false)}
         >
           Cancel
         </Button>
         <Button 
           className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-          onPress={() => {
+          onClick={() => {
             handleDelete();
           }}
         >

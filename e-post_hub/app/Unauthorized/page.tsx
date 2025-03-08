@@ -27,7 +27,7 @@ export default function Unauthorized() {
         </p>
       )}
       <button
-        onPress={() => router.push("/")}
+        onClick={() => router.push("/")}
         className="mt-8 px-6 py-2 bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-white rounded"
       >
         Go to Home

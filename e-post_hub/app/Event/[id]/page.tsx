@@ -493,13 +493,13 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                         <div className="flex gap-2">
                           <Button
                             className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-                            onPress={() => handleEditComment(comment.id)} // Save the edited comment
+                            onClick={() => handleEditComment(comment.id)} // Save the edited comment
                           >
                             Save
                           </Button>
                           <Button
                             className="hover:scale-105 transition-transform duration-200 ease-in-out text-gray-500 text-sm"
-                            onPress={() => setEditingCommentId(null)} // Cancel edit mode
+                            onClick={() => setEditingCommentId(null)} // Cancel edit mode
                           >
                             Cancel
                           </Button>
@@ -507,7 +507,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                       ) : (
                         <Button
                           className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-                          onPress={() => {
+                          onClick={() => {
                             setEditingCommentId(comment.id); // Enter edit mode
                             setEditContent(comment.content); // Populate the textarea with existing content
                           }}
@@ -519,13 +519,13 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                         <div className="flex gap-2">
                           <Button
                             className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7110d] to-[#f95d09] border border-black"
-                            onPress={() => handleDeleteComment(comment.id)} // Delete comment
+                            onClick={() => handleDeleteComment(comment.id)} // Delete comment
                           >
                             Confirm Delete
                           </Button>
                           <Button
                             className="hover:scale-105 transition-transform duration-200 ease-in-out text-gray-500 text-sm"
-                            onPress={() => setConfirmDelete(null)} // Cancel delete confirmation
+                            onClick={() => setConfirmDelete(null)} // Cancel delete confirmation
                           >
                             Cancel
                           </Button>
@@ -533,7 +533,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                       ) : (
                         <Button
                           className="hover:scale-105 transition-transform duration-200 ease-in-out bg-[#f7110d] border border-black"
-                          onPress={() => setConfirmDelete(comment.id)} // Trigger delete confirmation
+                          onClick={() => setConfirmDelete(comment.id)} // Trigger delete confirmation
                         >
                           Delete
                         </Button>
@@ -574,13 +574,13 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                                 <div className="flex gap-2">
                                   <Button
                                     className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-                                    onPress={() => handleEditComment(reply.id)} // Save the edited reply
+                                    onClick={() => handleEditComment(reply.id)} // Save the edited reply
                                   >
                                     Save
                                   </Button>
                                   <Button
                                     className="hover:scale-105 transition-transform duration-200 ease-in-out text-gray-500 text-xs"
-                                    onPress={() => setEditingCommentId(null)} // Cancel edit mode
+                                    onClick={() => setEditingCommentId(null)} // Cancel edit mode
                                   >
                                     Cancel
                                   </Button>
@@ -588,7 +588,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                               ) : (
                                 <Button
                                 className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-                                onPress={() => {
+                                onClick={() => {
                                     setEditingCommentId(reply.id); // Enter edit mode for reply
                                     setEditContent(reply.content); // Populate textarea with reply content
                                   }}
@@ -600,13 +600,13 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                                 <div className="flex gap-2">
                                   <Button
                             className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7110d] to-[#f95d09] border border-black"
-                            onPress={() => handleDeleteComment(reply.id)} // Delete reply
+                            onClick={() => handleDeleteComment(reply.id)} // Delete reply
                                   >
                                     Confirm Delete
                                   </Button>
                                   <Button
                                     className="hover:scale-105 transition-transform duration-200 ease-in-out text-gray-500 text-xs"
-                                    onPress={() => setConfirmDelete(null)} // Cancel delete confirmation
+                                    onClick={() => setConfirmDelete(null)} // Cancel delete confirmation
                                   >
                                     Cancel
                                   </Button>
@@ -614,7 +614,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                               ) : (
                                 <Button
                                   className="hover:scale-105 transition-transform duration-200 ease-in-out bg-[#f7110d] border border-black"
-                                  onPress={() => setConfirmDelete(reply.id)} // Trigger delete confirmation
+                                  onClick={() => setConfirmDelete(reply.id)} // Trigger delete confirmation
                                 >
                                   Delete
                                 </Button>
@@ -637,7 +637,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                     />
                     <Button 
                       className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-                      onPress={handleReplySubmit}>
+                      onClick={handleReplySubmit}>
                         Submit Reply
                       </Button>
                   </div>
@@ -645,7 +645,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                 {isLoggedIn && replyingTo !== comment.id && (
                   <Button 
                     className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-                    onPress={() => setReplyingTo(comment.id)}>Reply</Button>
+                    onClick={() => setReplyingTo(comment.id)}>Reply</Button>
                 )}
               </div>
             ))}
@@ -660,7 +660,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
               />
               <Button 
                 className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-                onPress={handleCommentSubmit}>Add Comment</Button>
+                onClick={handleCommentSubmit}>Add Comment</Button>
             </div>
           ) : (
             <div className="text-center mt-6">

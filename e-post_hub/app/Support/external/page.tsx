@@ -55,7 +55,7 @@ export default function ResourcesPage() {
         <div>
           <h4
             className="text-lg font-semibold mb-2 cursor-pointer"
-            onPress={() => setShowLocationFilters(!showLocationFilters)}
+            onClick={() => setShowLocationFilters(!showLocationFilters)}
           >
             Locations {showLocationFilters ? "-" : "+"}
           </h4>
@@ -87,7 +87,7 @@ export default function ResourcesPage() {
         <div className="mt-6">
           <h4
             className="text-lg font-semibold mb-2 cursor-pointer"
-            onPress={() => setShowCategoryFilters(!showCategoryFilters)}
+            onClick={() => setShowCategoryFilters(!showCategoryFilters)}
           >
             Categories {showCategoryFilters ? "-" : "+"}
           </h4>
