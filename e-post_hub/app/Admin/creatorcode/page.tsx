@@ -47,7 +47,7 @@ const NewCreatorCode = () => {
           setAdminName(decodedToken.name || "Admin");
           fetchCreatorCode(); // Fetch the current creator code if the user is an admin
         } else {
-          window.location.href = "/Unauthorized"; 
+          window.location.href = "/Unauthorized";
         }
       } catch (error) {
         console.error("Invalid token", error);
@@ -90,7 +90,7 @@ const NewCreatorCode = () => {
   // Render UI
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-2/5">
+      <Card className="w-full max-w-md mx-auto">
         <CardHeader className="flex flex-col items-center justify-center">
           <h1 className="text-3xl font-semibold text-orange-500">
             Update Creator Code
@@ -130,7 +130,8 @@ const NewCreatorCode = () => {
             </div>
           </form>
           <div className="text-neutral-500">
-            Note: This code is used for creating new admin accounts and can be changed at anytime. 
+            Note: This code is used for creating new admin accounts and can be
+            changed at anytime.
           </div>
         </CardBody>
       </Card>
