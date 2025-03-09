@@ -471,11 +471,14 @@ export default function HomePage() {
                             >
                               I'm Interested
                             </Button>
-                            <Link href={`/Event/${event.id}`} passHref>
-                              <Button className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
-                                View Details
-                              </Button>
-                            </Link>
+                            <Button
+                              as={Link}
+                              href={`/Event/${event.id}`}
+                              passHref
+                              className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                            >
+                              View Details
+                            </Button>
                           </div>
                         </CardBody>
                       </>
@@ -548,11 +551,14 @@ export default function HomePage() {
                           >
                             I'm Interested
                           </Button>
-                          <Link href={`/Event/${event.id}`} passHref>
-                            <Button className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
-                              View Details
-                            </Button>
-                          </Link>
+                          <Button
+                            as={Link}
+                            href={`/Event/${event.id}`}
+                            passHref
+                            className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                          >
+                            View Details
+                          </Button>
                         </div>
                       </CardBody>
                     )}
