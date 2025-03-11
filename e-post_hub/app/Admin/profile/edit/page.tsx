@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import React, { useEffect, useState } from 'react';
-import { Card, CardBody, CardHeader, Button, Input } from '@nextui-org/react';
+import React, { useEffect, useState } from "react";
+import { Card, CardBody, CardHeader, Button, Input } from "@nextui-org/react";
 
 // Define the type for AdminProfile with optional properties
 // This ensures that TypeScript knows the structure of the admin profile object
@@ -27,9 +27,9 @@ export default function EditProfilePage() {
     // Fetch the current user's profile details from the API
     const fetchProfile = async () => {
       try {
-        const response = await fetch('/api/admins/profile', {
+        const response = await fetch("/api/admins/profile", {
           headers: {
-            'Authorization': `Bearer ${localStorage.getItem('token')}`,
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
           },
         });
 
@@ -42,9 +42,11 @@ export default function EditProfilePage() {
         }
       } catch (error) {
         if (error instanceof Error) {
-          setError(`An error occurred while fetching the profile: ${error.message}`);
+          setError(
+            `An error occurred while fetching the profile: ${error.message}`
+          );
         } else {
-          setError('An unknown error occurred while fetching the profile');
+          setError("An unknown error occurred while fetching the profile");
         }
       } finally {
         setLoading(false);
@@ -61,21 +63,21 @@ export default function EditProfilePage() {
     setEmailError(null); // Reset email error before attempting save
 
     try {
-      const response = await fetch('/api/admins/profile/edit', {
-        method: 'PUT',
+      const response = await fetch("/api/admins/profile/edit", {
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify(adminProfile),
       });
 
       // Log response details to debug issues
-      console.log('Response status:', response.status);
-      console.log('Response:', response);
+      console.log("Response status:", response.status);
+      console.log("Response:", response);
 
       if (response.ok) {
-        alert('Profile updated successfully!');
+        alert("Profile updated successfully!");
       } else {
         const errorResponse = await response.json();
         if (response.status === 409) {
@@ -86,18 +88,18 @@ export default function EditProfilePage() {
         }
       }
     } catch (error) {
-      console.error('An error occurred while saving the profile:', error);
+      console.error("An error occurred while saving the profile:", error);
       setError(
         error instanceof Error
           ? `An error occurred while saving the profile: ${error.message}`
-          : 'An unknown error occurred while saving the profile'
+          : "An unknown error occurred while saving the profile"
       );
     } finally {
       setIsSaving(false);
     }
   };
 
-//loading indicator for slower processes
+  //loading indicator for slower processes
   if (loading) {
     return <div>Loading profile...</div>;
   }
@@ -108,17 +110,15 @@ export default function EditProfilePage() {
   }
 
   return (
-    <Card className="w-3/5 mx-auto my-10">
+    <Card className="w-full max-w-md mx-auto mt-8">
       <CardHeader className="flex flex-col items-center justify-center">
         <h2 className="text-3xl font-semibold">Edit Admin Profile</h2>
       </CardHeader>
       <CardBody className="space-y-6">
-        
         <div className="flex flex-col gap-4">
-
           <Input
             label="Name"
-            value={adminProfile?.name ?? ''}
+            value={adminProfile?.name ?? ""}
             onChange={(e) =>
               setAdminProfile((prev) => ({
                 ...(prev as AdminProfile),
@@ -131,7 +131,7 @@ export default function EditProfilePage() {
           <div>
             <Input
               label="Email"
-              value={adminProfile?.email ?? ''}
+              value={adminProfile?.email ?? ""}
               onChange={(e) =>
                 setAdminProfile((prev) => ({
                   ...(prev as AdminProfile),
@@ -139,7 +139,7 @@ export default function EditProfilePage() {
                 }))
               }
               variant="bordered"
-              errorMessage={emailError ?? ''}
+              errorMessage={emailError ?? ""}
             />
             {emailError && (
               <p className="text-red-500 mt-1 text-sm">{emailError}</p>
@@ -148,7 +148,7 @@ export default function EditProfilePage() {
 
           <Input
             label="Office Number"
-            value={adminProfile?.officeNumber ?? ''}
+            value={adminProfile?.officeNumber ?? ""}
             onChange={(e) =>
               setAdminProfile((prev) => ({
                 ...(prev as AdminProfile),
@@ -160,7 +160,7 @@ export default function EditProfilePage() {
 
           <Input
             label="Office Hours"
-            value={adminProfile?.officeHours ?? ''}
+            value={adminProfile?.officeHours ?? ""}
             onChange={(e) =>
               setAdminProfile((prev) => ({
                 ...(prev as AdminProfile),
@@ -169,10 +169,10 @@ export default function EditProfilePage() {
             }
             variant="bordered"
           />
-          
+
           <Input
             label="Office Location"
-            value={adminProfile?.officeLocation ?? ''}
+            value={adminProfile?.officeLocation ?? ""}
             onChange={(e) =>
               setAdminProfile((prev) => ({
                 ...(prev as AdminProfile),
@@ -182,22 +182,21 @@ export default function EditProfilePage() {
             variant="bordered"
           />
         </div>
-        
+
         <Button
           className="bg-orange-400 text-white mt-4"
           onClick={handleSave}
           isDisabled={isSaving}
         >
-          {isSaving ? 'Saving...' : 'Save Changes'}
+          {isSaving ? "Saving..." : "Save Changes"}
         </Button>
 
         <Button
           className="bg-orange-400 text-white mt-4"
-          onClick={() => (window.location.href = '/Admin')}
+          onClick={() => (window.location.href = "/Admin")}
         >
           Back to Admin Dashboard
         </Button>
-        
       </CardBody>
     </Card>
   );
