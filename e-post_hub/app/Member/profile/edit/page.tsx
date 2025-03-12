@@ -109,58 +109,60 @@ export default function EditProfilePage() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto mt-8">
-      <CardHeader className="flex flex-col items-center justify-center">
-        <h2 className="text-3xl font-semibold">Edit Member Profile</h2>
-      </CardHeader>
-      <CardBody className="space-y-6">
-        <div className="flex flex-col gap-4">
-          <Input
-            label="Name"
-            value={memberProfile?.name ?? ""}
-            onChange={(e) =>
-              setMemberProfile((prev) => ({
-                ...(prev as MemberProfile),
-                name: e.target.value,
-              }))
-            }
-            variant="bordered"
-          />
-
-          <div>
+    <div className="px-4">
+      <Card className="w-full max-w-md mx-auto mt-8">
+        <CardHeader className="flex flex-col items-center justify-center">
+          <h2 className="text-3xl font-semibold">Edit Member Profile</h2>
+        </CardHeader>
+        <CardBody className="space-y-6">
+          <div className="flex flex-col gap-4">
             <Input
-              label="Email"
-              value={memberProfile?.email ?? ""}
+              label="Name"
+              value={memberProfile?.name ?? ""}
               onChange={(e) =>
                 setMemberProfile((prev) => ({
                   ...(prev as MemberProfile),
-                  email: e.target.value,
+                  name: e.target.value,
                 }))
               }
               variant="bordered"
-              errorMessage={emailError ?? ""}
             />
-            {emailError && (
-              <p className="text-red-500 mt-1 text-sm">{emailError}</p>
-            )}
+
+            <div>
+              <Input
+                label="Email"
+                value={memberProfile?.email ?? ""}
+                onChange={(e) =>
+                  setMemberProfile((prev) => ({
+                    ...(prev as MemberProfile),
+                    email: e.target.value,
+                  }))
+                }
+                variant="bordered"
+                errorMessage={emailError ?? ""}
+              />
+              {emailError && (
+                <p className="text-red-500 mt-1 text-sm">{emailError}</p>
+              )}
+            </div>
           </div>
-        </div>
 
-        <Button
-          className="bg-orange-400 text-white mt-4"
-          onClick={handleSave}
-          isDisabled={isSaving}
-        >
-          {isSaving ? "Saving..." : "Save Changes"}
-        </Button>
+          <Button
+            className="bg-orange-400 text-white mt-4"
+            onClick={handleSave}
+            isDisabled={isSaving}
+          >
+            {isSaving ? "Saving..." : "Save Changes"}
+          </Button>
 
-        <Button
-          className="bg-orange-400 text-white mt-4"
-          onClick={() => (window.location.href = "/Member")}
-        >
-          Back to Member Dashboard
-        </Button>
-      </CardBody>
-    </Card>
+          <Button
+            className="bg-orange-400 text-white mt-4"
+            onClick={() => (window.location.href = "/Member")}
+          >
+            Back to Member Dashboard
+          </Button>
+        </CardBody>
+      </Card>
+    </div>
   );
 }

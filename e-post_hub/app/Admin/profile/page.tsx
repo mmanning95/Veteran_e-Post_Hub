@@ -108,59 +108,61 @@ export default function ProfilePage() {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto mt-8">
-      <CardHeader className="flex flex-col items-center justify-center">
-        <h2 className="text-3xl font-semibold">Admin Profile</h2>
-      </CardHeader>
-      <CardBody className="space-y-6">
-        <div className="flex flex-col gap-4 self-center">
-          <p>
-            <strong>Name:</strong> {adminProfile?.name}
-          </p>
-          <p>
-            <strong>Email:</strong> {adminProfile?.email}
-          </p>
-          <p>
-            <strong>Office Number:</strong> {adminProfile?.officeNumber}
-          </p>
-          <p>
-            <strong>Office Location:</strong> {adminProfile?.officeLocation}
-          </p>
-          <p>
-            <strong>Office Hours:</strong> {adminProfile?.officeHours}
-          </p>
-        </div>
+    <div className="px-4">
+      <Card className="w-full max-w-md mx-auto mt-8">
+        <CardHeader className="flex flex-col items-center justify-center">
+          <h2 className="text-3xl font-semibold">Admin Profile</h2>
+        </CardHeader>
+        <CardBody className="space-y-6">
+          <div className="flex flex-col gap-4 self-center">
+            <p>
+              <strong>Name:</strong> {adminProfile?.name}
+            </p>
+            <p>
+              <strong>Email:</strong> {adminProfile?.email}
+            </p>
+            <p>
+              <strong>Office Number:</strong> {adminProfile?.officeNumber}
+            </p>
+            <p>
+              <strong>Office Location:</strong> {adminProfile?.officeLocation}
+            </p>
+            <p>
+              <strong>Office Hours:</strong> {adminProfile?.officeHours}
+            </p>
+          </div>
 
-        <Button
-          className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
-          onClick={() => (window.location.href = "/Admin")}
-        >
-          Back to Dashboard
-        </Button>
+          <Button
+            className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+            onClick={() => (window.location.href = "/Admin")}
+          >
+            Back to Dashboard
+          </Button>
 
-        <Button
-          className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
-          onClick={() => (window.location.href = "/UpdatePassword")}
-        >
-          Update Password
-        </Button>
+          <Button
+            className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+            onClick={() => (window.location.href = "/UpdatePassword")}
+          >
+            Update Password
+          </Button>
 
-        <Button
-          className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
-          onClick={() => (window.location.href = "/Admin/profile/edit")}
-        >
-          Edit Profile
-        </Button>
+          <Button
+            className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+            onClick={() => (window.location.href = "/Admin/profile/edit")}
+          >
+            Edit Profile
+          </Button>
 
-        <Button
-          className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#e74949] to-[#f95d09] border border-black text-black w-full"
-          onClick={handleDeleteAccount}
-        >
-          Delete Account
-        </Button>
+          <Button
+            className="hover:scale-95 transition-transform duration-200 ease-in-out mt-4 bg-gradient-to-r from-[#e74949] to-[#f95d09] border border-black text-black w-full"
+            onClick={handleDeleteAccount}
+          >
+            Delete Account
+          </Button>
 
-        {error && <p className="text-red-500">{error}</p>}
-      </CardBody>
-    </Card>
+          {error && <p className="text-red-500">{error}</p>}
+        </CardBody>
+      </Card>
+    </div>
   );
 }

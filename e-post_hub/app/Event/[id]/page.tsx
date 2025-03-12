@@ -377,9 +377,9 @@ export default function EventDetailsPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
       {/* Event Details */}
-      <Card className="w-3/4 mb-10">
+      <Card className="w-full max-w-md mx-auto mb-6">
         <CardHeader className="flex flex-col items-center justify-center">
           <h1 className="text-3xl font-semibold">{event.title}</h1>
           {event.flyer ? (
@@ -464,7 +464,7 @@ export default function EventDetailsPage() {
       </Card>
 
       {/* Comment Section */}
-      <Card className="w-3/4">
+      <Card className="w-full max-w-md mx-auto">
         <CardHeader>
           <h2 className="text-2xl font-semibold">Comments</h2>
         </CardHeader>

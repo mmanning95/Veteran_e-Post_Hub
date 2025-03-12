@@ -116,107 +116,112 @@ export default function UpdatePasswordPage() {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto mt-8">
-      <CardHeader className="flex flex-col items-center justify-center">
-        <h2 className="text-3xl font-semibold">Update Password</h2>
-      </CardHeader>
-      <CardBody>
-        {/* Server error or success messages */}
-        {serverMessage && (
-          <p className="bg-yellow-100 text-yellow-800 p-2 rounded mb-4 text-center">
-            {serverMessage}
-          </p>
-        )}
+    <div className="px-4">
+      <Card className="w-full max-w-md mx-auto mt-8">
+        <CardHeader className="flex flex-col items-center justify-center">
+          <h2 className="text-3xl font-semibold">Update Password</h2>
+        </CardHeader>
+        <CardBody>
+          {/* Server error or success messages */}
+          {serverMessage && (
+            <p className="bg-yellow-100 text-yellow-800 p-2 rounded mb-4 text-center">
+              {serverMessage}
+            </p>
+          )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {/* Old Password Field */}
-          <div>
-            <label className="block font-medium mb-1" htmlFor="oldPassword">
-              Old Password:
-            </label>
-            <input
-              id="oldPassword"
-              type="password"
-              className={`w-full p-2 border rounded ${
-                oldPasswordError ? "border-red-500" : ""
-              }`}
-              value={oldPassword}
-              onChange={handleOldPasswordChange}
-            />
-            {oldPasswordError && (
-              <p className="text-red-500 text-sm mt-1">{oldPasswordError}</p>
-            )}
-          </div>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            {/* Old Password Field */}
+            <div>
+              <label className="block font-medium mb-1" htmlFor="oldPassword">
+                Old Password:
+              </label>
+              <input
+                id="oldPassword"
+                type="password"
+                className={`w-full p-2 border rounded ${
+                  oldPasswordError ? "border-red-500" : ""
+                }`}
+                value={oldPassword}
+                onChange={handleOldPasswordChange}
+              />
+              {oldPasswordError && (
+                <p className="text-red-500 text-sm mt-1">{oldPasswordError}</p>
+              )}
+            </div>
 
-          {/* New Password Field */}
-          <div>
-            <label className="block font-medium mb-1" htmlFor="newPassword">
-              New Password:
-            </label>
-            <input
-              id="newPassword"
-              type="password"
-              className={`w-full p-2 border rounded ${
-                newPasswordError ? "border-red-500" : ""
-              }`}
-              value={newPassword}
-              onChange={handleNewPasswordChange}
-            />
-            {newPasswordError && (
-              <p className="text-red-500 text-sm mt-1">{newPasswordError}</p>
-            )}
-          </div>
+            {/* New Password Field */}
+            <div>
+              <label className="block font-medium mb-1" htmlFor="newPassword">
+                New Password:
+              </label>
+              <input
+                id="newPassword"
+                type="password"
+                className={`w-full p-2 border rounded ${
+                  newPasswordError ? "border-red-500" : ""
+                }`}
+                value={newPassword}
+                onChange={handleNewPasswordChange}
+              />
+              {newPasswordError && (
+                <p className="text-red-500 text-sm mt-1">{newPasswordError}</p>
+              )}
+            </div>
 
-          {/* Confirm Password Field */}
-          <div>
-            <label className="block font-medium mb-1" htmlFor="confirmPassword">
-              Confirm New Password:
-            </label>
-            <input
-              id="confirmPassword"
-              type="password"
-              className={`w-full p-2 border rounded ${
-                confirmPasswordError || (!passwordsMatch && confirmPassword)
-                  ? "border-red-500"
-                  : ""
-              }`}
-              value={confirmPassword}
-              onChange={handleConfirmPasswordChange}
-            />
-            {confirmPasswordError && (
-              <p className="text-red-500 text-sm mt-1">
-                {confirmPasswordError}
-              </p>
-            )}
-            {!confirmPasswordError && confirmPassword && !passwordsMatch && (
-              <p className="text-red-500 text-sm mt-1">
-                New password and confirm password do not match.
-              </p>
-            )}
-          </div>
+            {/* Confirm Password Field */}
+            <div>
+              <label
+                className="block font-medium mb-1"
+                htmlFor="confirmPassword"
+              >
+                Confirm New Password:
+              </label>
+              <input
+                id="confirmPassword"
+                type="password"
+                className={`w-full p-2 border rounded ${
+                  confirmPasswordError || (!passwordsMatch && confirmPassword)
+                    ? "border-red-500"
+                    : ""
+                }`}
+                value={confirmPassword}
+                onChange={handleConfirmPasswordChange}
+              />
+              {confirmPasswordError && (
+                <p className="text-red-500 text-sm mt-1">
+                  {confirmPasswordError}
+                </p>
+              )}
+              {!confirmPasswordError && confirmPassword && !passwordsMatch && (
+                <p className="text-red-500 text-sm mt-1">
+                  New password and confirm password do not match.
+                </p>
+              )}
+            </div>
 
-          {/* Update Password Button */}
-          <Button
-            color="warning"
-            variant="solid"
-            type="submit"
-            className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
-            isDisabled={isButtonDisabled}
-          >
-            Update Password
-          </Button>
+            {/* Update Password Button */}
+            <Button
+              color="warning"
+              variant="solid"
+              type="submit"
+              className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+              isDisabled={isButtonDisabled}
+            >
+              Update Password
+            </Button>
 
-          {/* Cancel / Back Button (optional) */}
-          <Button
-            color="secondary"
-            variant="solid"
-            className="mt-4 bg-gradient-to-r from-[#eb4843] to-[#f95d09] border border-black text-black w-full"
-            onClick={() => router.push("/Admin/profile")}
-          >
-            Cancel
-          </Button>
-        </form>
-      </CardBody>
-    </Card>
+            {/* Cancel / Back Button (optional) */}
+            <Button
+              color="secondary"
+              variant="solid"
+              className="mt-4 bg-gradient-to-r from-[#eb4843] to-[#f95d09] border border-black text-black w-full"
+              onClick={() => router.push("/Admin/profile")}
+            >
+              Cancel
+            </Button>
+          </form>
+        </CardBody>
+      </Card>
+    </div>
   );
 }
