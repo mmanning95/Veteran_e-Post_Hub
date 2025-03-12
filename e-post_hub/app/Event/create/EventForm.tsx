@@ -70,31 +70,30 @@ export default function EventForm() {
     text: string;
   } | null>(null);
 
-    // Watch form values
-    const watchTitle = watch("title");
-    const watchStartDate = watch("startDate");
-    const watchEndDate = watch("endDate");
-    const watchDescription = watch("description");
-    const watchType = watch("type");
+  // Watch form values
+  const watchTitle = watch("title");
+  const watchStartDate = watch("startDate");
+  const watchEndDate = watch("endDate");
+  const watchDescription = watch("description");
+  const watchType = watch("type");
 
   // Check form validity: Title, Start/End Date, Type, and EITHER Description OR Flyer
   const isFormValid =
-  watchTitle &&
-  watchStartDate &&
-  watchEndDate &&
-  watchType &&
-  (watchDescription || file);
-  
+    watchTitle &&
+    watchStartDate &&
+    watchEndDate &&
+    watchType &&
+    (watchDescription || file);
+
   const handleTypeChange = (type: string) => {
     if (!type.trim()) return; // Prevent empty inputs
     setSelectedType(type);
     setValue("type", type, { shouldValidate: true });
-  
+
     if (!eventType.includes(type.trim())) {
       setEventType([...eventType, type.trim()]); // Trim to avoid whitespace issues
     }
   };
-  
 
   const onSubmit = async (data: CreateEventForm) => {
     try {
@@ -123,7 +122,7 @@ export default function EventForm() {
         startTime: formattedStartTime,
         endTime: formattedEndTime,
         flyer: flyerUrl,
-        type: selectedType, // Add selected event type 
+        type: selectedType, // Add selected event type
         address: data.address,
       };
 
@@ -175,163 +174,173 @@ export default function EventForm() {
   });
 
   return (
-    <Card className="w-2/5 mx-auto max-h-[80vh] overflow-y-auto">
-      <CardHeader className="flex flex-col items-center justify-center">
-        <h3 className="text-3xl font-semibold">Create New Event</h3>
-      </CardHeader>
-      <CardBody>
-        {/* Message Display */}
-        {message && (
-          <div
-            className={`mb-4 p-4 rounded ${
-              message.type === "success" ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {message.text}
-          </div>
-        )}
+    <div className="w-full min-h-screen bg-gray-50 flex items-center justify-center pt-64 pb-8 px-4">
+      <Card className="w-full max-w-lg mx-auto shadow-sm bg-white border border-gray-300">
+        <CardHeader className="flex flex-col items-center justify-center">
+          <h3 className="text-3xl font-semibold">Create New Event</h3>
+        </CardHeader>
+        <CardBody>
+          {/* Message Display */}
+          {message && (
+            <div
+              className={`mb-4 p-4 rounded ${
+                message.type === "success" ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {message.text}
+            </div>
+          )}
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-4">
-            <Input
-              isRequired
-              isClearable
-              label="Event Title"
-              variant="bordered"
-              {...register("title", { required: "Title is required" })}
-              errorMessage={errors.title?.message}
-            />
-
-            <div className="flex gap-4">
-              <Input
-              isRequired
-                type="date"
-                label="Start Date"
-                variant="bordered"
-                {...register("startDate", { required: "Start date is required" })}
-                errorMessage={errors.startDate?.message}
-              />
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-4">
               <Input
                 isRequired
-                type="date"
-                label="End Date"
+                isClearable
+                label="Event Title"
                 variant="bordered"
-                {...register("endDate", { required: "End date is required" })}
-                errorMessage={errors.endDate?.message}
+                {...register("title", { required: "Title is required" })}
+                errorMessage={errors.title?.message}
               />
-            </div>
 
-            <div className="flex gap-4">
-              <TimeInput
-                label="Event Start Time"
-                value={startTime}
-                variant="bordered"
-                onChange={(newValue) => setStartTime(newValue)}
-                errorMessage={errors.startTime?.message}
-              />
-              <TimeInput
-                label="Event End Time"
-                value={endTime}
-                variant="bordered"
-                onChange={(newValue) => setEndTime(newValue)}
-                errorMessage={errors.endTime?.message}
-              />
-            </div>
-
-            <div className="flex flex-wrap gap-4">
-              {/* Description */}
-              <div className="flex-1">
-                <Textarea
-                  minRows={8}
-                  label="Event Description"
+              <div className="flex gap-4">
+                <Input
+                  isRequired
+                  type="date"
+                  label="Start Date"
                   variant="bordered"
-                  {...register("description")}
-                  errorMessage={errors.description?.message}
-                  style={{ height: "200px", resize: "none" }}
+                  {...register("startDate", {
+                    required: "Start date is required",
+                  })}
+                  errorMessage={errors.startDate?.message}
+                />
+                <Input
+                  isRequired
+                  type="date"
+                  label="End Date"
+                  variant="bordered"
+                  {...register("endDate", { required: "End date is required" })}
+                  errorMessage={errors.endDate?.message}
                 />
               </div>
-              {/* Image Dropzone */}
-              <div>
-                <SingleImageDropzone
-                  width={200}
-                  height={200}
-                  value={file}
-                  dropzoneOptions={{
-                    maxSize: 1024 * 1024 * 2, //2mb max size
-                  }}
-                  onChange={(newfile) => {
-                    setFile(newfile);
-                  }}
+
+              <div className="flex gap-4">
+                <TimeInput
+                  label="Event Start Time"
+                  value={startTime}
+                  variant="bordered"
+                  onChange={(newValue) => setStartTime(newValue)}
+                  errorMessage={errors.startTime?.message}
                 />
-                {/* Uncomment to show URL and Thumbnail links */}
-                {/* {urls?.url && <Link href={urls.url} target="_blank">URL</Link>}
+                <TimeInput
+                  label="Event End Time"
+                  value={endTime}
+                  variant="bordered"
+                  onChange={(newValue) => setEndTime(newValue)}
+                  errorMessage={errors.endTime?.message}
+                />
+              </div>
+
+              <div className="flex flex-wrap gap-4">
+                {/* Description */}
+                <div className="flex-1">
+                  <Textarea
+                    minRows={8}
+                    label="Event Description"
+                    variant="bordered"
+                    {...register("description")}
+                    errorMessage={errors.description?.message}
+                    style={{ height: "200px", resize: "none" }}
+                  />
+                </div>
+                {/* Image Dropzone */}
+                <div>
+                  <SingleImageDropzone
+                    width={200}
+                    height={200}
+                    value={file}
+                    dropzoneOptions={{
+                      maxSize: 1024 * 1024 * 2, //2mb max size
+                    }}
+                    onChange={(newfile) => {
+                      setFile(newfile);
+                    }}
+                  />
+                  {/* Uncomment to show URL and Thumbnail links */}
+                  {/* {urls?.url && <Link href={urls.url} target="_blank">URL</Link>}
                 {urls?.thumbnailUrl && (
                   <Link href={urls.thumbnailUrl} target="_blank">THUMBNAIL</Link>
                 )} */}
+                </div>
+              </div>
+
+              {/* Event Type Dropdown */}
+              <Autocomplete
+                items={eventType.map((type) => ({ label: type, value: type }))} // Convert to objects
+                inputValue={selectedType}
+                onInputChange={(value) => {
+                  if (value.trim()) {
+                    setSelectedType(value); // Update input field
+                  }
+                }}
+                onSelectionChange={(key) => {
+                  if (key && !eventType.includes(key.toString())) {
+                    setEventType([...eventType, key.toString()]); // Add new type
+                  }
+                  setSelectedType(key?.toString() || ""); // Update selected type
+                  setValue("type", key?.toString() || "", {
+                    shouldValidate: true,
+                  });
+                }}
+                className="w-full"
+                placeholder="Select or enter an event type"
+                variant="bordered"
+                {...register("type", { required: "Type is required" })}
+              >
+                {(item) => (
+                  <AutocompleteItem key={item.value}>
+                    {item.label}
+                  </AutocompleteItem>
+                )}
+              </Autocomplete>
+              {errors.type && (
+                <p className="text-red-500">{errors.type.message}</p>
+              )}
+
+              {/* Autocomplete Address Input */}
+              <Input
+                label="Event Address"
+                ref={ref as unknown as React.RefObject<HTMLInputElement>}
+                variant="bordered"
+                placeholder="Enter event location"
+                value={address}
+                onChange={(e) => setAddress(e.target.value)}
+                errorMessage={errors.address?.message}
+              />
+
+              <Input
+                label="Event Website"
+                variant="bordered"
+                {...register("website")}
+                errorMessage={errors.website?.message}
+                placeholder="For the use of external webpages"
+              />
+
+              <Button
+                isDisabled={!isFormValid}
+                fullWidth
+                type="submit"
+                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
+              >
+                Submit Event
+              </Button>
+              <div className="text-[#757575]" style={{ fontSize: "12px" }}>
+                Note: Title, Start & End Dates, and Type are required, plus
+                either a Description or Flyer. Other fields are optional.
               </div>
             </div>
-
-            {/* Event Type Dropdown */}
-            <Autocomplete
-              items={eventType.map((type) => ({ label: type, value: type }))} // Convert to objects
-              inputValue={selectedType}
-              onInputChange={(value) => {
-                if (value.trim()) {
-                  setSelectedType(value); // Update input field
-                }
-              }}
-              
-              onSelectionChange={(key) => {
-                if (key && !eventType.includes(key.toString())) {
-                  setEventType([...eventType, key.toString()]); // Add new type
-                }
-                setSelectedType(key?.toString() || ""); // Update selected type
-                setValue("type", key?.toString() || "", { shouldValidate: true });
-              }}
-              
-              className="w-full"
-              placeholder="Select or enter an event type"
-              variant="bordered"
-              {...register("type", { required: "Type is required" })}
-            >
-              {(item) => <AutocompleteItem key={item.value}>{item.label}</AutocompleteItem>}
-            </Autocomplete>
-            {errors.type && <p className="text-red-500">{errors.type.message}</p>}
-
-            {/* Autocomplete Address Input */}
-            <Input
-              label="Event Address"
-              ref={ref as unknown as React.RefObject<HTMLInputElement>}
-              variant="bordered"
-              placeholder="Enter event location"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              errorMessage={errors.address?.message}
-            />
-
-            <Input
-              label="Event Website"
-              variant="bordered"
-              {...register("website")}
-              errorMessage={errors.website?.message}
-              placeholder="For the use of external webpages"
-            />
-
-            <Button
-              isDisabled={!isFormValid}
-              fullWidth
-              type="submit"
-              className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-            >
-              Submit Event
-            </Button>
-            <div className="text-[#757575]" style={{ fontSize: "12px" }}>
-            Note: Title, Start & End Dates, and Type are required, plus either
-            a Description or Flyer. Other fields are optional.
-            </div>
-          </div>
-        </form>
-      </CardBody>
-    </Card>
+          </form>
+        </CardBody>
+      </Card>
+    </div>
   );
 }

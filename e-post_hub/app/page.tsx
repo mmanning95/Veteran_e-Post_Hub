@@ -7,7 +7,7 @@ import Link from "next/link";
 import EventCalendar from "./Components/Calendar/EventCalendar";
 import jwt from "jsonwebtoken";
 import BottomBar from "./Components/BottomBar/BottomBar";
-import MilitaryBranches from './Images/Military-Branches.jpg';
+import MilitaryBranches from "./Images/Military-Branches.jpg";
 import {
   Dropdown,
   DropdownTrigger,
@@ -53,6 +53,7 @@ export default function HomePage() {
   const [message, setMessage] = useState<string | null>(null);
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
   const [eventTypes, setEventTypes] = useState<string[]>([]);
+
   const [selectedProximity, setSelectedProximity] = useState<number | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
@@ -118,6 +119,7 @@ export default function HomePage() {
   }, []);
 
   // -------------------- PROXIMITY & GEOLOCATION --------------------
+
   const getUserLocation = () => {
     if (!("geolocation" in navigator)) {
       setMessage("Geolocation is not supported.");
@@ -230,6 +232,7 @@ export default function HomePage() {
   }, [router]);
 
   // --------------------- FILTERS / TYPE / CALENDAR -------------------
+
   const handleTypeFilter = (keys: Set<string>) => {
     setIsFiltering(true); // user is applying a filter
     setSelectedTypes(keys);
@@ -247,6 +250,7 @@ export default function HomePage() {
       );
     }
   };
+
 
   const handleDateClick = (dateString: string) => {
     setIsFiltering(true); // user clicked a specific date => filtered
@@ -271,6 +275,7 @@ export default function HomePage() {
   };
 
   // --------------------- INTEREST HANDLER -------------------
+
   const handleInterest = async (eventId: string) => {
     const interestedEvents = JSON.parse(
       localStorage.getItem("interestedEvents") || "[]"
@@ -333,6 +338,7 @@ export default function HomePage() {
       <div
         className="w-full h-[650px] bg-cover bg-center"
         style={{ backgroundImage: `url(${MilitaryBranches.src})` }}
+
       />
 
       <div className="flex flex-col md:flex-row w-full">
@@ -351,7 +357,9 @@ export default function HomePage() {
               aria-label="Filter by Event Type"
               selectionMode="multiple"
               selectedKeys={selectedTypes}
+
               onSelectionChange={(keys) => handleTypeFilter(keys as Set<string>)}
+
             >
               {eventTypes.map((type) => (
                 <DropdownItem key={type}>{type}</DropdownItem>
@@ -359,7 +367,9 @@ export default function HomePage() {
             </DropdownMenu>
           </Dropdown>
 
+
           {/* Proximity filter */}
+
           <Dropdown className="mt-2">
             <DropdownTrigger>
               <Button
@@ -372,7 +382,9 @@ export default function HomePage() {
             <DropdownMenu
               aria-label="Filter by Distance"
               selectionMode="single"
+
               selectedKeys={selectedProximity ? [String(selectedProximity)] : []}
+
               onSelectionChange={(keys) => {
                 const selectedValue = Number(Array.from(keys)[0] as string);
                 handleProximityFilter(selectedValue);
@@ -385,8 +397,10 @@ export default function HomePage() {
             </DropdownMenu>
           </Dropdown>
 
+
           {/* Show "Reset" button ONLY if isFiltering is true */}
           {isFiltering && (
+
             <Button
               onClick={resetFilter}
               className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
@@ -417,7 +431,9 @@ export default function HomePage() {
                   <Card
                     key={event.id}
                     className="mb-4 md:w-[320-px] lg:w-[380-px]"
+
                     style={{ minHeight: "400px", minWidth: "280px" }}
+
                   >
                     {event.flyer ? (
                       <>
@@ -447,6 +463,7 @@ export default function HomePage() {
                             >
                               I'm Interested
                             </Button>
+
                               <Button 
                               as={Link}
                               href={`/Event/${event.id}`}
@@ -454,6 +471,7 @@ export default function HomePage() {
                               className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
                                 View Details
                               </Button>
+
                           </div>
                         </CardBody>
                       </>
@@ -521,6 +539,7 @@ export default function HomePage() {
                           >
                             I'm Interested
                           </Button>
+
                             <Button 
                             as={Link}
                             href={`/Event/${event.id}`}
@@ -528,6 +547,7 @@ export default function HomePage() {
                             className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
                               View Details
                             </Button>
+
                         </div>
                       </CardBody>
                     )}

@@ -1,7 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Card, CardBody, CardHeader, Button, Textarea } from "@nextui-org/react";
+import {
+  Card,
+  CardBody,
+  CardHeader,
+  Button,
+  Textarea,
+} from "@nextui-org/react";
 import Link from "next/link";
 
 type Event = {
@@ -31,7 +37,7 @@ type Comment = {
     name: string;
     email: string;
   };
-  parentId?: string | null; 
+  parentId?: string | null;
   replies: Comment[];
 };
 
@@ -49,7 +55,6 @@ export default function EventDetailsPage() {
   const [confirmDelete, setConfirmDelete] = useState<string | null>(null); // Track the comment being confirmed
   const [editingCommentId, setEditingCommentId] = useState<string | null>(null); // Track the comment being edited
   const [editContent, setEditContent] = useState<string>(""); // Track the updated content of the comment
-
 
   useEffect(() => {
     // Extract event ID from the URL path
@@ -139,10 +144,9 @@ export default function EventDetailsPage() {
 
   const canEditEvent = () => {
     if (!event) return false;
-    if (userRole === "ADMIN") return true; 
+    if (userRole === "ADMIN") return true;
     return event.createdBy.email === userId;
   };
-
 
   const handleEditComment = async (commentId: string) => {
     // Ensure the content is not empty
@@ -151,13 +155,13 @@ export default function EventDetailsPage() {
       setTimeout(() => setMessage(null), 3000); // Clear the message after 3 seconds
       return;
     }
-  
+
     const token = localStorage.getItem("token"); // Retrieve the user's token from localStorage
     if (!token) {
       setMessage("You must be logged in to edit a comment.");
       return;
     }
-  
+
     try {
       // Send a PATCH request to the backend API to update the comment
       const response = await fetch(`/api/Event/comments/${commentId}`, {
@@ -168,10 +172,10 @@ export default function EventDetailsPage() {
         },
         body: JSON.stringify({ content: editContent }), // Send the updated content
       });
-  
+
       if (response.ok) {
         const updatedComment = await response.json(); // Get the updated comment from the response
-  
+
         // Update the state to reflect the new comment content
         setComments((prevComments) =>
           prevComments.map((comment) =>
@@ -195,18 +199,17 @@ export default function EventDetailsPage() {
       }
     } catch (error) {
       console.error("Error editing comment:", error); // Log any errors
-      setMessage("An error occurred while editing the comment."); 
+      setMessage("An error occurred while editing the comment.");
     }
-  
+
     setTimeout(() => setMessage(null), 3000); // Clear the message after 3 seconds
   };
-  
-// Utility Function to Check Edit Authorization
-const isAuthorizedToEdit = (commentUserEmail: string) => {
-  // Both admins and members can only edit their own comments
-  return userId === commentUserEmail;
-};
 
+  // Utility Function to Check Edit Authorization
+  const isAuthorizedToEdit = (commentUserEmail: string) => {
+    // Both admins and members can only edit their own comments
+    return userId === commentUserEmail;
+  };
 
   // Submit a new comment
   const handleCommentSubmit = async () => {
@@ -266,13 +269,13 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
       setMessage("You must be logged in to delete a comment.");
       return;
     }
-  
+
     try {
       const response = await fetch(`/api/Event/comments/${commentId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
-  
+
       if (response.ok) {
         // Update the comments state by filtering out the deleted comment or reply
         setComments((prevComments) =>
@@ -280,7 +283,9 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
             .filter((comment) => comment.id !== commentId) // Filter parent comments
             .map((comment) => ({
               ...comment,
-              replies: comment.replies.filter((reply) => reply.id !== commentId), // Filter replies
+              replies: comment.replies.filter(
+                (reply) => reply.id !== commentId
+              ), // Filter replies
             }))
         );
         setMessage("Comment deleted successfully.");
@@ -291,11 +296,10 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
       console.error("Error deleting comment:", error);
       setMessage("An error occurred while deleting the comment.");
     }
-  
+
     setConfirmDelete(null); // Reset the confirmation state
     setTimeout(() => setMessage(null), 3000); // Clear the message after a delay
   };
-  
 
   // Utility Functions
   const isAuthorizedToDelete = (commentUserEmail: string) => {
@@ -303,8 +307,9 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
     console.log("Current userRole:", userRole);
     console.log("Comment userId:", commentUserEmail);
     console.log("___________");
-    return userRole === "ADMIN" || userId === commentUserEmail;  };
-  
+    return userRole === "ADMIN" || userId === commentUserEmail;
+  };
+
   // Submit a reply
   const handleReplySubmit = async () => {
     if (!replyContent.trim()) {
@@ -346,7 +351,10 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
         setComments((prevComments) =>
           prevComments.map((comment) =>
             comment.id === replyingTo
-              ? { ...comment, replies: [...(comment.replies || []), addedReply] }
+              ? {
+                  ...comment,
+                  replies: [...(comment.replies || []), addedReply],
+                }
               : comment
           )
         );
@@ -369,9 +377,9 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
       {/* Event Details */}
-      <Card className="w-3/4 mb-10">
+      <Card className="w-full max-w-md mx-auto mb-6">
         <CardHeader className="flex flex-col items-center justify-center">
           <h1 className="text-3xl font-semibold">{event.title}</h1>
           {event.flyer ? (
@@ -389,74 +397,74 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
             </div>
           )}
           {event.description && (
-                          <p className="text-gray-700 mb-4">{event.description}</p>
-                        )}
-                        {event.startDate && (
-                          <p className="text-gray-600">
-                            <strong>Start Date:</strong>{" "}
-                            {new Date(event.startDate).toLocaleDateString()}
-                          </p>
-                        )}
-                        {event.endDate && (
-                          <p className="text-gray-600">
-                            <strong>End Date:</strong>{" "}
-                            {new Date(event.endDate).toLocaleDateString()}
-                          </p>
-                        )}
-                        {event.startTime && (
-                          <p className="text-gray-600">
-                            <strong>Start Time:</strong> {event.startTime}
-                          </p>
-                        )}
-                        {event.endTime && (
-                          <p className="text-gray-600">
-                            <strong>End Time:</strong> {event.endTime}
-                          </p>
-                        )}
-                        {event.address && (
-                          <p className="text-gray-600">
-                            <strong>Address:</strong> {event.address}
-                          </p>
-                        )}
-                        {event.website && (
-                          <p className="text-gray-600">
-                            <strong>Website:</strong>{" "}
-                            <a
-                              href={
-                                event.website.startsWith("http://") || event.website.startsWith("https://")
-                                  ? event.website
-                                  : `https://${event.website}`
-                              }
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-500 underline"
-                            >
-                              {event.website}
-                            </a>
-                          </p>
-                        )}
-                        <p className="text-gray-600">
-                          <strong>Interested:</strong> {event.interested}
-                        </p>
-                        {isLoggedIn && canEditEvent() && (
-                          <div className="mt-4 flex gap-2">
-                            <a href={`/Event/edit/${eventId}`}>
-                            <Button 
-                              className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black">
-                                Edit Event
-                            </Button>
-                            </a>
-                          </div>
-                        )}
-
+            <p className="text-gray-700 mb-4">{event.description}</p>
+          )}
+          {event.startDate && (
+            <p className="text-gray-600">
+              <strong>Start Date:</strong>{" "}
+              {new Date(event.startDate).toLocaleDateString()}
+            </p>
+          )}
+          {event.endDate && (
+            <p className="text-gray-600">
+              <strong>End Date:</strong>{" "}
+              {new Date(event.endDate).toLocaleDateString()}
+            </p>
+          )}
+          {event.startTime && (
+            <p className="text-gray-600">
+              <strong>Start Time:</strong> {event.startTime}
+            </p>
+          )}
+          {event.endTime && (
+            <p className="text-gray-600">
+              <strong>End Time:</strong> {event.endTime}
+            </p>
+          )}
+          {event.address && (
+            <p className="text-gray-600">
+              <strong>Address:</strong> {event.address}
+            </p>
+          )}
+          {event.website && (
+            <p className="text-gray-600">
+              <strong>Website:</strong>{" "}
+              <a
+                href={
+                  event.website.startsWith("http://") ||
+                  event.website.startsWith("https://")
+                    ? event.website
+                    : `https://${event.website}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-500 underline"
+              >
+                {event.website}
+              </a>
+            </p>
+          )}
+          <p className="text-gray-600">
+            <strong>Interested:</strong> {event.interested}
+          </p>
+          {isLoggedIn && canEditEvent() && (
+            <div className="mt-4 flex gap-2">
+              <Button
+                as={Link}
+                href={`/Event/edit/${eventId}`}
+                passHref
+                className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
+              >
+                Edit Event
+              </Button>
+            </div>
+          )}
         </CardHeader>
-        <CardBody>
-          {/* Event details logic (same as before) */}
-        </CardBody>
+        <CardBody>{/* Event details logic (same as before) */}</CardBody>
       </Card>
-  
+
       {/* Comment Section */}
-      <Card className="w-3/4">
+      <Card className="w-full max-w-md mx-auto">
         <CardHeader>
           <h2 className="text-2xl font-semibold">Comments</h2>
         </CardHeader>
@@ -482,10 +490,11 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                       <p className="text-gray-800">{comment.content}</p>
                     )}
                     <p className="text-gray-500 text-sm">
-                      - {comment.createdBy.name} ({new Date(comment.createdAt).toLocaleString()})
+                      - {comment.createdBy.name} (
+                      {new Date(comment.createdAt).toLocaleString()})
                     </p>
                   </div>
-  
+
                   {/* Edit and Delete Buttons for Comments */}
                   {isAuthorizedToEdit(comment.createdBy.email) && (
                     <div className="flex flex-col gap-2">
@@ -541,7 +550,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                     </div>
                   )}
                 </div>
-  
+
                 {/* Replies */}
                 {comment.replies?.length > 0 && (
                   <div className="ml-4 mt-4">
@@ -563,10 +572,11 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                               <p className="text-gray-700">{reply.content}</p>
                             )}
                             <p className="text-gray-500 text-xs">
-                              - {reply.createdBy.name} ({new Date(reply.createdAt).toLocaleString()})
+                              - {reply.createdBy.name} (
+                              {new Date(reply.createdAt).toLocaleString()})
                             </p>
                           </div>
-  
+
                           {/* Edit and Delete Buttons for Replies */}
                           {isAuthorizedToEdit(reply.createdBy.email) && (
                             <div className="flex flex-col gap-2">
@@ -587,8 +597,8 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                                 </div>
                               ) : (
                                 <Button
-                                className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-                                onClick={() => {
+                                  className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
+                                  onClick={() => {
                                     setEditingCommentId(reply.id); // Enter edit mode for reply
                                     setEditContent(reply.content); // Populate textarea with reply content
                                   }}
@@ -599,8 +609,10 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                               {confirmDelete === reply.id ? (
                                 <div className="flex gap-2">
                                   <Button
-                            className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7110d] to-[#f95d09] border border-black"
-                            onClick={() => handleDeleteComment(reply.id)} // Delete reply
+                                    className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7110d] to-[#f95d09] border border-black"
+                                    onClick={() =>
+                                      handleDeleteComment(reply.id)
+                                    } // Delete reply
                                   >
                                     Confirm Delete
                                   </Button>
@@ -626,7 +638,7 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                     ))}
                   </div>
                 )}
-  
+
                 {/* Reply Form */}
                 {isLoggedIn && replyingTo === comment.id && (
                   <div className="mt-2">
@@ -635,21 +647,25 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                       value={replyContent}
                       onChange={(e) => setReplyContent(e.target.value)}
                     />
-                    <Button 
+                    <Button
                       className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-                      onClick={handleReplySubmit}>
-                        Submit Reply
-                      </Button>
+                      onClick={handleReplySubmit}
+                    >
+                      Submit Reply
+                    </Button>
                   </div>
                 )}
                 {isLoggedIn && replyingTo !== comment.id && (
-                  <Button 
+                  <Button
                     className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-                    onClick={() => setReplyingTo(comment.id)}>Reply</Button>
+                    onClick={() => setReplyingTo(comment.id)}
+                  >
+                    Reply
+                  </Button>
                 )}
               </div>
             ))}
-  
+
           {/* New Comment Form */}
           {isLoggedIn ? (
             <div className="mt-6">
@@ -658,9 +674,12 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
                 value={newComment}
                 onChange={(e) => setNewComment(e.target.value)}
               />
-              <Button 
+              <Button
                 className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-                onClick={handleCommentSubmit}>Add Comment</Button>
+                onClick={handleCommentSubmit}
+              >
+                Add Comment
+              </Button>
             </div>
           ) : (
             <div className="text-center mt-6">
@@ -674,4 +693,4 @@ const isAuthorizedToEdit = (commentUserEmail: string) => {
       </Card>
     </div>
   );
-}  
+}
