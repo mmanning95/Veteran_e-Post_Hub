@@ -51,98 +51,102 @@ export default function AdminRegisterForm() {
   };
 
   return (
-    <Card className="w-full max-w-md mx-auto">
-      <CardHeader className="flex flex-col items-center justify-center">
-        <div className="flex flex-col gap-2 items-center text-orange-500">
-          <div className="flex flex-row items-center gap-3">
-            <GiPadlock size={30} />
-            <h1 className="text-3xl font-semibold">Admin Register</h1>
+    <div className="w-full px-4">
+      <Card className="w-full max-w-md mx-auto">
+        <CardHeader className="flex flex-col items-center justify-center">
+          <div className="flex flex-col gap-2 items-center text-orange-500">
+            <div className="flex flex-row items-center gap-3">
+              <GiPadlock size={30} />
+              <h1 className="text-3xl font-semibold">Admin Register</h1>
+            </div>
+            <p className="text-neutral-500">
+              Welcome to the Veteran e-Post Hub
+            </p>
           </div>
-          <p className="text-neutral-500">Welcome to the Veteran e-Post Hub</p>
-        </div>
-      </CardHeader>
-      <CardBody>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-4">
-            {errorMessage && (
-              <p role="alert" className="text-red-500">
-                {errorMessage}
-              </p>
-            )}
-            <Input
-              isRequired
-              defaultValue=""
-              label="Name"
-              variant="bordered"
-              {...register("name")}
-              isInvalid={!!errors.name}
-              errorMessage={errors.name?.message}
-              autoComplete="name"
-            />
-            <Input
-              defaultValue=""
-              label="Office Number"
-              variant="bordered"
-              {...register("officeNumber")}
-              isInvalid={!!errors.officeNumber}
-              errorMessage={errors.officeNumber?.message}
-            />
-            <Input
-              defaultValue=""
-              label="Office Hours"
-              variant="bordered"
-              {...register("officeHours")}
-              isInvalid={!!errors.officeHours}
-              errorMessage={errors.officeHours?.message}
-            />
-            <Input
-              defaultValue=""
-              label="Office Location"
-              variant="bordered"
-              {...register("officeLocation")}
-              isInvalid={!!errors.officeLocation}
-              errorMessage={errors.officeLocation?.message}
-            />
-            <Input
-              isRequired
-              defaultValue=""
-              label="Email"
-              variant="bordered"
-              {...register("email")}
-              isInvalid={!!errors.email}
-              errorMessage={errors.email?.message}
-              autoComplete="email"
-            />
-            <Input
-              isRequired
-              defaultValue=""
-              label="Password"
-              variant="bordered"
-              type="password"
-              {...register("password")}
-              isInvalid={!!errors.password}
-              errorMessage={errors.password?.message}
-            />
-            <Input
-              isRequired
-              defaultValue=""
-              label="Creator Code"
-              variant="bordered"
-              {...register("creatorCode")}
-              isInvalid={!!errors.creatorCode}
-              errorMessage={errors.creatorCode?.message}
-            />
-            <Button
-              isDisabled={!isValid || !creatorCode?.trim()}
-              fullWidth
-              className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-              type="submit"
-            >
-              Register Admin
-            </Button>
-          </div>
-        </form>
-      </CardBody>
-    </Card>
+        </CardHeader>
+        <CardBody>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-4">
+              {errorMessage && (
+                <p role="alert" className="text-red-500">
+                  {errorMessage}
+                </p>
+              )}
+              <Input
+                isRequired
+                defaultValue=""
+                label="Name"
+                variant="bordered"
+                {...register("name")}
+                isInvalid={!!errors.name}
+                errorMessage={errors.name?.message}
+                autoComplete="name"
+              />
+              <Input
+                defaultValue=""
+                label="Office Number"
+                variant="bordered"
+                {...register("officeNumber")}
+                isInvalid={!!errors.officeNumber}
+                errorMessage={errors.officeNumber?.message}
+              />
+              <Input
+                defaultValue=""
+                label="Office Hours"
+                variant="bordered"
+                {...register("officeHours")}
+                isInvalid={!!errors.officeHours}
+                errorMessage={errors.officeHours?.message}
+              />
+              <Input
+                defaultValue=""
+                label="Office Location"
+                variant="bordered"
+                {...register("officeLocation")}
+                isInvalid={!!errors.officeLocation}
+                errorMessage={errors.officeLocation?.message}
+              />
+              <Input
+                isRequired
+                defaultValue=""
+                label="Email"
+                variant="bordered"
+                {...register("email")}
+                isInvalid={!!errors.email}
+                errorMessage={errors.email?.message}
+                autoComplete="email"
+              />
+              <Input
+                isRequired
+                defaultValue=""
+                label="Password"
+                variant="bordered"
+                type="password"
+                {...register("password")}
+                isInvalid={!!errors.password}
+                errorMessage={errors.password?.message}
+              />
+              <Input
+                isRequired
+                defaultValue=""
+                label="Creator Code"
+                variant="bordered"
+                {...register("creatorCode")}
+                isInvalid={!!errors.creatorCode}
+                errorMessage={errors.creatorCode?.message}
+              />
+              <Button
+                isDisabled={!isValid || !creatorCode?.trim()}
+                fullWidth
+                className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
+                type="submit"
+              >
+                Register Admin
+              </Button>
+            </div>
+          </form>
+        </CardBody>
+      </Card>
+    </div>
   );
 }

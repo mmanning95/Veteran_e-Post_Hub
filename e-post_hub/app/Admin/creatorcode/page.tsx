@@ -89,7 +89,7 @@ const NewCreatorCode = () => {
 
   // Render UI
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-2">
       <Card className="w-full max-w-md mx-auto">
         <CardHeader className="flex flex-col items-center justify-center">
           <h1 className="text-3xl font-semibold text-orange-500">
