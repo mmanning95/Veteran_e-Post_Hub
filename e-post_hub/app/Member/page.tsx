@@ -42,6 +42,8 @@ export default function Memberpage() {
   const [isMember, setIsMember] = useState(false);
   const [memberName, setMemberName] = useState<string | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
+  const [defaultEvents, setDefaultEvents] = useState<Event[]>([]);
+  const [isFiltering, setIsFiltering] = useState(false);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
   const [message, setMessage] = useState<string | null>(null);
   const [userId, setUserId] = useState<string | null>(null); // Store the logged-in user's ID
@@ -58,33 +60,16 @@ export default function Memberpage() {
     lng: number;
   } | null>(null);
 
-  // {
-  //   /*for event filtering by type */
-  // }
-  // const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
-
-  // const handleTypeFilter = (keys: Set<string>) => {
-  //   setSelectedTypes(keys);
-  //   const selectedArray = Array.from(keys);
-
-  //   if (selectedArray.length === 0) {
-  //     setFilteredEvents(events); // Show all events if no filter is selected
-  //   } else {
-  //     setFilteredEvents(
-  //       events.filter((event) => selectedArray.includes(event.type || ""))
-  //     );
-  //   }
-  // };
-
   const handleTypeFilter = (keys: Set<string>) => {
+    setIsFiltering(true);
     setSelectedTypes(keys);
     const selectedArray = Array.from(keys);
 
     if (selectedArray.length === 0) {
-      setFilteredEvents(events);
+      setFilteredEvents(defaultEvents);
     } else {
       setFilteredEvents(
-        events.filter((event) => selectedArray.includes(event.type || ""))
+        defaultEvents.filter((ev) => selectedArray.includes(ev.type || ""))
       );
     }
   };
@@ -171,6 +156,8 @@ export default function Memberpage() {
     /*  Filters events based on the selected proximity (distance in miles). */
   }
   const handleProximityFilter = async (distance: number) => {
+    setIsFiltering(true);
+
     if (!userLocation) {
       getUserLocation();
     }
@@ -224,48 +211,79 @@ export default function Memberpage() {
   }, []);
 
   // Fetch approved events
-  const fetchApprovedEvents = async () => {
+  async function fetchApprovedEvents() {
     try {
       const response = await fetch("/api/Event/approved");
-      if (response.ok) {
-        const data = await response.json();
-        setEvents(data.events);
-        setFilteredEvents(data.events); // Initially, show all events
-
-        const uniqueTypes: string[] = Array.from(
-          new Set<string>(
-            data.events
-              .map((event: Event) => event.type as string)
-              .filter(Boolean)
-          )
-        );
-
-        setEventTypes(uniqueTypes);
-      } else {
+      if (!response.ok) {
         console.error("Failed to fetch approved events:", response.statusText);
+        return;
       }
+
+      const data = await response.json();
+      let allEvents = data.events as Event[];
+
+      // 1) Sort events by start date
+      allEvents.sort((a, b) => {
+        const dateA = a.startDate ? new Date(a.startDate).getTime() : Infinity;
+        const dateB = b.startDate ? new Date(b.startDate).getTime() : Infinity;
+        return dateA - dateB;
+      });
+
+      // 2) Build upcoming subset
+      const now = new Date();
+      const upcoming = allEvents.filter((ev) => {
+        const end = ev.endDate ? new Date(ev.endDate) : null;
+        const start = ev.startDate ? new Date(ev.startDate) : null;
+
+        // If there's an endDate in the past => exclude
+        if (end && end < now) return false;
+
+        // If no endDate but startDate is in the past => exclude
+        if (!end && start && start < now) return false;
+
+        return true;
+      });
+
+      setEvents(allEvents);
+      setDefaultEvents(upcoming);
+      setFilteredEvents(upcoming);
+      setIsFiltering(false);
+
+      // Build unique event types
+      const uniqueTypes: string[] = Array.from(
+        new Set<string>(allEvents.map((ev) => ev.type || "").filter(Boolean))
+      );
+      setEventTypes(uniqueTypes);
+
     } catch (error) {
       console.error("Error fetching approved events:", error);
     }
   };
 
-  const handleDateClick = (date: string) => {
-    // Filter events based on the selected date
-    const eventsForDate = events.filter((event) => {
-      const startDate = event.startDate
-        ? new Date(event.startDate).toISOString().split("T")[0]
-        : null;
-      const endDate = event.endDate
-        ? new Date(event.endDate).toISOString().split("T")[0]
-        : null;
-      return startDate && endDate && date >= startDate && date < endDate;
+  const handleDateClick = (dateString: string) => {
+    setIsFiltering(true);
+    const clickedDate = new Date(dateString);
+
+    // Filter from upcoming-only (defaultEvents)
+    const eventsForDate = events.filter((ev) => {
+      if (!ev.startDate || !ev.endDate) return false;
+      const start = new Date(ev.startDate);
+      const end = new Date(ev.endDate);
+
+        // Subtract one day from both
+        start.setDate(start.getDate() - 1);
+        end.setDate(end.getDate() - 1);
+      
+      return clickedDate >= start && clickedDate <= end;
     });
     setFilteredEvents(eventsForDate);
   };
 
   const resetFilter = () => {
-    setFilteredEvents(events); // Reset to show all events
+    setFilteredEvents(defaultEvents); // Reset to show all events
     setSelectedProximity(null); // Clear the selected distance
+    setIsFiltering(false);
+    setSelectedTypes(new Set()); // Clear the selected types
   };
 
   const handleInterest = async (eventId: string) => {
@@ -429,7 +447,7 @@ export default function Memberpage() {
             Print Events
           </Button>
 
-          {filteredEvents.length !== events.length && (
+          {isFiltering && (
             <Button
               onClick={resetFilter}
               className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
@@ -455,7 +473,7 @@ export default function Memberpage() {
 
           {/* Events List */}
           <div className="mt-10">
-            <h4 className="text-2xl mb-4 text-center">Approved Events:</h4>
+            <h4 className="text-2xl mb-4 text-center">Events:</h4>
 
             {filteredEvents.length === 0 ? (
               <p className="text-center">

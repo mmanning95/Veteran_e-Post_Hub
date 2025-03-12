@@ -40,33 +40,86 @@ type Event = {
 
 export default function HomePage() {
   const router = useRouter();
+
+  // -- All events (past + future) --
   const [events, setEvents] = useState<Event[]>([]);
+  // -- The subset (upcoming‐only) --
+  const [defaultEvents, setDefaultEvents] = useState<Event[]>([]);
+  // -- The currently displayed list (can be filtered) --
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
+  // -- True if the user has applied filters/date picks, etc. --
+  const [isFiltering, setIsFiltering] = useState(false);
+
   const [message, setMessage] = useState<string | null>(null);
-  const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
   const [eventTypes, setEventTypes] = useState<string[]>([]);
 
-  const [selectedProximity, setSelectedProximity] = useState<number | null>(
-    null
-  );
-  const [userLocation, setUserLocation] = useState<{
-    lat: number;
-    lng: number;
-  } | null>(null);
+  const [selectedProximity, setSelectedProximity] = useState<number | null>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
-  // {
-  //   /*for event filtering by type */
-  // }
-  // const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
+  // ------------------------------ FETCH EVENTS --------------------------------
+  useEffect(() => {
+    async function fetchApprovedEvents() {
+      try {
+        const response = await fetch("/api/Event/approved");
+        if (!response.ok) {
+          console.error("Failed to fetch approved events:", response.statusText);
+          return;
+        }
 
-  // const handleTypeFilter = (keys: Set<string>) => {
-  //   setSelectedTypes(keys);
-  //   const selectedArray = Array.from(keys);
+        const data = await response.json();
+        let allEvents = data.events as Event[];
 
-  {
-    /*  Retrieves the user's current location using the browser's Geolocation API. */
-  }
+        // 1) Sort events by start date
+        allEvents.sort((a, b) => {
+          const dateA = a.startDate ? new Date(a.startDate).getTime() : Infinity;
+          const dateB = b.startDate ? new Date(b.startDate).getTime() : Infinity;
+          return dateA - dateB;
+        });
+
+        // 2) Build an upcoming only subset
+        const now = new Date();
+        const upcoming = allEvents.filter((event) => {
+          const endDate = event.endDate ? new Date(event.endDate) : null;
+          const startDate = event.startDate ? new Date(event.startDate) : null;
+
+          // If there's an endDate and it's already passed, exclude
+          if (endDate && endDate < now) return false;
+
+          // If no endDate but the startDate is in the past, exclude
+          if (!endDate && startDate && startDate < now) return false;
+
+          return true;
+        });
+
+        // 3) Keep the full array so you can still display older items if needed
+        setEvents(allEvents);
+
+        // 4) 'defaultEvents' = upcoming only
+        setDefaultEvents(upcoming);
+
+        // 5) By default, show upcoming events
+        setFilteredEvents(upcoming);
+
+        // 6) Not in a “filtered” state yet
+        setIsFiltering(false);
+
+        // Build your unique event types
+        const uniqueTypes: string[] = Array.from(
+          new Set<string>(allEvents.map((ev) => ev.type || "").filter(Boolean))
+        );
+        setEventTypes(uniqueTypes);
+
+      } catch (error) {
+        console.error("Error fetching approved events:", error);
+      }
+    }
+
+    fetchApprovedEvents();
+  }, []);
+
+  // -------------------- PROXIMITY & GEOLOCATION --------------------
+
   const getUserLocation = () => {
     if (!("geolocation" in navigator)) {
       setMessage("Geolocation is not supported.");
@@ -79,19 +132,10 @@ export default function HomePage() {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
-
-        setUserLocation((prevLocation) =>
-          prevLocation &&
-          prevLocation.lat === newLocation.lat &&
-          prevLocation.lng === newLocation.lng
-            ? prevLocation
-            : newLocation
-        );
+        setUserLocation(newLocation);
       },
       () =>
-        setMessage(
-          "Location access denied. Please enable location permissions."
-        ),
+        setMessage("Location access denied. Please enable location permissions."),
       {
         enableHighAccuracy: true,
         timeout: 10000,
@@ -100,52 +144,39 @@ export default function HomePage() {
     );
   };
 
-  {
-    /* Fetches the distance between the user's location and each event location using an API. */
-  }
-  const fetchEventDistances = async (events: Event[]) => {
-    if (!userLocation) return events;
+  async function fetchEventDistances(someEvents: Event[]) {
+    if (!userLocation) return someEvents;
+    const validEvents = someEvents.filter((e) => e.latitude && e.longitude);
 
-    const validEvents = events.filter(
-      (event) => event.latitude !== null && event.longitude !== null
-    );
-
-    if (validEvents.length === 0) return events;
+    if (validEvents.length === 0) return someEvents;
 
     const destinations = validEvents
-      .map((event) => `${event.latitude},${event.longitude}`)
+      .map((ev) => `${ev.latitude},${ev.longitude}`)
       .join("|");
-
-    if (!destinations) return events;
-
-    const url = `/api/proximity?origins=${userLocation.lat},${userLocation.lng}&destinations=${destinations}`;
+    if (!destinations) return someEvents;
 
     try {
+      const url = `/api/proximity?origins=${userLocation.lat},${userLocation.lng}&destinations=${destinations}`;
       const response = await fetch(url);
       const data = await response.json();
-
-      if (data.status !== "OK" || !data.rows || data.rows.length === 0)
-        return events;
+      if (data.status !== "OK" || !data.rows?.length) return someEvents;
 
       const distances = data.rows[0].elements;
-
-      return validEvents.map((event, index) =>
+      return validEvents.map((ev, index) =>
         distances[index]?.status === "OK"
-          ? {
-              ...event,
-              distance: distances[index].distance.value / 1609.34,
-            }
-          : { ...event, distance: NaN }
+          ? { ...ev, distance: distances[index].distance.value / 1609.34 }
+          : { ...ev, distance: NaN }
       );
     } catch {
-      return events;
+      return someEvents;
     }
-  };
-
-  {
-    /*  Filters events based on the selected proximity (distance in miles). */
   }
+
   const handleProximityFilter = async (distance: number) => {
+    // Mark that we're now filtering
+    setIsFiltering(true);
+
+    // Make sure we have user location
     if (!userLocation) {
       await new Promise<void>((resolve) => {
         navigator.geolocation.getCurrentPosition(
@@ -157,9 +188,7 @@ export default function HomePage() {
             resolve();
           },
           () => {
-            console.warn(
-              "Location access denied. Please enable location permissions."
-            );
+            console.warn("Location access denied. Please enable location permissions.");
             resolve();
           },
           {
@@ -172,23 +201,20 @@ export default function HomePage() {
     }
 
     setSelectedProximity(distance);
-
     const updatedEvents = await fetchEventDistances(events);
 
-    setFilteredEvents(
-      updatedEvents.filter(
-        (event) => event.distance !== undefined && event.distance <= distance
-      )
+    const filtered = updatedEvents.filter(
+      (ev) => ev.distance !== undefined && ev.distance <= distance
     );
+    setFilteredEvents(filtered);
   };
 
+  // ------------------------- ROLES / TOKEN -------------------------
   useEffect(() => {
     const token = localStorage.getItem("token");
-
     if (token) {
       try {
         const decodedToken = jwt.decode(token) as { role: string };
-
         if (decodedToken) {
           if (decodedToken.role === "ADMIN") {
             router.push("/Admin");
@@ -202,70 +228,66 @@ export default function HomePage() {
         console.error("Error decoding token:", error);
         return;
       }
-    } else {
-      return;
     }
   }, [router]);
 
-  useEffect(() => {
-    // Fetch approved events
-    async function fetchApprovedEvents() {
-      try {
-        const response = await fetch("/api/Event/approved"); // Adjust endpoint based on backend
-        if (response.ok) {
-          const data = await response.json();
-          setEvents(data.events);
-          setFilteredEvents(data.events); // Initially, show all events
-
-          const uniqueTypes: string[] = Array.from(
-            new Set<string>(
-              data.events
-                .map((event: Event) => event.type as string)
-                .filter(Boolean)
-            )
-          );
-
-          setEventTypes(uniqueTypes);
-        } else {
-          console.error(
-            "Failed to fetch approved events:",
-            response.statusText
-          );
-        }
-      } catch (error) {
-        console.error("Error fetching approved events:", error);
-      }
-    }
-
-    fetchApprovedEvents();
-  }, []);
+  // --------------------- FILTERS / TYPE / CALENDAR -------------------
 
   const handleTypeFilter = (keys: Set<string>) => {
+    setIsFiltering(true); // user is applying a filter
     setSelectedTypes(keys);
     const selectedArray = Array.from(keys);
 
     if (selectedArray.length === 0) {
-      setFilteredEvents(events);
+      // No type selected => show *all upcoming*
+      setFilteredEvents(defaultEvents);
     } else {
+      // Filter from *all* events or from default events?
+      // Typically you'd filter from *defaultEvents* if you want to keep only future events
+      // or from *events* if you want to allow older events as well.
       setFilteredEvents(
-        events.filter((event) => selectedArray.includes(event.type || ""))
+        defaultEvents.filter((ev) => selectedArray.includes(ev.type || ""))
       );
     }
   };
+
+
+  const handleDateClick = (dateString: string) => {
+    setIsFiltering(true); // user clicked a specific date => filtered
+
+    // Convert string => Date
+    const clickedDate = new Date(dateString);
+
+    // If you want to allow older events, you could filter from all events.
+    // If you only want upcoming events, filter from defaultEvents. It's up to you.
+    const eventsForDate = events.filter((ev) => {
+      if (!ev.startDate || !ev.endDate) return false;
+      const start = new Date(ev.startDate);
+      const end = new Date(ev.endDate);
+
+        // Subtract one day from both
+        start.setDate(start.getDate() - 1);
+        end.setDate(end.getDate() - 1);
+      
+      return clickedDate >= start && clickedDate <= end;
+    });
+    setFilteredEvents(eventsForDate);
+  };
+
+  // --------------------- INTEREST HANDLER -------------------
 
   const handleInterest = async (eventId: string) => {
     const interestedEvents = JSON.parse(
       localStorage.getItem("interestedEvents") || "[]"
     ) as string[];
 
-    // Check if the user has already expressed interest in this event
     if (interestedEvents.includes(eventId)) {
       setMessage("You have already expressed interest in this event.");
       setTimeout(() => setMessage(null), 3000);
       return;
     }
 
-    // Add the event ID to the list of interested events
+    // Add the event ID to the local storage
     localStorage.setItem(
       "interestedEvents",
       JSON.stringify([...interestedEvents, eventId])
@@ -278,18 +300,15 @@ export default function HomePage() {
       });
 
       if (response.ok) {
-        setEvents((prevEvents) =>
-          prevEvents.map((event) =>
-            event.id === eventId
-              ? { ...event, interested: event.interested + 1 }
-              : event
+        // increment interest count in both arrays
+        setEvents((prev) =>
+          prev.map((ev) =>
+            ev.id === eventId ? { ...ev, interested: ev.interested + 1 } : ev
           )
         );
-        setFilteredEvents((prevFilteredEvents) =>
-          prevFilteredEvents.map((event) =>
-            event.id === eventId
-              ? { ...event, interested: event.interested + 1 }
-              : event
+        setFilteredEvents((prev) =>
+          prev.map((ev) =>
+            ev.id === eventId ? { ...ev, interested: ev.interested + 1 } : ev
           )
         );
         setMessage("Your interest has been recorded.");
@@ -304,31 +323,24 @@ export default function HomePage() {
     setTimeout(() => setMessage(null), 3000);
   };
 
-  const handleDateClick = (date: string) => {
-    // Filter events based on the selected date
-    const eventsForDate = events.filter((event) => {
-      const startDate = event.startDate
-        ? new Date(event.startDate).toISOString().split("T")[0]
-        : null;
-      const endDate = event.endDate
-        ? new Date(event.endDate).toISOString().split("T")[0]
-        : null;
-      return startDate && endDate && date >= startDate && date < endDate;
-    });
-    setFilteredEvents(eventsForDate);
-  };
-
+  // --------------------- RESET FILTER -------------------
   const resetFilter = () => {
-    setFilteredEvents(events); // Reset to show all events
-    setSelectedProximity(null); // Clear the selected distance
+    // Return to the default “upcoming only” subset
+    setFilteredEvents(defaultEvents);
+    setIsFiltering(false);
+    setSelectedProximity(null);
+    setSelectedTypes(new Set());
   };
 
+  // --------------------- RENDERING -----------------------
   return (
     <div className="min-h-screen w-full bg-blue-100 flex flex-col">
       <div
         className="w-full h-[650px] bg-cover bg-center"
         style={{ backgroundImage: `url(${MilitaryBranches.src})` }}
-      ></div>
+
+      />
+
       <div className="flex flex-col md:flex-row w-full">
         {/* Sidebar */}
         <div className="calendar-sidebar w-full md:w-2/5 p-4 lg:w-1/4">
@@ -345,9 +357,9 @@ export default function HomePage() {
               aria-label="Filter by Event Type"
               selectionMode="multiple"
               selectedKeys={selectedTypes}
-              onSelectionChange={(keys) =>
-                handleTypeFilter(keys as Set<string>)
-              }
+
+              onSelectionChange={(keys) => handleTypeFilter(keys as Set<string>)}
+
             >
               {eventTypes.map((type) => (
                 <DropdownItem key={type}>{type}</DropdownItem>
@@ -355,7 +367,9 @@ export default function HomePage() {
             </DropdownMenu>
           </Dropdown>
 
-          {/* Proximity filter*/}
+
+          {/* Proximity filter */}
+
           <Dropdown className="mt-2">
             <DropdownTrigger>
               <Button
@@ -368,9 +382,9 @@ export default function HomePage() {
             <DropdownMenu
               aria-label="Filter by Distance"
               selectionMode="single"
-              selectedKeys={
-                selectedProximity ? [String(selectedProximity)] : []
-              }
+
+              selectedKeys={selectedProximity ? [String(selectedProximity)] : []}
+
               onSelectionChange={(keys) => {
                 const selectedValue = Number(Array.from(keys)[0] as string);
                 handleProximityFilter(selectedValue);
@@ -382,24 +396,11 @@ export default function HomePage() {
               <DropdownItem key="50">Within 50 miles</DropdownItem>
             </DropdownMenu>
           </Dropdown>
-          {/* Print Events Button */}
-          <Button
-            className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
-            onClick={() => {
-              const filters = {
-                types: Array.from(selectedTypes),
-                proximity: selectedProximity,
-              };
-              const queryParams = new URLSearchParams({
-                filters: JSON.stringify(filters),
-              }).toString();
-              window.open(`/print-events?${queryParams}`, "_blank");
-            }}
-          >
-            Print Events
-          </Button>
 
-          {filteredEvents.length !== events.length && (
+
+          {/* Show "Reset" button ONLY if isFiltering is true */}
+          {isFiltering && (
+
             <Button
               onClick={resetFilter}
               className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
@@ -412,12 +413,9 @@ export default function HomePage() {
         {/* Main Content */}
         <div className="content w-3/4 p-4">
           <div className="text-center mb-10">
-            <h1 className="text-4xl font-bold">
-              Welcome to the Veteran e-Post Hub
-            </h1>
+            <h1 className="text-4xl font-bold">Welcome to the Veteran e-Post Hub</h1>
             <p className="text-lg mt-4">
-              Find and participate in events specifically tailored for veterans
-              and their families.
+              Find and participate in events specifically tailored for veterans and their families.
             </p>
           </div>
 
@@ -426,22 +424,18 @@ export default function HomePage() {
             <h4 className="text-2xl mb-4 text-center">Events:</h4>
 
             {filteredEvents.length === 0 ? (
-              <p className="text-center">
-                No events found for the selected date
-              </p>
+              <p className="text-center">No events found for the selected date</p>
             ) : (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-3">
                 {filteredEvents.map((event) => (
                   <Card
                     key={event.id}
                     className="mb-4 md:w-[320-px] lg:w-[380-px]"
-                    style={{
-                      minHeight: "400px",
-                      minWidth: "280px",
-                    }}
+
+                    style={{ minHeight: "400px", minWidth: "280px" }}
+
                   >
                     {event.flyer ? (
-                      // Display title, image, and buttons if the flyer exists
                       <>
                         <CardHeader className="p-4 flex justify-between items-center">
                           <h5 className="text-xl font-bold">{event.title}</h5>
@@ -459,9 +453,7 @@ export default function HomePage() {
                               src={event.flyer}
                               alt={`${event.title} Flyer`}
                               className="w-full h-full object-cover rounded-md"
-                              style={{
-                                maxHeight: "400px",
-                              }}
+                              style={{ maxHeight: "400px" }}
                             />
                           </a>
                           <div className="flex gap-2 mt-4 justify-center">
@@ -471,28 +463,24 @@ export default function HomePage() {
                             >
                               I'm Interested
                             </Button>
-                            <Button
+
+                              <Button 
                               as={Link}
                               href={`/Event/${event.id}`}
                               passHref
-                              className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-                            >
-                              View Details
-                            </Button>
+                              className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
+                                View Details
+                              </Button>
+
                           </div>
                         </CardBody>
                       </>
                     ) : (
-                      // Display all event information if no flyer exists
                       <CardBody className="flex flex-col justify-between p-6">
                         <div>
-                          <h5 className="text-xl font-bold mb-4">
-                            {event.title}
-                          </h5>
+                          <h5 className="text-xl font-bold mb-4">{event.title}</h5>
                           {event.description && (
-                            <p className="text-gray-700 mb-4">
-                              {event.description}
-                            </p>
+                            <p className="text-gray-700 mb-4">{event.description}</p>
                           )}
                           {event.startDate && (
                             <p className="text-gray-600">
@@ -551,14 +539,15 @@ export default function HomePage() {
                           >
                             I'm Interested
                           </Button>
-                          <Button
+
+                            <Button 
                             as={Link}
                             href={`/Event/${event.id}`}
                             passHref
-                            className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
-                          >
-                            View Details
-                          </Button>
+                            className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
+                              View Details
+                            </Button>
+
                         </div>
                       </CardBody>
                     )}
@@ -569,6 +558,7 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+
       <BottomBar />
     </div>
   );
