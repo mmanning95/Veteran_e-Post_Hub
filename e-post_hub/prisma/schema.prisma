@@ -8,6 +8,7 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
 generator client {
   provider = "prisma-client-js"
 }
@@ -105,6 +106,7 @@ model Question {
   datePosted  DateTime @default(now())
   userId      String?  // If posted by logged-in user
   createdBy   User?    @relation(fields: [userId], references: [id])
+  comments    Comment[]
 }
 
 model Comment {
@@ -112,13 +114,15 @@ model Comment {
   content     String   // The comment text
   createdAt   DateTime @default(now()) // When the comment was created
   updatedAt   DateTime @updatedAt // When the comment was last updated
-  eventId     String   // Foreign key to associate with an event
-  event       Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
-  userId      String   // Foreign key to associate with the user who commented
-  createdBy   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  // Self-referencing relationship for replies
-  parentId    String?  // Foreign key to link a comment
+  eventId     String?   
+  questionId   String? 
+  userId      String   
+  parentId    String?  
+
+  createdBy   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question     Question? @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  event       Event?    @relation(fields: [eventId], references: [id], onDelete: Cascade)
   parent      Comment? @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
   replies     Comment[] @relation("CommentReplies")
 }

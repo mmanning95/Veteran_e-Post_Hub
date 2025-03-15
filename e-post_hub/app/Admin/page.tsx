@@ -40,8 +40,10 @@ export default function Adminpage() {
   const [isAdmin, setIsAdmin] = useState(false);
   const [adminName, setAdminName] = useState<string | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
+  const [defaultEvents, setDefaultEvents] = useState<Event[]>([]);
   const [eventTypes, setEventTypes] = useState<string[]>([]);
   const [filteredEvents, setFilteredEvents] = useState<Event[]>([]);
+  const [isFiltering, setIsFiltering] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState<boolean>(false);
   const [selectedEventId, setSelectedEventId] = useState<string | null>(null);
@@ -56,11 +58,6 @@ export default function Adminpage() {
     /*for event filtering by type */
   }
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
-
-  // {
-  //   /*for event filtering by type */
-  // }
-  // const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
 
   {
     /*  Retrieves the user's current location using the browser's Geolocation API. */
@@ -144,6 +141,8 @@ export default function Adminpage() {
     /*  Filters events based on the selected proximity (distance in miles). */
   }
   const handleProximityFilter = async (distance: number) => {
+    setIsFiltering(true);
+    
     if (!userLocation) {
       getUserLocation();
     }
@@ -196,59 +195,104 @@ export default function Adminpage() {
     async function fetchEvents() {
       try {
         const response = await fetch("/api/Event/approved");
-        if (response.ok) {
-          const data = await response.json();
-          setEvents(data.events);
-          setFilteredEvents(data.events);
 
-          const uniqueTypes: string[] = Array.from(
-            new Set<string>(
-              data.events
-                .map((event: Event) => event.type as string)
-                .filter(Boolean)
-            )
-          );
+        if (!response.ok) {
+          console.error("Failed to fetch approved events:", response.statusText);
+          return;
 
-          setEventTypes(uniqueTypes);
-        } else {
-          setMessage("Failed to fetch events.");
         }
+
+        const data = await response.json();
+        let allEvents = data.events as Event[];
+
+        // 1) Sort events by start date
+        allEvents.sort((a, b) => {
+          const dateA = a.startDate ? new Date(a.startDate).getTime() : Infinity;
+          const dateB = b.startDate ? new Date(b.startDate).getTime() : Infinity;
+          return dateA - dateB;
+        });
+
+        // 2) Build an upcoming only subset
+        const now = new Date();
+        const upcoming = allEvents.filter((event) => {
+          const endDate = event.endDate ? new Date(event.endDate) : null;
+          const startDate = event.startDate ? new Date(event.startDate) : null;
+
+          // If there's an endDate and it's already passed, exclude
+          if (endDate && endDate < now) return false;
+
+          // If no endDate but the startDate is in the past, exclude
+          if (!endDate && startDate && startDate < now) return false;
+
+          return true;
+        });
+
+        // 3) Keep the full array so you can still display older items if needed
+        setEvents(allEvents);
+
+        // 4) 'defaultEvents' = upcoming only
+        setDefaultEvents(upcoming);
+
+        // 5) By default, show upcoming events
+        setFilteredEvents(upcoming);
+
+        // 6) Not in a “filtered” state yet
+        setIsFiltering(false);
+
+        // Build your unique event types
+        const uniqueTypes: string[] = Array.from(
+          new Set<string>(allEvents.map((ev) => ev.type || "").filter(Boolean))
+        );
+        setEventTypes(uniqueTypes);
+
       } catch (error) {
-        console.error("Error fetching events:", error);
-        setMessage("An error occurred while fetching events.");
+        console.error("Error fetching approved events:", error);
       }
     }
+
+    fetchEvents();
   }, []);
 
-  const handleDateClick = (date: string) => {
-    const eventsForDate = events.filter((event) => {
-      const startDate = event.startDate
-        ? new Date(event.startDate).toISOString().split("T")[0]
-        : null;
-      const endDate = event.endDate
-        ? new Date(event.endDate).toISOString().split("T")[0]
-        : null;
-      return startDate && endDate && date >= startDate && date < endDate;
+
+  const handleDateClick = (dateString: string) => {
+    setIsFiltering(true); // user clicked a specific date => filtered
+
+    // Convert string => Date
+    const clickedDate = new Date(dateString);
+
+    const eventsForDate = events.filter((ev) => {
+      if (!ev.startDate || !ev.endDate) return false;
+      const start = new Date(ev.startDate);
+      const end = new Date(ev.endDate);
+
+      // Subtract one day from both
+      start.setDate(start.getDate() - 1);
+      end.setDate(end.getDate() - 1);
+
+      return clickedDate >= start && clickedDate <= end;
     });
     setFilteredEvents(eventsForDate);
   };
 
   const handleTypeFilter = (keys: Set<string>) => {
+    setIsFiltering(true);
     setSelectedTypes(keys);
     const selectedArray = Array.from(keys);
 
     if (selectedArray.length === 0) {
-      setFilteredEvents(events);
+      setFilteredEvents(defaultEvents);
     } else {
       setFilteredEvents(
-        events.filter((event) => selectedArray.includes(event.type || ""))
+        defaultEvents.filter((ev) => selectedArray.includes(ev.type || ""))
       );
     }
   };
 
   const resetFilter = () => {
-    setFilteredEvents(events); // Reset to show all events
+    setFilteredEvents(defaultEvents); // Reset to show all events
+    setIsFiltering(false); // Reset filtering state
     setSelectedProximity(null); // Clear the selected distance
+    setSelectedTypes(new Set()); 
   };
 
   const handleInterest = async (eventId: string) => {
@@ -339,7 +383,7 @@ export default function Adminpage() {
   }
 
   return (
-    <div className="min-h-screen w-full bg-blue-100 flex flex-col">
+    <div className=" bg-blue-100 w-full">
       <div
         className="w-full h-[650px] bg-cover bg-center"
         style={{ backgroundImage: `url(${MilitaryBranches.src})` }}
@@ -347,8 +391,8 @@ export default function Adminpage() {
 
       {/* Sidebar */}
       {/* Calendar */}
-      <div className="flex flex-1">
-        <div className="calendar-sidebar w-1/4 p-4">
+      <div className="flex flex-col md:flex-row w-full">
+        <div className="calendar-sidebar w-full md:w-2/5 p-4 lg:w-1/4">
           <EventCalendar events={events} onDateClick={handleDateClick} />
 
           {/* Event type Filter */}
@@ -416,7 +460,7 @@ export default function Adminpage() {
             Print Events
           </Button>
 
-          {filteredEvents.length !== events.length && (
+          {isFiltering && (
             <Button
               onClick={resetFilter}
               className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
@@ -447,19 +491,19 @@ export default function Adminpage() {
                 No events found for the selected date
               </p>
             ) : (
-              <div className="grid grid-cols-1 gap-y-6 md:grid-cols-2 lg:grid-cols-3 gap-x-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-3">
                 {filteredEvents.map((event) => (
                   <Card
                     key={event.id}
-                    className="mb-4 w-full min-h-[500px] flex flex-col justify-between"
+                    className="mb-4 md:w-[320-px] lg:w-[380-px]"
                     style={{
-                      minHeight: "400px", // Taller cards
+                      minHeight: "400px", minWidth: "280px",
                     }}
                   >
                     {event.flyer ? (
                       // Display title, image, and buttons if the flyer exists
                       <>
-                        <CardHeader className="p-4 flex justify-between items-center">
+                        <CardHeader className="p-4 flex justify-between items-center ">
                           <h5 className="text-xl font-bold">{event.title}</h5>
                           <p className="text-gray-600">
                             Interested: {event.interested}
@@ -654,7 +698,7 @@ export default function Adminpage() {
         </div>
       )}
 
-      <BottomBar />
+      <BottomBar /> 
     </div>
   );
 }

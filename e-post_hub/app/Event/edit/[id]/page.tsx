@@ -162,8 +162,8 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <Card className="w-2/5 mx-auto max-h-[80vh] overflow-y-auto">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 pt-8 pb-8 px-4">
+      <Card className="w-full max-w-lg mx-auto shadow-sm bg-white border border-gray-300">
         <CardHeader className="flex flex-col items-center justify-center">
           <h3 className="text-3xl font-semibold">Edit Event</h3>
         </CardHeader>

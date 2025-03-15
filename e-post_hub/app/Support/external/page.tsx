@@ -46,9 +46,9 @@ export default function ResourcesPage() {
   }, [locationFilter, categoryFilter]); // Refetch on filter changes
 
   return (
-    <div className="flex">
+    <div className="flex flex-col md:flex-row">
       {/* Sidebar for filters */}
-      <div className="w-1/4 p-4 bg-gray-100">
+      <div className="w-full md:w-1/4 lg:w-1/4 p-4 border-r border-gray-200">
         <h3 className="text-xl font-bold mb-4">Filters</h3>
 
         {/* Location Filter */}
@@ -126,10 +126,18 @@ export default function ResourcesPage() {
             </div>
           )}
         </div>
+          <Button 
+              as={Link}
+              href={'/Admin/external'}
+              passHref
+              className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
+                add resource
+            </Button>
+
       </div>
 
       {/* Main Content */}
-      <div className="w-3/4 p-4">
+      <div className="w-full md:w-3/4 p-4 overflow-auto">
         <div className="grid grid-cols-1 gap-6">
           {links.length === 0 ? (
             <p>No links found for the selected filters.</p>
@@ -169,11 +177,6 @@ export default function ResourcesPage() {
             ))
           )}
         </div>
-          <Link href={`/Admin/external`} passHref>
-            <Button className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
-              add resource
-            </Button>
-            </Link>
       </div>
     </div>
   );
