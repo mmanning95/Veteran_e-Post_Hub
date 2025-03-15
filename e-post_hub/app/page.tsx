@@ -54,8 +54,13 @@ export default function HomePage() {
   const [selectedTypes, setSelectedTypes] = useState<Set<string>>(new Set());
   const [eventTypes, setEventTypes] = useState<string[]>([]);
 
-  const [selectedProximity, setSelectedProximity] = useState<number | null>(null);
-  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [selectedProximity, setSelectedProximity] = useState<number | null>(
+    null
+  );
+  const [userLocation, setUserLocation] = useState<{
+    lat: number;
+    lng: number;
+  } | null>(null);
 
   // ------------------------------ FETCH EVENTS --------------------------------
   useEffect(() => {
@@ -63,7 +68,10 @@ export default function HomePage() {
       try {
         const response = await fetch("/api/Event/approved");
         if (!response.ok) {
-          console.error("Failed to fetch approved events:", response.statusText);
+          console.error(
+            "Failed to fetch approved events:",
+            response.statusText
+          );
           return;
         }
 
@@ -72,8 +80,12 @@ export default function HomePage() {
 
         // 1) Sort events by start date
         allEvents.sort((a, b) => {
-          const dateA = a.startDate ? new Date(a.startDate).getTime() : Infinity;
-          const dateB = b.startDate ? new Date(b.startDate).getTime() : Infinity;
+          const dateA = a.startDate
+            ? new Date(a.startDate).getTime()
+            : Infinity;
+          const dateB = b.startDate
+            ? new Date(b.startDate).getTime()
+            : Infinity;
           return dateA - dateB;
         });
 
@@ -109,7 +121,6 @@ export default function HomePage() {
           new Set<string>(allEvents.map((ev) => ev.type || "").filter(Boolean))
         );
         setEventTypes(uniqueTypes);
-
       } catch (error) {
         console.error("Error fetching approved events:", error);
       }
@@ -135,7 +146,9 @@ export default function HomePage() {
         setUserLocation(newLocation);
       },
       () =>
-        setMessage("Location access denied. Please enable location permissions."),
+        setMessage(
+          "Location access denied. Please enable location permissions."
+        ),
       {
         enableHighAccuracy: true,
         timeout: 10000,
@@ -188,7 +201,9 @@ export default function HomePage() {
             resolve();
           },
           () => {
-            console.warn("Location access denied. Please enable location permissions.");
+            console.warn(
+              "Location access denied. Please enable location permissions."
+            );
             resolve();
           },
           {
@@ -251,7 +266,6 @@ export default function HomePage() {
     }
   };
 
-
   const handleDateClick = (dateString: string) => {
     setIsFiltering(true); // user clicked a specific date => filtered
 
@@ -265,10 +279,10 @@ export default function HomePage() {
       const start = new Date(ev.startDate);
       const end = new Date(ev.endDate);
 
-        // Subtract one day from both
-        start.setDate(start.getDate() - 1);
-        end.setDate(end.getDate() - 1);
-      
+      // Subtract one day from both
+      start.setDate(start.getDate() - 1);
+      end.setDate(end.getDate() - 1);
+
       return clickedDate >= start && clickedDate <= end;
     });
     setFilteredEvents(eventsForDate);
@@ -338,7 +352,6 @@ export default function HomePage() {
       <div
         className="w-full h-[650px] bg-cover bg-center"
         style={{ backgroundImage: `url(${MilitaryBranches.src})` }}
-
       />
 
       <div className="flex flex-col md:flex-row w-full">
@@ -357,16 +370,15 @@ export default function HomePage() {
               aria-label="Filter by Event Type"
               selectionMode="multiple"
               selectedKeys={selectedTypes}
-
-              onSelectionChange={(keys) => handleTypeFilter(keys as Set<string>)}
-
+              onSelectionChange={(keys) =>
+                handleTypeFilter(keys as Set<string>)
+              }
             >
               {eventTypes.map((type) => (
                 <DropdownItem key={type}>{type}</DropdownItem>
               ))}
             </DropdownMenu>
           </Dropdown>
-
 
           {/* Proximity filter */}
 
@@ -382,9 +394,9 @@ export default function HomePage() {
             <DropdownMenu
               aria-label="Filter by Distance"
               selectionMode="single"
-
-              selectedKeys={selectedProximity ? [String(selectedProximity)] : []}
-
+              selectedKeys={
+                selectedProximity ? [String(selectedProximity)] : []
+              }
               onSelectionChange={(keys) => {
                 const selectedValue = Number(Array.from(keys)[0] as string);
                 handleProximityFilter(selectedValue);
@@ -397,10 +409,25 @@ export default function HomePage() {
             </DropdownMenu>
           </Dropdown>
 
+          {/* Print Events Button */}
+          <Button
+            className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+            onClick={() => {
+              const filters = {
+                types: Array.from(selectedTypes),
+                proximity: selectedProximity,
+              };
+              const queryParams = new URLSearchParams({
+                filters: JSON.stringify(filters),
+              }).toString();
+              window.open(`/print?${queryParams}`, "_blank");
+            }}
+          >
+            Print Events
+          </Button>
 
           {/* Show "Reset" button ONLY if isFiltering is true */}
           {isFiltering && (
-
             <Button
               onClick={resetFilter}
               className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
@@ -413,9 +440,12 @@ export default function HomePage() {
         {/* Main Content */}
         <div className="content w-3/4 p-4">
           <div className="text-center mb-10">
-            <h1 className="text-4xl font-bold">Welcome to the Veteran e-Post Hub</h1>
+            <h1 className="text-4xl font-bold">
+              Welcome to the Veteran e-Post Hub
+            </h1>
             <p className="text-lg mt-4">
-              Find and participate in events specifically tailored for veterans and their families.
+              Find and participate in events specifically tailored for veterans
+              and their families.
             </p>
           </div>
 
@@ -424,16 +454,16 @@ export default function HomePage() {
             <h4 className="text-2xl mb-4 text-center">Events:</h4>
 
             {filteredEvents.length === 0 ? (
-              <p className="text-center">No events found for the selected date</p>
+              <p className="text-center">
+                No events found for the selected date
+              </p>
             ) : (
               <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-3">
                 {filteredEvents.map((event) => (
                   <Card
                     key={event.id}
                     className="mb-4 md:w-[320-px] lg:w-[380-px]"
-
                     style={{ minHeight: "400px", minWidth: "280px" }}
-
                   >
                     {event.flyer ? (
                       <>
@@ -464,23 +494,27 @@ export default function HomePage() {
                               I'm Interested
                             </Button>
 
-                              <Button 
+                            <Button
                               as={Link}
                               href={`/Event/${event.id}`}
                               passHref
-                              className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
-                                View Details
-                              </Button>
-
+                              className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                            >
+                              View Details
+                            </Button>
                           </div>
                         </CardBody>
                       </>
                     ) : (
                       <CardBody className="flex flex-col justify-between p-6">
                         <div>
-                          <h5 className="text-xl font-bold mb-4">{event.title}</h5>
+                          <h5 className="text-xl font-bold mb-4">
+                            {event.title}
+                          </h5>
                           {event.description && (
-                            <p className="text-gray-700 mb-4">{event.description}</p>
+                            <p className="text-gray-700 mb-4">
+                              {event.description}
+                            </p>
                           )}
                           {event.startDate && (
                             <p className="text-gray-600">
@@ -540,14 +574,14 @@ export default function HomePage() {
                             I'm Interested
                           </Button>
 
-                            <Button 
+                          <Button
                             as={Link}
                             href={`/Event/${event.id}`}
                             passHref
-                            className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black">
-                              View Details
-                            </Button>
-
+                            className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+                          >
+                            View Details
+                          </Button>
                         </div>
                       </CardBody>
                     )}
