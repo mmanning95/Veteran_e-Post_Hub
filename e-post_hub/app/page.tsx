@@ -409,6 +409,23 @@ export default function HomePage() {
             </DropdownMenu>
           </Dropdown>
 
+          {/* Print Events Button */}
+          <Button
+            className="mt-4 bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black w-full"
+            onClick={() => {
+              const filters = {
+                types: Array.from(selectedTypes),
+                proximity: selectedProximity,
+              };
+              const queryParams = new URLSearchParams({
+                filters: JSON.stringify(filters),
+              }).toString();
+              window.open(`/print?${queryParams}`, "_blank");
+            }}
+          >
+            Print Events
+          </Button>
+
           {/* Show "Reset" button ONLY if isFiltering is true */}
           {isFiltering && (
             <Button

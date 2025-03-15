@@ -52,12 +52,42 @@ export async function PATCH(
   try {
     // Parse JSON body
     const data = await req.json();
+     
+    let updatedLatitude = existingEvent?.latitude;
+    let updatedLongitude = existingEvent?.longitude;
+
+    // If the address has changed, fetch new latitude and longitude
+    if (data.address && data.address !== existingEvent?.address) {
+      try {
+        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+
+        if (apiKey) {
+          const geoUrl = `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(data.address)}&key=${apiKey}`;
+          const response = await fetch(geoUrl);
+          const geoData = await response.json();
+
+          if (geoData.status === "OK" && geoData.results.length > 0) {
+            updatedLatitude = geoData.results[0].geometry.location.lat;
+            updatedLongitude = geoData.results[0].geometry.location.lng;
+          } else {
+            console.warn("Warning: Geolocation lookup failed. Proceeding without updating coordinates.");
+          }
+        } else {
+          console.warn("Warning: Missing GOOGLE_MAPS_API_KEY. Skipping geolocation update.");
+        }
+      } catch (error) {
+        console.error("Error fetching new geolocation:", error);
+      }
+    }
 
 
+    // Added lat/long fields to be updated, for proximity filter which uses distance matrix API
     const updatedEvent = await prisma.event.update({
       where: { id },
       data: {
         ...data,
+        latitude: updatedLatitude,
+        longitude: updatedLongitude,
         startDate: data.startDate ? new Date(data.startDate) : null,
         endDate: data.endDate ? new Date(data.endDate) : null,
       },
