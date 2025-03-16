@@ -66,6 +66,5 @@ N/A
   * [Meeting Minutes](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Meeting%20Minutes/MoM.md)
   * [Training Document](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Training/training.md)
   * [Project Description](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Documentation/Sprint%201%20Documentation/Project_Description.docx)
-  * [System Requirements and Specifications](https://github.com/mmanning95/ACME26WCV-Cpts421/blob/main/Documentation/Sprint%201%20Documentation/Requirements_and_Specifications_Template.docx)
   * [Presentations](https://github.com/mmanning95/ACME26WCV-Cpts421/tree/main/Presentations)
 
