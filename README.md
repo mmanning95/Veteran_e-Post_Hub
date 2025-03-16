@@ -17,7 +17,7 @@ The only thing needed to use Veteran e-Post Hub is an internet-connected device,
 
 ### Add-ons
 
-- [Next UI](nextui.org) - Used for the front end design
+- [Next UI](nextui.org) - Used for the front end design (Deprecated and now is called HeroUI)
 - [Next JS](nextjs.org) - The framework used for our e-Post Hub
 - [Tailwind CSS](tailwindcss.com) - A script command for css. Helps by scripting front end design commands
 - [Zod](zod.dev) -  Used for validations
@@ -26,6 +26,7 @@ The only thing needed to use Veteran e-Post Hub is an internet-connected device,
 - [Prisma](https://www.prisma.io/) - Helps with collabrative database enviroments
 - [SQLlite](https://www.sqlite.org/) - database used to save accounts and other important information
 - [Bcrypt](https://www.npmjs.com/package/bcrypt) - hash used for password hashing
+- [Vercel](https://vercel.com/docs) - Used for our website deployment
 
 ### Installation Steps - (Dev steps)
 
