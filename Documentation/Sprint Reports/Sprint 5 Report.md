@@ -33,6 +33,5 @@ Here's what we'd like to improve:
   
 Here are the changes we plan to implement in the next sprint:
 * UI Improvements
-* Event Printout
 * Website deployment
 
