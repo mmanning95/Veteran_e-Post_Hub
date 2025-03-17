@@ -12,6 +12,9 @@ During this sprint, we focused on implementing UI updates and user quality of li
 
 ## Completed Issues/ User Stories
 * [Issue 5](https://github.com/mmanning95/ACME26WCV-Cpts421/issues/5)
+* [Issue_27](https://github.com/mmanning95/ACME26WCV-Cpts421/issues/27)
+* [Issue_25](https://github.com/mmanning95/ACME26WCV-Cpts421/issues/25)
+* [Issue_16](https://github.com/mmanning95/ACME26WCV-Cpts421/issues/16)
 
  ## Incomplete Issues/User Stories
 - N/A
