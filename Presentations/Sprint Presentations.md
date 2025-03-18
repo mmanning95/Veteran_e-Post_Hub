@@ -13,6 +13,9 @@ This document provides links to our presentation videos, organized by sprint. Th
 ## Sprint 4 - UI updating
 - [Sprint 4 Presentation](https://youtu.be/rgEgILctwPw)
 
+## Sprint 5 - UI updates, final features implemented
+- [Sprint 5 Presentation](https://www.youtube.com/watch?v=cbi8HBTocjw)
+
 ## Alpha Prototype Presentation
 - [Alpha Prototype](https://www.canva.com/design/DAGW3gaWbJs/x4VVizACvHApaYqRB9_Pug/edit?utm_content=DAGW3gaWbJs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
