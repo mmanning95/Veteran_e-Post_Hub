@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import EventForm from "./EventForm";
 import jwt from "jsonwebtoken";
+import { EdgeStoreProvider } from "@/lib/edgestore";
 
 export default function CreateEventPage() {
   const [isUser, setIsUser] = useState(false);
@@ -48,6 +49,7 @@ export default function CreateEventPage() {
   }, []);
 
   return (
+    <EdgeStoreProvider>
     <div
       className="flex items-center justify-center"
       style={{ height: "calc(100vh - 64px)" }}
@@ -64,5 +66,6 @@ export default function CreateEventPage() {
       )}
       {isUser && <EventForm />}
     </div>
+    </EdgeStoreProvider>
   );
 }
