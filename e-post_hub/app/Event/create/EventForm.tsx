@@ -197,6 +197,7 @@ export default function EventForm() {
                 isRequired
                 isClearable
                 label="Event Title"
+                aria-label="Event Title"
                 variant="bordered"
                 {...register("title", { required: "Title is required" })}
                 errorMessage={errors.title?.message}
@@ -207,6 +208,7 @@ export default function EventForm() {
                   isRequired
                   type="date"
                   label="Start Date"
+                  aria-label="Start Date"
                   variant="bordered"
                   {...register("startDate", {
                     required: "Start date is required",
@@ -217,6 +219,7 @@ export default function EventForm() {
                   isRequired
                   type="date"
                   label="End Date"
+                  aria-label="End Date"
                   variant="bordered"
                   {...register("endDate", { required: "End date is required" })}
                   errorMessage={errors.endDate?.message}
@@ -226,6 +229,7 @@ export default function EventForm() {
               <div className="flex gap-4">
                 <TimeInput
                   label="Event Start Time"
+                  aria-label="Event Start Time"
                   value={startTime}
                   variant="bordered"
                   onChange={(newValue) => setStartTime(newValue)}
@@ -233,6 +237,7 @@ export default function EventForm() {
                 />
                 <TimeInput
                   label="Event End Time"
+                  aria-label="Event End Time"
                   value={endTime}
                   variant="bordered"
                   onChange={(newValue) => setEndTime(newValue)}
@@ -246,6 +251,7 @@ export default function EventForm() {
                   <Textarea
                     minRows={8}
                     label="Event Description"
+                    aria-label="Event Description"
                     variant="bordered"
                     {...register("description")}
                     errorMessage={errors.description?.message}
@@ -309,6 +315,7 @@ export default function EventForm() {
               {/* Autocomplete Address Input */}
               <Input
                 label="Event Address"
+                aria-label="Event Address"
                 ref={ref as unknown as React.RefObject<HTMLInputElement>}
                 variant="bordered"
                 placeholder="Enter event location"
@@ -319,6 +326,7 @@ export default function EventForm() {
 
               <Input
                 label="Event Website"
+                aria-label="Event Website"
                 variant="bordered"
                 {...register("website")}
                 errorMessage={errors.website?.message}

@@ -441,7 +441,7 @@ export default function HomePage() {
         <div className="content w-3/4 p-4">
           <div className="text-center mb-10">
             <h1 className="text-4xl font-bold">
-              Welcome to the Veteran e-Post Hub
+            Welcome to Whitman county veteran page
             </h1>
             <p className="text-lg mt-4">
               Find and participate in events specifically tailored for veterans

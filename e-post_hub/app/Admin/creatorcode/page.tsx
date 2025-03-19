@@ -3,8 +3,11 @@
 import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import React, { useEffect, useState } from "react";
 import jwt from "jsonwebtoken";
+import { useRouter } from "next/navigation";
 
 const NewCreatorCode = () => {
+  const router = useRouter();
+
   const [creatorCode, setCreatorCode] = useState("");
   const [currentCreatorCode, setCurrentCreatorCode] = useState<string | null>(
     null
@@ -34,6 +37,11 @@ const NewCreatorCode = () => {
     // check for valid JWT token
     const token = localStorage.getItem("token");
 
+    if (!token) {
+      router.replace("/Unauthorized"); 
+      return;
+    }
+
     if (token) {
       try {
         // Verify and decode the token to determine if the user is an admin
@@ -42,16 +50,15 @@ const NewCreatorCode = () => {
           role: string;
           name?: string;
         };
-        if (decodedToken && decodedToken.role === "ADMIN") {
+        if (!decodedToken || decodedToken.role !== "ADMIN") {
+          router.push("/Unauthorized");
+        } else{
           setIsAdmin(true);
           setAdminName(decodedToken.name || "Admin");
-          fetchCreatorCode(); // Fetch the current creator code if the user is an admin
-        } else {
-          window.location.href = "/Unauthorized";
+          fetchCreatorCode(); // Fetch the current creator code if the user is an 
         }
-      } catch (error) {
-        console.error("Invalid token", error);
-        window.location.href = "/Unauthorized"; // Redirect to homepage if the token is invalid
+        } catch (error) {
+        router.replace("/Unauthorized"); // Redirect to homepage if the token is invalid
       }
     } else {
       window.location.href = "/Unauthorized";
@@ -83,9 +90,9 @@ const NewCreatorCode = () => {
   };
 
   // Loading message until user is verified as admin
-  if (!isAdmin) {
-    return <div>Loading...</div>;
-  }
+  // if (!isAdmin) {
+  //   return <div>Loading...</div>;
+  // }
 
   // Render UI
   return (

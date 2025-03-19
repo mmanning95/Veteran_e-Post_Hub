@@ -9,6 +9,8 @@ import {
   Checkbox,
 } from "@nextui-org/react";
 import jwt from "jsonwebtoken";
+import { Router } from "lucide-react";
+import { useRouter} from "next/navigation";
 
 type Event = {
   id: string;
@@ -37,6 +39,8 @@ type Question = {
 };
 
 export default function EventManagement() {
+  const router = useRouter();
+
   const [events, setEvents] = useState<Event[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -51,18 +55,21 @@ export default function EventManagement() {
   );
 
   useEffect(() => {
-    // Check admin token
     const token = localStorage.getItem("token");
+    
     if (token) {
       const decodedToken = jwt.decode(token) as { role?: string };
-      if (decodedToken?.role === "ADMIN") {
-        setIsAdmin(true);
+      if (!decodedToken || decodedToken?.role !== "ADMIN") {
+        setTimeout(() => router.replace("/Unauthorized"), 0);
       } else {
-        window.location.href = "/Unauthorized";
+        setIsAdmin(true);
       }
     } else {
-      window.location.href = "/Unauthorized";
+      setTimeout(() => router.replace("/Unauthorized"), 0);
     }
+  }, [router]); 
+
+  useEffect(() => {
 
     // Fetch pending events and private questions
     async function fetchPendingEventsAndQuestions() {
@@ -232,9 +239,9 @@ export default function EventManagement() {
     }
   };
 
-  if (!isAdmin) {
-    return <div>Loading...</div>;
-  }
+  // if (!isAdmin) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <div className="w-4/5 mx-auto">

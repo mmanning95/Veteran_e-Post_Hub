@@ -3,8 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardBody, CardHeader, Button, Input } from "@nextui-org/react";
 
-// Define the type for AdminProfile with optional properties
-// This ensures that TypeScript knows the structure of the admin profile object
 type AdminProfile = {
   id: string;
   name: string;

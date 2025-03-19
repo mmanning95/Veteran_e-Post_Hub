@@ -36,7 +36,7 @@ export default function PrintEventsPage() {
         const data = await response.json();
         let filteredEvents = data.events;
 
-        // 🔍 Apply Type Filtering (if any)
+        // Apply Type Filtering (if any)
         if (filters.types?.length) {
           filteredEvents = filteredEvents.filter((event: Event) =>
             filters.types.includes(event.type!)
