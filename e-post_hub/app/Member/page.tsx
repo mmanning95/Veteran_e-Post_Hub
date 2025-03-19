@@ -461,7 +461,7 @@ export default function Memberpage() {
         <div className="content w-full md:w-3/5 p-4 overflow-x-hidden">
           <div className="text-center mb-10">
             <h3 className="text-3xl font-bold">
-              Welcome, {memberName || "to Whitman county veteran page"}!
+            Welcome to Whitman county veteran page
             </h3>
             <p className="text-lg mt-4">
               Check out the upcoming events that you can join!

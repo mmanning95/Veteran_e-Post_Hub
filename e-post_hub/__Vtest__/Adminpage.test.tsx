@@ -52,7 +52,7 @@ describe("Adminpage Component", () => {
     render(<Adminpage />);
 
     await waitFor(() => {
-      expect(screen.getByText("Welcome to the Veteran e-Post Hub")).toBeInTheDocument();
+      expect(screen.getByText("Welcome to Whitman county veteran page")).toBeInTheDocument();
     });
 
     expect(screen.getByTestId("event-calendar")).toBeInTheDocument();
