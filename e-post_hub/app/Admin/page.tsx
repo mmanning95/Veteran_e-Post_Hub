@@ -2,6 +2,7 @@
 import { Button, Card, CardBody, CardHeader } from "@nextui-org/react";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import jwt from "jsonwebtoken";
 import EventCalendar from "../Components/Calendar/EventCalendar";
 import BottomBar from "../Components/BottomBar/BottomBar";
@@ -37,7 +38,9 @@ type Event = {
 };
 
 export default function Adminpage() {
-  const [isAdmin, setIsAdmin] = useState(false);
+  const router = useRouter();
+
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [adminName, setAdminName] = useState<string | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [defaultEvents, setDefaultEvents] = useState<Event[]>([]);
@@ -161,6 +164,12 @@ export default function Adminpage() {
   useEffect(() => {
     const token = localStorage.getItem("token");
 
+    if (!token) {
+      router.replace("/Unauthorized"); // Redirect immediately
+      return;
+    }
+
+
     if (token) {
       try {
         const decodedToken = jwt.decode(token) as {
@@ -168,29 +177,16 @@ export default function Adminpage() {
           role: string;
           name?: string;
         };
-        if (decodedToken && decodedToken.role === "ADMIN") {
+        if (!decodedToken || decodedToken.role !== "ADMIN") {
+          router.replace("/Unauthorized");
+        } else {
           setIsAdmin(true);
           setAdminName(decodedToken.name || "Admin");
           fetchEvents();
-        } else {
-          setMessage("Unauthorized access.");
-          setTimeout(() => {
-            window.location.href = "/Unauthorized";
-          }, 3000);
         }
       } catch (error) {
-        console.error("Invalid token", error);
-        setMessage("Invalid token. Please log in again.");
-        setTimeout(() => {
-          window.location.href = "/Unauthorized";
-        }, 3000);
-      }
-    } else {
-      setMessage("You need to log in to access the admin page.");
-      setTimeout(() => {
-        window.location.href = "/Unauthorized";
-      }, 3000);
-    }
+        router.replace("/Unauthorized");
+      }    }
 
     async function fetchEvents() {
       try {
@@ -378,9 +374,9 @@ export default function Adminpage() {
     }
   };
 
-  if (!isAdmin) {
-    return <div>Loading...</div>;
-  }
+  // if (!isAdmin) {
+  //   return <div>Loading...</div>;
+  // }
 
   return (
     <div className=" bg-blue-100 w-full">
