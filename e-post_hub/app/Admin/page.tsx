@@ -473,8 +473,7 @@ export default function Adminpage() {
             Welcome to Whitman county veteran page
             </h1>
             <p className="text-lg mt-4">
-              Find and participate in events specifically tailored for veterans
-              and their families.
+            Check out the upcoming events that you can join!
             </p>
           </div>
 
