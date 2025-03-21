@@ -458,9 +458,9 @@ export default function Memberpage() {
         </div>
 
         {/* Main Content */}
-        <div className="content w-full md:w-3/5 p-4 overflow-x-hidden">
+        <div className="content w-3/4 p-4">
           <div className="text-center mb-10">
-            <h3 className="text-3xl font-bold">
+            <h3 className="text-4xl font-bold">
             Welcome to Whitman county veteran page
             </h3>
             <p className="text-lg mt-4">
@@ -570,9 +570,9 @@ export default function Memberpage() {
                         </CardBody>
                       </>
                     ) : (
-                      <CardBody className="flex flex-col justify-between p-6">
+                      <CardBody className="flex flex-col justify-between">
                         <div>
-                          <h5 className="text-xl font-bold mb-4">
+                          <h5 className="text-xl font-bold mb-2">
                             {event.title}
                           </h5>
                           {event.description && (

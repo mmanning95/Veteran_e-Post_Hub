@@ -8,7 +8,7 @@ import { EdgeStoreProvider } from "@/lib/edgestore";
 
 export const metadata: Metadata = {
   title: "Veteran e-Post Hub",
-  description: "to-do",
+  description: "A platform to connect veterans with resources and support.",
 };
 
 export default function RootLayout({

@@ -1,5 +1,3 @@
-// Form used to register Member accounts
-
 "use client";
 
 import {
@@ -8,11 +6,15 @@ import {
 } from "@/lib/schemas/memberRegisterSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { GiPadlock } from "react-icons/gi";
+import { useRouter } from "next/navigation";
+
 
 export default function MemberRegisterForm() {
+  const router = useRouter();
+
   const {
     register,
     handleSubmit,
@@ -22,7 +24,11 @@ export default function MemberRegisterForm() {
     mode: "onTouched",
   });
 
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
   const onSubmit = async (data: MemberRegisterSchema) => {
+    console.log("Submitting registration form...");
+
     try {
       const response = await fetch("/api/members", {
         method: "POST",
@@ -35,13 +41,15 @@ export default function MemberRegisterForm() {
       if (response.ok) {
         const { token } = await response.json();
         localStorage.setItem("token", token);
-      }
 
-      // Redirect to the member homepage or dashboard
-      window.location.href = "/Member";
+        console.log("Registration successful! Redirecting to login...");
+        router.replace("/Login");
+      } else {
+        throw new Error("An error occurred while registering the member.");
+      }
     } catch (error) {
-      console.error("An error occurred during registration", error);
-      alert("An error occurred while registering the member.");
+      console.error("Registration error:", error);
+      setErrorMessage("An error occurred while registering the member.");
     }
   };
 

@@ -9,8 +9,11 @@ import { Button, Card, CardBody, CardHeader, Input } from "@nextui-org/react";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { GiPadlock } from "react-icons/gi";
+import { useRouter } from "next/navigation";
 
 export default function AdminRegisterForm() {
+  const router = useRouter();
+
   const [errorMessage, setErrorMessage] = useState<string | null>(null); // State to store error messages
   const {
     register,
@@ -40,11 +43,9 @@ export default function AdminRegisterForm() {
         localStorage.setItem("token", token);
 
         // Redirect to the admin page
-        window.location.href = "/Admin";
+        router.replace("/Login");
       } else {
-        const errorData = await response.json();
-        setErrorMessage(errorData.message || "An error occurred.");
-      }
+        throw new Error("An error occurred while registering the admin.");      }
     } catch (error) {
       setErrorMessage("An error occurred. Please try again later.");
     }
