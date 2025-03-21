@@ -9,15 +9,8 @@ on:
       - main
 
 jobs:
-  build:
+  vitest:
     runs-on: ubuntu-latest
-
-    services:
-      # Run the Selenium standalone container for Edge
-      selenium:
-        image: selenium/standalone-edge
-        ports:
-          - 4444:4444
 
     steps:
       - name: Checkout Repository
@@ -39,7 +32,5 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
-      - name: Build Docker Image
-        run: docker build -t epost-image .
-
-
+      - name: Run Vitest Tests in __Vtest__
+        run: npx vitest run __Vtest__ --coverage

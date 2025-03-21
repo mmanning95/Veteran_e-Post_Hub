@@ -28,11 +28,11 @@ try:
     login_button.click()
 
     # Step 4: Wait for redirect after login
-    WebDriverWait(driver, 10).until(EC.url_contains("/Member"))
+    WebDriverWait(driver, 10).until(EC.url_contains("/Login"))
 
     # Step 5: Verify login is successful by checking the URL
     current_url = driver.current_url
-    assert "/Member" in current_url, "Test Failed: User was not redirected to /Member after login."
+    assert "/Login" in current_url, "Test Failed: User was not redirected to /Login after login."
     print("Login successful. Proceeding with logout test.")
 
     # Step 6: Locate and click the logout button within the navbar

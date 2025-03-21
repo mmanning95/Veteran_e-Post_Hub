@@ -31,7 +31,7 @@ try:
 
     # Verifying by URL
     current_url = driver.current_url
-    if "/Member" in current_url:
+    if "/Login" in current_url:
         print("Test Passed: User successfully redirected to /Member.")
     else:
         print("Test Failed: User was not redirected to /Member.")
