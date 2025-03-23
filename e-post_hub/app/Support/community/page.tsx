@@ -1,5 +1,6 @@
 'use client';
-import { useEffect, useState } from 'react';
+
+import React, { useEffect, useState } from 'react';
 import { Button, Card, CardBody, CardHeader, Divider, Textarea } from '@nextui-org/react';
 import Link from 'next/link';
 
