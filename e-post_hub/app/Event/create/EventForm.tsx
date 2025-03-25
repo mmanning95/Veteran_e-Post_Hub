@@ -122,7 +122,7 @@ export default function EventForm() {
         startTime: formattedStartTime,
         endTime: formattedEndTime,
         flyer: flyerUrl,
-        type: selectedType, // Add selected event type
+        type: selectedType.toLowerCase(), // Add selected event type
         address: data.address,
       };
 
@@ -280,34 +280,26 @@ export default function EventForm() {
               </div>
 
               {/* Event Type Dropdown */}
-              <Autocomplete
-                items={eventType.map((type) => ({ label: type, value: type }))} // Convert to objects
-                inputValue={selectedType}
-                onInputChange={(value) => {
-                  if (value.trim()) {
-                    setSelectedType(value); // Update input field
-                  }
-                }}
-                onSelectionChange={(key) => {
-                  if (key && !eventType.includes(key.toString())) {
-                    setEventType([...eventType, key.toString()]); // Add new type
-                  }
-                  setSelectedType(key?.toString() || ""); // Update selected type
-                  setValue("type", key?.toString() || "", {
-                    shouldValidate: true,
-                  });
-                }}
-                className="w-full"
-                placeholder="Select or enter an event type"
+              <Input
+                isRequired
+                label="Event Type"
+                aria-label="Event Type"
                 variant="bordered"
-                {...register("type", { required: "Type is required" })}
-              >
-                {(item) => (
-                  <AutocompleteItem key={item.value}>
-                    {item.label}
-                  </AutocompleteItem>
-                )}
-              </Autocomplete>
+                placeholder="e.g. seminar, workshop, meeting"
+                value={selectedType}
+                onChange={(e) => {
+                  const lowercase = e.target.value.toLowerCase();
+                  setSelectedType(lowercase);
+                  setValue("type", lowercase, { shouldValidate: true });
+                }}
+                onBlur={() => {
+                  const trimmed = selectedType.trim().toLowerCase();
+                  setSelectedType(trimmed);
+                  setValue("type", trimmed, { shouldValidate: true });
+                }}
+                errorMessage={errors.type?.message}
+              />
+              
               {errors.type && (
                 <p className="text-red-500">{errors.type.message}</p>
               )}
