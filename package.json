@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "@edgestore/server": "^0.3.3",
-    "date-fns": "^4.1.0"
-  }
-}
