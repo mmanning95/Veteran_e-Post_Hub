@@ -55,9 +55,10 @@ export default function EventForm() {
   });
 
   // States
+  const [filePreview, setFilePreview] = useState<string | null>(null);
   const [startTime, setStartTime] = useState<Time | null>(null);
   const [endTime, setEndTime] = useState<Time | null>(null);
-  const [file, setFile] = useState<File>();
+  const [file, setFile] = useState<File | null>(null);
   const [eventType, setEventType] = useState(predefinedEventType);
   const [selectedType, setSelectedType] = useState("");
   const [urls, setUrls] = useState<{
@@ -92,6 +93,24 @@ export default function EventForm() {
 
     if (!eventType.includes(type.trim())) {
       setEventType([...eventType, type.trim()]); // Trim to avoid whitespace issues
+    }
+  };
+
+  const isImageFile = React.useMemo(() => {
+    if (file && file.type.includes("image")) return true;
+    return false;
+  }, [file]);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newFile = e.target.files?.[0];
+    setFile(newFile || null);
+
+    // If it’s an image, show preview
+    if (newFile && newFile.type.includes("image")) {
+      const url = URL.createObjectURL(newFile);
+      setFilePreview(url);
+    } else {
+      setFilePreview(null); // No preview for PDF
     }
   };
 
@@ -257,20 +276,28 @@ export default function EventForm() {
                     errorMessage={errors.description?.message}
                     style={{ height: "200px", resize: "none" }}
                   />
+
+                   {/* File input for image/PDF */}
+                <div>
+                  <label className="block text-sm font-medium mb-1">
+                    Flyer / Attachment
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*,application/pdf"
+                    onChange={handleFileChange}
+                  />
+                  {filePreview && isImageFile && (
+                    <img
+                      src={filePreview}
+                      alt="Preview"
+                      className="mt-2 w-48 h-auto border border-gray-200 rounded"
+                    />
+                  )}
+                  </div>
                 </div>
                 {/* Image Dropzone */}
                 <div>
-                  <SingleImageDropzone
-                    width={200}
-                    height={200}
-                    value={file}
-                    dropzoneOptions={{
-                      maxSize: 1024 * 1024 * 2, //2mb max size
-                    }}
-                    onChange={(newfile) => {
-                      setFile(newfile);
-                    }}
-                  />
                   {/* Uncomment to show URL and Thumbnail links */}
                   {/* {urls?.url && <Link href={urls.url} target="_blank">URL</Link>}
                 {urls?.thumbnailUrl && (
