@@ -2,6 +2,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 
+export const dynamic = "force-dynamic";
+
 const prisma = new PrismaClient();
 
 export async function DELETE(request: NextRequest, { params }: { params: { questionId: string } }) {
