@@ -13,6 +13,11 @@ import {
   DropdownMenu,
   DropdownItem,
 } from "@nextui-org/react";
+import dynamic from "next/dynamic";
+
+const PdfViewer = dynamic(() => import("../Components/PdfViewer/PdfViewer"), {
+  ssr: false,
+});
 
 type Event = {
   id: string;
@@ -524,15 +529,7 @@ export default function Adminpage() {
                         </CardHeader>
                         <CardBody className="flex flex-col justify-between p-6">
                         {isPdfUrl(event.flyer) ? (
-  <div style={{ width: "100%", height: "400px" }}>
-    <embed
-      src={event.flyer}
-      type="application/pdf"
-      width="100%"
-      height="100%"
-      style={{ border: "none" }}
-    />
-  </div>
+  <PdfViewer fileUrl={event.flyer} containerHeight={400} />
 ) : (
   // If it’s not a PDF, fall back to the image:
   <a
