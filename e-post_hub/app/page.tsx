@@ -41,6 +41,12 @@ type Event = {
 export default function HomePage() {
   const router = useRouter();
 
+  function isPdfUrl(url?: string | null) {
+    if (!url) return false;
+    return url.toLowerCase().endsWith(".pdf");
+  }
+  
+
   // -- All events (past + future) --
   const [events, setEvents] = useState<Event[]>([]);
   // -- The subset (upcoming‐only) --
@@ -474,18 +480,31 @@ export default function HomePage() {
                           </p>
                         </CardHeader>
                         <CardBody className="flex flex-col justify-between p-6">
-                          <a
-                            href={event.flyer}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <img
-                              src={event.flyer}
-                              alt={`${event.title} Flyer`}
-                              className="w-full h-full object-cover rounded-md"
-                              style={{ maxHeight: "400px" }}
-                            />
-                          </a>
+                        {isPdfUrl(event.flyer) ? (
+  <div style={{ width: "100%", height: "400px" }}>
+    <embed
+      src={event.flyer}
+      type="application/pdf"
+      width="100%"
+      height="100%"
+      style={{ border: "none" }}
+    />
+  </div>
+) : (
+  // If it’s not a PDF, fall back to the image:
+  <a
+    href={event.flyer}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <img
+      src={event.flyer}
+      alt={`${event.title} Flyer`}
+      style={{ maxHeight: "400px" }}
+      className="w-full h-full object-cover rounded-md"
+    />
+  </a>
+)}
                           <div className="flex gap-2 mt-4 justify-center">
                             <Button
                               className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"

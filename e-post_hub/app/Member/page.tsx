@@ -60,6 +60,12 @@ export default function Memberpage() {
     lng: number;
   } | null>(null);
 
+  function isPdfUrl(url?: string | null) {
+    if (!url) return false;
+    return url.toLowerCase().endsWith(".pdf");
+  }
+  
+
   const handleTypeFilter = (keys: Set<string>) => {
     setIsFiltering(true);
     setSelectedTypes(keys);
@@ -499,20 +505,31 @@ export default function Memberpage() {
                           </p>
                         </CardHeader>
                         <CardBody className="flex flex-col justify-between p-6">
-                          <a
-                            href={event.flyer}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                          >
-                            <img
-                              src={event.flyer}
-                              alt={`${event.title} Flyer`}
-                              className="w-full h-full object-cover rounded-md"
-                              style={{
-                                maxHeight: "400px",
-                              }}
-                            />
-                          </a>
+                        {isPdfUrl(event.flyer) ? (
+  <div style={{ width: "100%", height: "400px" }}>
+    <embed
+      src={event.flyer}
+      type="application/pdf"
+      width="100%"
+      height="100%"
+      style={{ border: "none" }}
+    />
+  </div>
+) : (
+  // If it’s not a PDF, fall back to the image:
+  <a
+    href={event.flyer}
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    <img
+      src={event.flyer}
+      alt={`${event.title} Flyer`}
+      style={{ maxHeight: "400px" }}
+      className="w-full h-full object-cover rounded-md"
+    />
+  </a>
+)}
                           <div className="flex flex-col gap-2 mt-4 justify-center items-center">
                             {userId === event.createdBy.id ? (
                               // If the Delete Event button is present
