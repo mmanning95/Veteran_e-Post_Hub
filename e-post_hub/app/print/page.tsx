@@ -29,7 +29,7 @@ export default function PrintEventsPage() {
     // Fetch all approved events
     const fetchApprovedEvents = async () => {
       try {
-        let query = "/api/Event/approved"; // Adjust to actual API route
+        const query = "/api/Event/approved"; // Adjust to actual API route
         const response = await fetch(query);
         if (!response.ok) throw new Error("Failed to fetch events");
 

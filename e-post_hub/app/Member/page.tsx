@@ -220,7 +220,7 @@ export default function Memberpage() {
       }
 
       const data = await response.json();
-      let allEvents = data.events as Event[];
+      const allEvents = data.events as Event[];
 
       // 1) Sort events by start date
       allEvents.sort((a, b) => {
