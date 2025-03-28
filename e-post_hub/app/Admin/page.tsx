@@ -40,6 +40,8 @@ type Event = {
 export default function Adminpage() {
   const router = useRouter();
 
+  const [showCleanupModal, setShowCleanupModal] = useState(false);
+  const [cleanupStatus, setCleanupStatus] = useState<string | null>(null);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [adminName, setAdminName] = useState<string | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
@@ -199,7 +201,7 @@ export default function Adminpage() {
         }
 
         const data = await response.json();
-        let allEvents = data.events as Event[];
+        const allEvents = data.events as Event[];
 
         // 1) Sort events by start date
         allEvents.sort((a, b) => {
@@ -464,6 +466,15 @@ export default function Adminpage() {
               Reset Filter
             </Button>
           )}
+          {isAdmin && (
+            <Button
+              onClick={() => setShowCleanupModal(true)}
+              className="mt-4 bg-gradient-to-r from-red-600 to-orange-500 border border-black text-white w-full"
+            >
+              Delete Expired Events
+            </Button>
+          )}
+
         </div>
 
         {/* Main Content */}
@@ -692,6 +703,50 @@ export default function Adminpage() {
           </div>
         </div>
       )}
+      {showCleanupModal && (
+  <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg w-96">
+      <h3 className="text-xl font-bold mb-4">Confirm Expired Event Cleanup</h3>
+      <p>
+        This will permanently delete all events that ended over a month ago,
+        including their files. Are you sure?
+      </p>
+      <div className="mt-4 flex justify-end gap-4">
+        <Button
+          className="bg-gray-500 text-white"
+          onClick={() => setShowCleanupModal(false)}
+        >
+          Cancel
+        </Button>
+        <Button
+          className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black text-black"
+          onClick={async () => {
+            try {
+              const res = await fetch("/api/Event/cleanup", {
+                method: "DELETE",
+              });
+              const data = await res.json();
+          
+              if (res.ok) {
+                window.location.reload(); 
+              } else {
+                setCleanupStatus(` ${data.error || "Cleanup failed."}`);
+              }
+            } catch (err) {
+              console.error("Cleanup error:", err);
+              setCleanupStatus(" Error while cleaning up events.");
+            } finally {
+              setShowCleanupModal(false);
+            }
+          }}
+                  >
+          Confirm Cleanup
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
+
 
       <BottomBar /> 
     </div>
