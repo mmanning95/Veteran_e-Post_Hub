@@ -27,6 +27,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
   const [editType, setEditType] = useState("");
   const [editAddress, setEditAddress] = useState("");
   const [editWebsite, setEditWebsite] = useState("");
+  const [filePreview, setFilePreview] = useState<string | null>(null);
   const [editStartDate, setEditStartDate] = useState("");
   const [editEndDate, setEditEndDate] = useState("");
   const [editStartTime, setEditStartTime] = useState<Time | null>(null);
@@ -34,8 +35,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
 
   // 3) State to track the existing flyer URL (if any) and the new file
   const [existingFlyerUrl, setExistingFlyerUrl] = useState<string | null>(null);
-  const [file, setFile] = useState<File | undefined>(undefined);
-
+  const [file, setFile] = useState<File | null>(null);
   // 4) Get your EdgeStore instance
   const { edgestore } = useEdgeStore();
 
@@ -95,6 +95,25 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
     const displayMinute = time.minute.toString().padStart(2, "0");
     return `${displayHour}:${displayMinute} ${ampm}`;
   }
+
+  // Handling the file input
+  const isImageFile = React.useMemo(() => {
+    if (file && file.type.includes("image")) return true;
+    return false;
+  }, [file]);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newFile = e.target.files?.[0];
+    setFile(newFile || null);
+
+    // If it’s an image, show preview
+    if (newFile && newFile.type.includes("image")) {
+      const url = URL.createObjectURL(newFile);
+      setFilePreview(url);
+    } else {
+      setFilePreview(null); // No preview for PDF
+    }
+  };
 
   // Google Maps Autocomplete
   const { ref } = usePlacesWidget<HTMLInputElement>({
@@ -232,34 +251,54 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
               onChange={(e) => setEditType(e.target.value)}
             />
 
-            {/* Show the existing flyer if it exists, otherwise user can add one */}
-            <div>
-              <label className="font-semibold text-sm">Flyer (optional)</label>
-              <div className="flex items-center gap-4 mt-1">
-                {existingFlyerUrl && (
-                  <img
-                    src={existingFlyerUrl}
-                    alt="Existing Flyer"
-                    className="w-20 h-20 object-cover border border-gray-300 rounded-md"
-                  />
-                )}
+{/* Flyer (optional) block */}
+<div>
+  <label className="font-semibold text-sm">Flyer (optional)</label>
 
-                <SingleImageDropzone
-                  width={150}
-                  height={150}
-                  value={file}
-                  dropzoneOptions={{
-                    maxSize: 1024 * 1024 * 2, // 2 MB
-                  }}
-                  onChange={(newFile) => {
-                    setFile(newFile);
-                  }}
-                />
-              </div>
-              <p className="text-xs text-gray-500 mt-1">
-                You can replace or add a flyer by uploading a file here.
-              </p>
-            </div>
+  <div className="flex items-center gap-4 mt-1">
+    {existingFlyerUrl && (
+      <div>
+        <label className="block text-sm font-medium mb-1">
+          Existing Flyer
+        </label>
+        <a href={existingFlyerUrl} target="_blank" rel="noreferrer">
+          {existingFlyerUrl.toLowerCase().endsWith(".pdf") ? (
+            <p className="text-blue-600 underline">View PDF</p>
+          ) : (
+            <img
+              src={existingFlyerUrl}
+              alt="Existing Flyer"
+              className="mt-1 w-32 h-32 object-cover border border-gray-200 rounded"
+            />
+          )}
+        </a>
+      </div>
+    )}
+
+    {/* File input for image/PDF */}
+    <div>
+      <label className="block text-sm font-medium mb-1">
+        Flyer / Attachment
+      </label>
+      <input
+        type="file"
+        accept="image/*,application/pdf"
+        onChange={handleFileChange}
+      />
+      {filePreview && isImageFile && (
+        <img
+          src={filePreview}
+          alt="Preview"
+          className="mt-2 w-48 h-auto border border-gray-200 rounded"
+        />
+      )}
+    </div>
+  </div>
+
+  <p className="text-xs text-gray-500 mt-1">
+    You can replace or add a flyer by uploading a file here.
+  </p>
+</div>
 
             <Input
               label="Event Address"

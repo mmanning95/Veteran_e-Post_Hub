@@ -9,6 +9,7 @@ import {
   Textarea,
 } from "@nextui-org/react";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 
 type Event = {
   id: string;
@@ -40,6 +41,15 @@ type Comment = {
   parentId?: string | null;
   replies: Comment[];
 };
+
+const PdfViewer = dynamic(() => import("../../Components/PdfViewer/PdfViewer"), {
+  ssr: false,
+});
+
+function isPdfUrl(url?: string) {
+  if (!url) return false;
+  return url.toLowerCase().endsWith(".pdf");
+}
 
 export default function EventDetailsPage() {
   const [eventId, setEventId] = useState<string | null>(null);
@@ -383,19 +393,32 @@ export default function EventDetailsPage() {
         <CardHeader className="flex flex-col items-center justify-center">
           <h1 className="text-3xl font-semibold">{event.title}</h1>
           {event.flyer ? (
-            <a href={event.flyer} target="_blank" rel="noopener noreferrer">
-              <img
-                src={event.flyer}
-                alt={`${event.title} Flyer`}
-                className="w-full h-full object-cover rounded-md"
-                style={{ maxHeight: "400px" }}
-              />
-            </a>
-          ) : (
-            <div className="w-full h-40 flex items-center justify-center bg-gray-200 rounded-md">
-              <span className="text-gray-500">No Image Available</span>
-            </div>
-          )}
+  isPdfUrl(event.flyer) ? (
+    // Render PDF viewer
+    <a
+    href={event.flyer}
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ display: "block", position: "relative" }}
+  >
+    <PdfViewer fileUrl={event.flyer} containerHeight={400} />
+  </a>
+  ) : (
+    // Otherwise, assume it's an image
+    <a href={event.flyer} target="_blank" rel="noopener noreferrer">
+      <img
+        src={event.flyer}
+        alt={`${event.title} Flyer`}
+        className="w-full h-full object-cover rounded-md"
+        style={{ maxHeight: "400px" }}
+      />
+    </a>
+  )
+) : (
+  <div className="w-full h-40 flex items-center justify-center bg-gray-200 rounded-md">
+    <span className="text-gray-500">No Image Available</span>
+  </div>
+)}
           {event.description && (
             <p className="text-gray-700 mb-4">{event.description}</p>
           )}
