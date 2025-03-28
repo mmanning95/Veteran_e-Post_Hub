@@ -529,8 +529,14 @@ export default function Adminpage() {
                         </CardHeader>
                         <CardBody className="flex flex-col justify-between p-6">
                         {isPdfUrl(event.flyer) ? (
+  <a
+  href={event.flyer}
+  target="_blank"
+  rel="noopener noreferrer"
+  style={{ display: "block", position: "relative" }}
+>
   <PdfViewer fileUrl={event.flyer} containerHeight={400} />
-) : (
+</a>) : (
   // If it’s not a PDF, fall back to the image:
   <a
     href={event.flyer}

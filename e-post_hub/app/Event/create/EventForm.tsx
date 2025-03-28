@@ -306,7 +306,7 @@ export default function EventForm() {
                 </div>
               </div>
 
-              {/* Event Type Dropdown */}
+              {/* Event Type  */}
               <Input
                 isRequired
                 label="Event Type"
