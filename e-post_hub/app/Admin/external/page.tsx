@@ -10,6 +10,7 @@ import {
   Textarea,
 } from "@nextui-org/react";
 import jwt from "jsonwebtoken";
+import Link from "next/link";
 
 export default function AddExternalLinkPage() {
   // Hardcoded categories
@@ -190,7 +191,17 @@ export default function AddExternalLinkPage() {
                 >
                   {isSubmitting ? "Submitting..." : "Add Link"}
                 </Button>
+
+
               </div>
+              <Button
+                  fullWidth
+                  as={Link}
+                  href="/Support/external"
+                  className="bg-gradient-to-r from-[#f7960d] to-[#f95d09] text-black border border-black mt-2"
+                >
+                  Return to resources
+                </Button>
             </div>
           </form>
         </CardBody>

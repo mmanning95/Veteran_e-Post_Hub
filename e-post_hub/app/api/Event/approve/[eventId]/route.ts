@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { PrismaClient } from '@prisma/client';
 import sgMail from '@sendgrid/mail';
 
+export const dynamic = "force-dynamic";
+
 const prisma = new PrismaClient();
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY as string);
