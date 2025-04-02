@@ -27,6 +27,7 @@ The only thing needed to use Veteran e-Post Hub is an internet-connected device,
 - [SQLlite](https://www.sqlite.org/) - database used to save accounts and other important information
 - [Bcrypt](https://www.npmjs.com/package/bcrypt) - hash used for password hashing
 - [Vercel](https://vercel.com/docs) - Used for our website deployment
+- [Vitest](https://vitest.dev/) - Used for testing our website
 
 ### Installation Steps - (Dev steps)
 
@@ -34,18 +35,40 @@ The only thing needed to use Veteran e-Post Hub is an internet-connected device,
     - git clone https://github.com/mmanning95/veteran-e-post-hub.git
     - cd veteran-e-post-hub
 2. Install Dependencies:
-    - Bundle install
-3. Setup database:
-    - npx prisma generate
-    - npx prisma db push
+    - npm install
+3. Setup the database:
+    - Create your own database
+    - Recommended: SQlite for local testing
 4. Start Server:
     - npx run dev
 
 ### Functionality
 
-At this stage of the project, we have completed key development tasks, including laying the foundation for the website, creating a homepage, an admin page, an event editing page for administrators.
+#### Admin Experience
+- **Full Control & Moderation:**  
+  Administrators are granted comprehensive control over the website. They have the authority to delete any content as needed, ensuring the platform remains current and free from inappropriate or outdated information.
+- **Content Approval:**  
+  Admins have access to a dedicated notification page, where they can review and approve events, posts, and community questions before they are made publicly available. This moderation process helps maintain high content quality and relevance.
+- **Enhanced Management Tools:**  
+  With advanced management features, administrators can efficiently oversee both user-generated content and system settings, ensuring a secure and well-maintained platform.
 
-When on the  homepage, to access the admin page, click the button located in the top-left corner of the screen which will direct you to the dedicated admin interface. On this page you will find two buttons: one to return to the homepage and another to access the event editing page. By selecting the "Edit Events" button you will be taken to the admin event editing page where you can modify fields such as Event Title, Event Description, and more. The page also includes two buttons in the top-left corner, one to return to the homepage and the other to navigate back to the admin interface.
+#### Member Experience
+- **Interactive Participation:**  
+  Authenticated members enjoy an enhanced experience compared to guests. In addition to viewing content, members can actively engage by commenting on posts and responding to community questions.
+- **Community Engagement:**  
+  This interactive functionality fosters communication and collaboration among users, encouraging the exchange of ideas while maintaining a secure environment.
+- **Consistent Public Access:**  
+  Aside from the additional interactive features, members have the same access to public content as guests, ensuring a seamless and unified user experience across the platform.
+
+#### Guest Experience
+- **Read-Only Access:**  
+  Guests, or users who are not logged in, receive a read-only experience. They can browse public content, including event listings and community posts, but cannot interact with or modify any data.
+- **Data Protection:**  
+  To maintain privacy and security, all sensitive information is completely hidden from guest users, ensuring that critical data and administrative controls are accessible only to authenticated users.
+
+---
+
+By implementing role-specific pages and functionalities, the application not only enhances user engagement but also ensures robust security and content management. Each user's experience is carefully tailored to their permissions and needs, resulting in a more organized, interactive, and secure website overall.
 
 ## Known Problems
 
