@@ -10,13 +10,13 @@ import {
 } from "@nextui-org/react";
 import jwt from "jsonwebtoken";
 import { Router } from "lucide-react";
-import { useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 
 type Event = {
   id: string;
   title: string;
   description?: string;
-  createdBy: {
+  createdBy?: {
     name: string;
     email: string;
   };
@@ -56,7 +56,7 @@ export default function EventManagement() {
 
   useEffect(() => {
     const token = localStorage.getItem("token");
-    
+
     if (token) {
       const decodedToken = jwt.decode(token) as { role?: string };
       if (!decodedToken || decodedToken?.role !== "ADMIN") {
@@ -67,10 +67,9 @@ export default function EventManagement() {
     } else {
       setTimeout(() => router.replace("/Unauthorized"), 0);
     }
-  }, [router]); 
+  }, [router]);
 
   useEffect(() => {
-
     // Fetch pending events and private questions
     async function fetchPendingEventsAndQuestions() {
       try {
@@ -267,10 +266,16 @@ export default function EventManagement() {
                   <div key={event.id} className="mb-4 p-4 border-b">
                     <h4 className="text-xl font-bold">{event.title}</h4>
                     <p className="text-gray-600">{event.description}</p>
-                    <p className="text-gray-600">
-                      Created By: {event.createdBy.name} (
-                      {event.createdBy.email})
-                    </p>
+                    {event.createdBy ? (
+                      <p className="text-gray-600">
+                        Created By: {event.createdBy.name} (
+                        {event.createdBy.email})
+                      </p>
+                    ) : (
+                      <p className="text-gray-600 italic">
+                        Created By: Guest User
+                      </p>
+                    )}
                     {event.startDate && (
                       <p className="text-gray-600">
                         Start Date:{" "}

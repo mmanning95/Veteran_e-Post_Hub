@@ -23,21 +23,12 @@ export default function CreateEventPage() {
         };
         if (decodedToken) {
           setIsUser(true);
-        } else {
-          window.location.href = "/Unauthorized";
         }
       } catch (error) {
-        console.error("Invalid token", error);
-        setStatusMessage({
-          type: "error",
-          text: "Invalid token. Please log in again.",
-        });
-        setTimeout(() => {
-          window.location.href = "/Unauthorized";
-        }, 3000);
+        console.warn("Invalid token. Proceeding as guest.", error);
       }
     } else {
-      window.location.href = "/Unauthorized";
+      // No token — proceed as guest
     }
 
     // Retrieve status message from localStorage
@@ -50,22 +41,22 @@ export default function CreateEventPage() {
 
   return (
     <EdgeStoreProvider>
-    <div
-      className="flex items-center justify-center"
-      style={{ height: "calc(100vh - 64px)" }}
-    >
-      {statusMessage && (
-        <div
-          className={`fixed top-16 left-1/2 transform -translate-x-1/2 px-6 py-4 rounded shadow-lg ${
-            statusMessage.type === "success" ? "bg-green-500" : "bg-red-500"
-          } text-white z-50`}
-          style={{ maxWidth: "90vw", textAlign: "center" }}
-        >
-          {statusMessage.text}
-        </div>
-      )}
-      {isUser && <EventForm />}
-    </div>
+      <div
+        className="flex items-center justify-center"
+        style={{ height: "calc(100vh - 64px)" }}
+      >
+        {statusMessage && (
+          <div
+            className={`fixed top-16 left-1/2 transform -translate-x-1/2 px-6 py-4 rounded shadow-lg ${
+              statusMessage.type === "success" ? "bg-green-500" : "bg-red-500"
+            } text-white z-50`}
+            style={{ maxWidth: "90vw", textAlign: "center" }}
+          >
+            {statusMessage.text}
+          </div>
+        )}
+        {<EventForm />}
+      </div>
     </EdgeStoreProvider>
   );
 }

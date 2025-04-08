@@ -113,20 +113,20 @@ export default function TopNav() {
               </span>
               <CiLogout className="text-black" size={20} />
             </Button>
-
-            <Button
-              as={Link}
-              href="/Event/create"
-              variant="bordered"
-              className="w-[140px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300"
-            >
-              <span className="text-center text-black text-small font-normal font-['Inter'] leading-none">
-                Create Event
-              </span>
-              <MdOutlineCreate className="text-black" size={20} />
-            </Button>
           </>
         )}
+
+        <Button
+          as={Link}
+          href="/Event/create"
+          variant="bordered"
+          className="w-[140px] h-[30px] px-2.5 py-2 rounded-lg border border-black flex items-center justify-between gap-2 text-black hover:bg-orange-300"
+        >
+          <span className="text-center text-black text-small font-normal font-['Inter'] leading-none">
+            Create Event
+          </span>
+          <MdOutlineCreate className="text-black" size={20} />
+        </Button>
 
         {!isUserLoggedIn && (
           <Dropdown backdrop="blur">

@@ -8,37 +8,26 @@ const prisma = new PrismaClient();
 
 export async function POST(req: NextRequest) {
   try {
-    const authHeader = req.headers.get('authorization');
-
-    console.log('Authorization Header:', authHeader);
-
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-
-      console.log('Authorization Error: Missing or invalid header');
-
-      return NextResponse.json({ message: 'Unauthorized: No token provided' }, { status: 401 });
-    }
-
-    const token = authHeader.split(' ')[1];
-    if (!token) {
-      return NextResponse.json({ message: 'Unauthorized: Invalid token format' }, { status: 401 });
-    }
-
-    let decodedToken;
-    try {
-      decodedToken = jwt.verify(token, process.env.JWT_SECRET!);
-    } catch (error) {
-      return NextResponse.json({ message: 'Unauthorized: Invalid token' }, { status: 401 });
-    }
-
-    const { role, userId } = decodedToken as { role: string; userId: string };
-    if (role !== 'ADMIN' && role !== 'MEMBER') {
-      return NextResponse.json({ message: 'Unauthorized: Insufficient privileges' }, { status: 403 });
-    }
+    const authHeader = req.headers.get("authorization");
+    let role = "GUEST";
+    let userId: string | null = null;
+    
+    if (authHeader && authHeader.startsWith("Bearer ")) {
+      const token = authHeader.split(" ")[1];
+      try {
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET!) as {
+          role: string;
+          userId: string;
+        };
+        role = decodedToken.role;
+        userId = decodedToken.userId;
+      } catch (error) {
+        console.warn("Invalid token, treating as guest:", error);     
+      }
+    }   
 
     const { website, title, startDate, endDate, description, startTime, endTime, flyer, type, address, latitude, longitude } = await req.json();
 
-    // Fetch latitude and longitude from Google Maps API if an address is provided
     // Fetch latitude and longitude from Google Maps API if an address is provided
     let resolvedLatitude = latitude;
     let resolvedLongitude = longitude;
@@ -80,7 +69,7 @@ export async function POST(req: NextRequest) {
     // Create the event
     const newEvent = await prisma.event.create({
       data: {
-        createdById: userId,
+        createdById: userId || undefined,
         website,
         title,
         startDate: startDate ? new Date(startDate + 'T00:00:00') : null,
