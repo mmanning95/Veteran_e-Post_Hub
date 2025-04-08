@@ -77,7 +77,7 @@ model Admin {
 
 model Event {
   id                String @id @default(cuid())
-  createdById            String
+  createdById       String? // Now optional to allow guest event creation
   createdBy         User   @relation(fields: [createdById], references: [id], onDelete: Cascade)
 
   website      String?
