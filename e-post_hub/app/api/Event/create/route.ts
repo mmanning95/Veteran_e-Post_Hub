@@ -29,7 +29,6 @@ export async function POST(req: NextRequest) {
     const { website, title, startDate, endDate, description, startTime, endTime, flyer, type, address, latitude, longitude } = await req.json();
 
     // Fetch latitude and longitude from Google Maps API if an address is provided
-    // Fetch latitude and longitude from Google Maps API if an address is provided
     let resolvedLatitude = latitude;
     let resolvedLongitude = longitude;
 
