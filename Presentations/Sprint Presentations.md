@@ -26,6 +26,6 @@ This document provides links to our presentation videos, organized by sprint. Th
 - [30 Second Pitch video](https://youtu.be/HPQPBDKgwf8)
 
 ## Showcase Presentation
-- [Showcase] (https://youtu.be/VvqAsIPeQY4)
+- [Showcase](https://youtu.be/VvqAsIPeQY4)
   
 Feel free to refer to these links during your discussions or for further insights into our work. Additional videos will be added as we progress through upcoming sprints.
