@@ -398,143 +398,147 @@ export default function EventDetailsPage() {
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
  {/* Event Details */}
- <Card className="w-full max-w-md mx-auto mb-6">
-        <CardHeader className="flex flex-col items-center justify-center">
-          <h1 className="text-3xl font-semibold mb-4">{event.title}</h1>
+ <Card className="w-full max-w-2xl mx-auto mb-6">
+  <CardHeader className="flex flex-col items-center justify-center">
+    <h1 className="text-3xl font-semibold mb-4">{event.title}</h1>
 
-          {/* Flyer Logic */}
-          {event.flyer ? (
-            isPdfUrl(event.flyer) ? (
-              <a
-                href={event.flyer}
-                target="_blank"
-                rel="noopener noreferrer"
-                style={{ display: "block", position: "relative" }}
-                className="mb-4"
-              >
-                <PdfViewer fileUrl={event.flyer} containerHeight={400} />
-              </a>
-            ) : (
-              <a
-                href={event.flyer}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mb-4"
-              >
-                <img
-                  src={event.flyer}
-                  alt={`${event.title} Flyer`}
-                  className="w-full h-full object-cover rounded-md"
-                  style={{ maxHeight: "400px" }}
-                />
-              </a>
-            )
-          ) : (
-            <div className="w-full h-40 flex items-center justify-center bg-gray-200 rounded-md mb-4">
-              <span className="text-gray-500">No Image Available</span>
-            </div>
-          )}
+    {/* Flyer Logic */}
+    {event.flyer ? (
+      isPdfUrl(event.flyer) ? (
+        <a
+          href={event.flyer}
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{ display: "block", position: "relative" }}
+          className="mb-4"
+        >
+          <PdfViewer fileUrl={event.flyer} containerHeight={400} />
+        </a>
+      ) : (
+        <a
+          href={event.flyer}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="mb-4"
+        >
+          <img
+            src={event.flyer}
+            alt={`${event.title} Flyer`}
+            className="w-full h-full object-cover rounded-md"
+            style={{ maxHeight: "400px" }}
+          />
+        </a>
+      )
+    ) : (
+      <div className="w-full h-40 flex items-center justify-center bg-gray-200 rounded-md mb-4">
+        <span className="text-gray-500">No Image Available</span>
+      </div>
+    )}
 
-          {/* Now we display all the relevant fields */}
-          {event.type && (
-            <p className="text-gray-700 mb-1">
-              <strong>Type:</strong> {event.type}
-            </p>
-          )}
-          {event.description && (
-            <p className="text-gray-700 mb-4">{event.description}</p>
-          )}
+    {/* Basic fields */}
+    {event.type && (
+      <p className="text-gray-700 mb-1">
+        <strong>Type:</strong> {event.type}
+      </p>
+    )}
+    {event.description && (
+      <p className="text-gray-700 mb-4">{event.description}</p>
+    )}
 
-          {/* Single-day fields if used */}
-          {event.startDate && (
-            <p className="text-gray-600">
-              <strong>Start Date:</strong>{" "}
-              {new Date(event.startDate).toLocaleDateString()}
-            </p>
-          )}
-          {event.endDate && (
-            <p className="text-gray-600">
-              <strong>End Date:</strong>{" "}
-              {new Date(event.endDate).toLocaleDateString()}
-            </p>
-          )}
-          {event.startTime && (
-            <p className="text-gray-600">
-              <strong>Start Time:</strong> {event.startTime}
-            </p>
-          )}
-          {event.endTime && (
-            <p className="text-gray-600">
-              <strong>End Time:</strong> {event.endTime}
-            </p>
-          )}
+    {/* Single-day fields if present */}
+    {event.startDate && (
+      <p className="text-gray-600">
+        <strong>Start Date:</strong>{" "}
+        {new Date(event.startDate).toLocaleDateString()}
+      </p>
+    )}
+    {event.endDate && (
+      <p className="text-gray-600">
+        <strong>End Date:</strong>{" "}
+        {new Date(event.endDate).toLocaleDateString()}
+      </p>
+    )}
+    {event.startTime && (
+      <p className="text-gray-600">
+        <strong>Start Time:</strong> {event.startTime}
+      </p>
+    )}
+    {event.endTime && (
+      <p className="text-gray-600">
+        <strong>End Time:</strong> {event.endTime}
+      </p>
+    )}
 
-          {/* Display occurrences if multi-day approach */}
-          {event.occurrences && event.occurrences.length > 0 && (
-            <div className="mt-3 mb-2">
-              <h4 className="font-semibold">Occurrences:</h4>
-              {event.occurrences.map((occ) => {
-                const d = new Date(occ.date);
-                const dateStr = d.toLocaleDateString();
-                return (
-                  <p key={occ.id} className="text-gray-600 ml-4">
-                    - {dateStr}
-                    {occ.startTime && `, Start: ${occ.startTime}`}
-                    {occ.endTime && `, End: ${occ.endTime}`}
-                  </p>
-                );
-              })}
-            </div>
-          )}
+    {/* Occurrences displayed in a bullet list */}
+    {event.occurrences && event.occurrences.length > 0 && (
+      <div className="mt-3 mb-2">
+        <h4 className="font-semibold text-lg mb-2">Dates:</h4>
+        <ul className="list-disc list-inside text-gray-600">
+          {event.occurrences.map((occ) => {
+            const d = new Date(occ.date);
+            const dateStr = d.toLocaleDateString();
+            const timeString =
+              occ.startTime || occ.endTime
+                ? ` (${occ.startTime || "???"} - ${occ.endTime || "???"})`
+                : "";
+            return (
+              <li key={occ.id}>
+                {dateStr}
+                {timeString}
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    )}
 
-          {event.address && (
-            <p className="text-gray-600">
-              <strong>Address:</strong> {event.address}
-            </p>
-          )}
-          {event.website && (
-            <p className="text-gray-600">
-              <strong>Website:</strong>{" "}
-              <a
-                href={
-                  event.website.startsWith("http://") ||
-                  event.website.startsWith("https://")
-                    ? event.website
-                    : `https://${event.website}`
-                }
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 underline"
-              >
-                {event.website}
-              </a>
-            </p>
-          )}
-          <p className="text-gray-600">
-            <strong>Interested:</strong> {event.interested}
-          </p>
+    {/* Address, Website, Interested, etc. */}
+    {event.address && (
+      <p className="text-gray-600">
+        <strong>Address:</strong> {event.address}
+      </p>
+    )}
+    {event.website && (
+      <p className="text-gray-600">
+        <strong>Website:</strong>{" "}
+        <a
+          href={
+            event.website.startsWith("http://") ||
+            event.website.startsWith("https://")
+              ? event.website
+              : `https://${event.website}`
+          }
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 underline"
+        >
+          {event.website}
+        </a>
+      </p>
+    )}
+    <p className="text-gray-600">
+      <strong>Interested:</strong> {event.interested}
+    </p>
 
-          {/* Edit button if canEditEvent */}
-          {isLoggedIn && canEditEvent() && (
-            <div className="mt-4 flex gap-2">
-              <Button
-                as={Link}
-                href={`/Event/edit/${eventId}`}
-                passHref
-                className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
-              >
-                Edit Event
-              </Button>
-            </div>
-          )}
-        </CardHeader>
-        <CardBody>
-          {/* Additional details, comments, or whatever else you want here */}
-        </CardBody>
-      </Card>
+    {/* Example Edit button, if user can edit */}
+    {isLoggedIn && canEditEvent() && (
+      <div className="mt-4 flex gap-2">
+        <Button
+          as={Link}
+          href={`/Event/edit/${eventId}`}
+          passHref
+          className="hover:scale-105 transition-transform duration-200 ease-in-out bg-gradient-to-r from-[#f7960d] to-[#f95d09] border border-black"
+        >
+          Edit Event
+        </Button>
+      </div>
+    )}
+  </CardHeader>
+  <CardBody>{/* Additional details if needed */}</CardBody>
+</Card>
 
       {/* Comment Section */}
-      <Card className="w-full max-w-md mx-auto">
+      <Card className="w-full max-w-2xl mx-auto mb-6">
         <CardHeader>
           <h2 className="text-2xl font-semibold">Comments</h2>
         </CardHeader>
