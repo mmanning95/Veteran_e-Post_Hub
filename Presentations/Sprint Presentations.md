@@ -21,5 +21,11 @@ This document provides links to our presentation videos, organized by sprint. Th
 
 ## Client Prototype Demonstration
 - [Prototype with client](https://youtu.be/yhmBGRdXeME)
+
+## 30 Second Pitch
+- [30 Second Pitch video](https://youtu.be/HPQPBDKgwf8)
+
+## Showcase Presentation
+- [Showcase] (https://youtu.be/VvqAsIPeQY4)
   
 Feel free to refer to these links during your discussions or for further insights into our work. Additional videos will be added as we progress through upcoming sprints.
