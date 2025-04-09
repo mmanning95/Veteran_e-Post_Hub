@@ -268,7 +268,7 @@ export default function EventForm() {
   });
 
   return (
-    <div className="w-full min-h-screen bg-gray-50 flex items-center justify-center pt-64 pb-8 px-4">
+    <div className="w-full min-h-screen bg-gray-50 flex items-center justify-center pt-20 pb-8 px-4">
       <Card className="w-full max-w-lg mx-auto shadow-sm bg-white border border-gray-300 overflow-auto">
         <CardHeader className="flex flex-col items-center justify-center">
           <h3 className="text-3xl font-semibold">Create New Event</h3>

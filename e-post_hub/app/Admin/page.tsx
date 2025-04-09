@@ -551,28 +551,28 @@ export default function Adminpage() {
                         </CardHeader>
                         <CardBody className="flex flex-col justify-between p-6">
                         {isPdfUrl(event.flyer) ? (
-  <a
-  href={event.flyer}
-  target="_blank"
-  rel="noopener noreferrer"
-  style={{ display: "block", position: "relative" }}
->
-  <PdfViewer fileUrl={event.flyer} containerHeight={400} />
-</a>) : (
-  // If it’s not a PDF, fall back to the image:
-  <a
-    href={event.flyer}
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    <img
-      src={event.flyer}
-      alt={`${event.title} Flyer`}
-      style={{ maxHeight: "400px" }}
-      className="w-full h-full object-cover rounded-md"
-    />
-  </a>
-)}
+                          <a
+                          href={event.flyer}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          style={{ display: "block", position: "relative" }}
+                        >
+                          <PdfViewer fileUrl={event.flyer} containerHeight={400} />
+                        </a>) : (
+                          // If it’s not a PDF, fall back to the image:
+                          <a
+                            href={event.flyer}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <img
+                              src={event.flyer}
+                              alt={`${event.title} Flyer`}
+                              style={{ maxHeight: "400px" }}
+                              className="w-full h-full object-cover rounded-md"
+                            />
+                          </a>
+                        )}
                           <div className="flex flex-col gap-2 mt-4 justify-center items-center">
                             {/* Top Row: Interested and Delete Event */}
                             <div className="flex gap-2">
