@@ -11,6 +11,13 @@ import {
 import Link from "next/link";
 import dynamic from "next/dynamic";
 
+type EventOccurrence = {
+  id: string;
+  date: string; 
+  startTime?: string;
+  endTime?: string;
+};
+
 type Event = {
   id: string;
   title: string;
@@ -27,7 +34,9 @@ type Event = {
   endTime?: string;
   website?: string;
   flyer?: string;
+  type?: string
   address?: string;
+  occurrences?: EventOccurrence[];
 };
 
 type Comment = {
@@ -388,40 +397,55 @@ export default function EventDetailsPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
-      {/* Event Details */}
-      <Card className="w-full max-w-md mx-auto mb-6">
+ {/* Event Details */}
+ <Card className="w-full max-w-md mx-auto mb-6">
         <CardHeader className="flex flex-col items-center justify-center">
-          <h1 className="text-3xl font-semibold">{event.title}</h1>
+          <h1 className="text-3xl font-semibold mb-4">{event.title}</h1>
+
+          {/* Flyer Logic */}
           {event.flyer ? (
-  isPdfUrl(event.flyer) ? (
-    // Render PDF viewer
-    <a
-    href={event.flyer}
-    target="_blank"
-    rel="noopener noreferrer"
-    style={{ display: "block", position: "relative" }}
-  >
-    <PdfViewer fileUrl={event.flyer} containerHeight={400} />
-  </a>
-  ) : (
-    // Otherwise, assume it's an image
-    <a href={event.flyer} target="_blank" rel="noopener noreferrer">
-      <img
-        src={event.flyer}
-        alt={`${event.title} Flyer`}
-        className="w-full h-full object-cover rounded-md"
-        style={{ maxHeight: "400px" }}
-      />
-    </a>
-  )
-) : (
-  <div className="w-full h-40 flex items-center justify-center bg-gray-200 rounded-md">
-    <span className="text-gray-500">No Image Available</span>
-  </div>
-)}
+            isPdfUrl(event.flyer) ? (
+              <a
+                href={event.flyer}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ display: "block", position: "relative" }}
+                className="mb-4"
+              >
+                <PdfViewer fileUrl={event.flyer} containerHeight={400} />
+              </a>
+            ) : (
+              <a
+                href={event.flyer}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mb-4"
+              >
+                <img
+                  src={event.flyer}
+                  alt={`${event.title} Flyer`}
+                  className="w-full h-full object-cover rounded-md"
+                  style={{ maxHeight: "400px" }}
+                />
+              </a>
+            )
+          ) : (
+            <div className="w-full h-40 flex items-center justify-center bg-gray-200 rounded-md mb-4">
+              <span className="text-gray-500">No Image Available</span>
+            </div>
+          )}
+
+          {/* Now we display all the relevant fields */}
+          {event.type && (
+            <p className="text-gray-700 mb-1">
+              <strong>Type:</strong> {event.type}
+            </p>
+          )}
           {event.description && (
             <p className="text-gray-700 mb-4">{event.description}</p>
           )}
+
+          {/* Single-day fields if used */}
           {event.startDate && (
             <p className="text-gray-600">
               <strong>Start Date:</strong>{" "}
@@ -444,6 +468,25 @@ export default function EventDetailsPage() {
               <strong>End Time:</strong> {event.endTime}
             </p>
           )}
+
+          {/* Display occurrences if multi-day approach */}
+          {event.occurrences && event.occurrences.length > 0 && (
+            <div className="mt-3 mb-2">
+              <h4 className="font-semibold">Occurrences:</h4>
+              {event.occurrences.map((occ) => {
+                const d = new Date(occ.date);
+                const dateStr = d.toLocaleDateString();
+                return (
+                  <p key={occ.id} className="text-gray-600 ml-4">
+                    - {dateStr}
+                    {occ.startTime && `, Start: ${occ.startTime}`}
+                    {occ.endTime && `, End: ${occ.endTime}`}
+                  </p>
+                );
+              })}
+            </div>
+          )}
+
           {event.address && (
             <p className="text-gray-600">
               <strong>Address:</strong> {event.address}
@@ -470,6 +513,8 @@ export default function EventDetailsPage() {
           <p className="text-gray-600">
             <strong>Interested:</strong> {event.interested}
           </p>
+
+          {/* Edit button if canEditEvent */}
           {isLoggedIn && canEditEvent() && (
             <div className="mt-4 flex gap-2">
               <Button
@@ -483,7 +528,9 @@ export default function EventDetailsPage() {
             </div>
           )}
         </CardHeader>
-        <CardBody>{/* Event details logic (same as before) */}</CardBody>
+        <CardBody>
+          {/* Additional details, comments, or whatever else you want here */}
+        </CardBody>
       </Card>
 
       {/* Comment Section */}
