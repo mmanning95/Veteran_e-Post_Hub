@@ -16,6 +16,9 @@ This document provides links to our presentation videos, organized by sprint. Th
 ## Sprint 5 - UI updates, final features implemented
 - [Sprint 5 Presentation](https://www.youtube.com/watch?v=cbi8HBTocjw)
 
+## Sprint 6 - Final Sprint
+- [Sprint 6 Presentation](https://youtu.be/tJG6PE7TQBI)
+
 ## Alpha Prototype Presentation
 - [Alpha Prototype](https://www.canva.com/design/DAGW3gaWbJs/x4VVizACvHApaYqRB9_Pug/edit?utm_content=DAGW3gaWbJs&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton)
 
@@ -28,4 +31,4 @@ This document provides links to our presentation videos, organized by sprint. Th
 ## Showcase Presentation
 - [Showcase](https://youtu.be/VvqAsIPeQY4)
   
-Feel free to refer to these links during your discussions or for further insights into our work. Additional videos will be added as we progress through upcoming sprints.
+Please feel free to refer to these links during your talks or for additional insights into our work.
