@@ -164,7 +164,7 @@ export default function EventDetailsPage() {
   const canEditEvent = () => {
     if (!event) return false;
     if (userRole === "ADMIN") return true;
-    return event.createdBy.email === userId;
+    return event.createdBy?.email === userId;
   };
 
   const handleEditComment = async (commentId: string) => {
