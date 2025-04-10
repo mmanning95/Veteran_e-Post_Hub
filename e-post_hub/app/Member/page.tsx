@@ -669,7 +669,7 @@ export default function Memberpage() {
                           </p>
                         </div>
                         <div className="flex flex-col gap-2 mt-4 justify-center items-center">
-                          {userId === event.createdBy.id ? (
+                          {userId === event.createdBy?.id ? (
                             // If the Delete Event button is present
                             <>
                               {/* Top Row: I'm Interested and Delete Event */}
