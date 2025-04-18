@@ -36,7 +36,7 @@ justify-between gap-4 md:gap-0 h-auto p-4 md:h-[110px] shadow-md">
         <div className="flex flex-col items-center">
           <h3 className="text-lg font-bold">Help & Support</h3>
           <div className="flex space-x-4 mt-2">
-            <a href="/Support/external" className="text-sm underline">
+            <a href="https://www.whitmancounty.org/628/Veteran-Services-Officer" className="text-sm underline">
               External Resources
             </a>
             <a href="/Support/community" className="text-sm underline">
