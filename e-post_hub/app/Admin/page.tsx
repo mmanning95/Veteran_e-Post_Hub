@@ -222,8 +222,8 @@ export default function Adminpage() {
           const data = await response.json();
           const allEvents = data.events as Event[];
       
-          // ******** 1) Compute startDate / endDate from occurrences
-          // Check if each event has .occurrences. If so, figure out earliest & latest
+          //  1) Compute startDate / endDate from occurrences
+          // Check if each event has .occurrences.
           allEvents.forEach((ev) => {
             if (ev.occurrences && ev.occurrences.length > 0) {
               // Sort them by date ascending

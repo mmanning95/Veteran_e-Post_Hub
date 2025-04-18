@@ -38,7 +38,10 @@ export default function CommunityPage() {
 
     fetch('/api/community/question/public')
       .then(res => res.json())
-      .then(data => setQuestions(data.questions));
+      .then(data => {
+        console.log("Fetched Questions:",data.questions);
+        setQuestions(data.questions);
+      });
   }, []);
 
   useEffect(() => {
