@@ -85,10 +85,8 @@ export async function POST(req: NextRequest) {
   // 2) Create the occurrences
     // If the user provided an array of date/time objects, store them
     if (Array.isArray(eventOccurrences)) {
-      // We loop and create each day/time
       for (const occ of eventOccurrences) {
-        // parse the "date" string we sent from the front end
-        // e.g. "2025-04-10T00:00:00.000Z"
+
         const dateObj = new Date(occ.date);
 
         await prisma.eventOccurrence.create({

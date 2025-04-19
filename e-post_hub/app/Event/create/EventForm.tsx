@@ -28,6 +28,7 @@ import Link from "next/link";
 import { SingleImageDropzone } from "@/app/Components/Dropzone/single-image-dropzone";
 import { LoadScript } from "@react-google-maps/api";
 import { usePlacesWidget } from "react-google-autocomplete";
+import { pdfjs } from "react-pdf";
 
 const predefinedEventType = ["Workshop", "Seminar", "Meeting", "Fundraiser"];
 
@@ -176,8 +177,26 @@ export default function EventForm() {
     if (newFile && newFile.type.includes("image")) {
       const url = URL.createObjectURL(newFile);
       setFilePreview(url);
+    } else if (newFile && newFile.type.includes("pdf")) {
+      // Check for PDF content and ensure only one page is present
+      const fileReader = new FileReader();
+      fileReader.onload = async (e) => {
+        const arrayBuffer = e.target?.result as ArrayBuffer;
+        const pdf = await pdfjs.getDocument(arrayBuffer).promise;
+        
+        if (pdf.numPages === 1) {
+          setFilePreview(null); // No preview for single-page PDF
+          setFile(newFile); // Proceed with the PDF
+        } else {
+          // Handle PDFs with more than one page
+          alert("Please upload a PDF with only one page.");
+          setFile(null); // Clear the file input if it's not valid
+        }
+      };
+  
+      fileReader.readAsArrayBuffer(newFile);
     } else {
-      setFilePreview(null); // No preview for PDF
+      setFilePreview(null); // No preview for unsupported file types
     }
   };
 
@@ -194,7 +213,6 @@ export default function EventForm() {
       const eventOccurrences = occurrences
       .filter((occ) => occ.date.trim())
       .map((occ) => {
-        // Convert user’s "YYYY-MM-DD" to local date at noon
         const [yearStr, monthStr, dayStr] = occ.date.split("-");
         const year = Number(yearStr);
         const month = Number(monthStr) - 1; // 0-based
@@ -203,6 +221,7 @@ export default function EventForm() {
         // Construct a date at local “noon”
         const dateObj = new Date(Date.UTC(year, month, day));
     
+        dateObj.setDate(dateObj.getDate() + 1);
         return {
           date: dateObj.toISOString(),
           startTime: occ.startTime,

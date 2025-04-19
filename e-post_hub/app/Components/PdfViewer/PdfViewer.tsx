@@ -3,8 +3,10 @@
 import React, { useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 
-pdfjs.GlobalWorkerOptions.workerSrc = "/pdfjs/pdf.worker.min.js"; 
-
+pdfjs.GlobalWorkerOptions.workerSrc = new URL(
+  'pdfjs-dist/build/pdf.worker.min.mjs',
+  import.meta.url,
+).toString();
 interface PdfViewerProps {
   fileUrl: string;   
   containerHeight?: number;
@@ -13,15 +15,10 @@ interface PdfViewerProps {
 export default function PdfPreview({
     fileUrl,
   }: PdfViewerProps) {
-    const [numPages, setNumPages] = useState(0);
   
     return (
       <div>
-        <Document file={fileUrl} onLoadSuccess={(pdf) => setNumPages(pdf.numPages)}>
-          {/* 
-             We'll just display page 1 with some fixed size/scale.
-             The container is 100% wide, 400px tall, overflow hidden.
-          */}
+        <Document file={fileUrl}>
           <div
             style={{
               width: "100%",
