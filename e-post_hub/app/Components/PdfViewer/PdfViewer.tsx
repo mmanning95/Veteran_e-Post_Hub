@@ -11,7 +11,7 @@ interface PdfViewerProps {
   fileUrl: string;   
   containerHeight?: number;
 }
-
+ 
 export default function PdfPreview({ fileUrl, containerHeight }: PdfViewerProps) {
   const [thumbnail, setThumbnail] = useState<string | null>(null);
 
